@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
+:root {
+  --ink: #152A2E;
+  --ink-soft: #3F5458;
+  --green: #1F6F4A;
+  --green-deep: #164F35;
+  --green-light: #4FAE80;
+  --gold: #B98A2E;
+  --paper: #FAF8F3;
+  --paper-raised: #FFFFFF;
+  --line: #DEDACD;
+  --line-soft: #ECE9DF;
+  --danger: #A3402C;
+  --radius: 3px;
+  --path-selected-bg: #F4EFE6;
+
+  /* shadcn/ui mapping to the editorial government palette */
+  --background: var(--paper);
+  --foreground: var(--ink);
+
+  --card: var(--paper-raised);
+  --card-foreground: var(--ink);
+
+  --popover: var(--paper-raised);
+  --popover-foreground: var(--ink);
+
+  --primary: var(--green);
+  --primary-foreground: #FFFFFF;
+
+  --secondary: var(--line-soft);
+  --secondary-foreground: var(--ink);
+
+  --muted: var(--line-soft);
+  --muted-foreground: var(--ink-soft);
+
+  --accent: var(--line-soft);
+  --accent-foreground: var(--ink);
+
+  --destructive: var(--danger);
+  --destructive-foreground: #FFFFFF;
+
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--green);
+}
+
+:root[data-theme="dark"],
+.dark {
+  --ink: #EDEAE0;
+  --ink-soft: #B7C2C0;
+  --paper: #12181A;
+  --paper-raised: #1A2224;
+  --line: #2C3436;
+  --line-soft: #232B2D;
+  --green: #1F6F4A;
+  --green-deep: #164F35;
+  --green-light: #4FAE80;
+  --gold: #D4A347;
+  --danger: #C8533D;
+  --path-selected-bg: #1A2624;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+
+  --card: var(--paper-raised);
+  --card-foreground: var(--ink);
+
+  --popover: var(--paper-raised);
+  --popover-foreground: var(--ink);
+
+  --primary: var(--green);
+  --primary-foreground: #FFFFFF;
+
+  --secondary: var(--line-soft);
+  --secondary-foreground: var(--ink);
+
+  --muted: var(--line-soft);
+  --muted-foreground: var(--ink-soft);
+
+  --accent: var(--line-soft);
+  --accent-foreground: var(--ink);
+
+  --destructive: var(--danger);
+  --destructive-foreground: #FFFFFF;
+
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--green-light);
+}
+
+@theme {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-green: var(--green);
+  --color-green-deep: var(--green-deep);
+  --color-green-light: var(--green-light);
+  --color-gold: var(--gold);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-danger: var(--danger);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --radius-sm: calc(var(--radius) - 1px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    color: var(--ink);
+  }
+}
+
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
