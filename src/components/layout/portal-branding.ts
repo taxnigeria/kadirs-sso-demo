@@ -61,6 +61,7 @@ export const PORTALS: Record<string, PortalConfig> = {
     navItems: [
       { label: "Dashboard", path: "/paykaduna", icon: LayoutDashboard },
       { label: "Services", path: "/paykaduna/services", icon: ClipboardList },
+      { label: "Citizen Profile", path: "/auth/profile", icon: User },
     ],
   },
   kadvreg: {

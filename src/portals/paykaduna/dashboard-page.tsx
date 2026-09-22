@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, Link } from 'react-router'
 import {
   ShieldCheck,
   CreditCard,
@@ -8,7 +8,8 @@ import {
   AlertTriangle,
   ArrowRight,
   UserCheck,
-  Layers
+  Layers,
+  User
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { TSP_REGISTRY } from '@/components/layout/portal-branding'
@@ -89,6 +90,14 @@ export default function PayKadunaDashboard() {
               <span><strong className="text-[var(--ink)]">LGA:</strong> {lga}</span>
               <span className="text-[var(--line)]">&bull;</span>
               <span><strong className="text-[var(--ink)]">Security:</strong> Level 2 (2FA Protected)</span>
+              <span className="text-[var(--line)]">&bull;</span>
+              <Link
+                to="/auth/profile"
+                className="inline-flex items-center gap-1 font-semibold text-[var(--green)] hover:underline"
+              >
+                <User className="w-3 h-3" />
+                <span>Citizen Profile &amp; NDPA Privacy &rarr;</span>
+              </Link>
             </div>
           </div>
 

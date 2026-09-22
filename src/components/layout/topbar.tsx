@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { Sun, Moon, Search, RotateCcw } from 'lucide-react'
+import { Sun, Moon, Search, RotateCcw, User } from 'lucide-react'
 import { useThemeStore } from '@/engine/theme-store'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { type PortalConfig } from './portal-branding'
@@ -48,15 +48,20 @@ export function Topbar({ portal }: TopbarProps) {
 
         {/* Current user pill if logged in */}
         {currentUser && (
-          <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-[var(--radius)] bg-[var(--paper-raised)] border border-[var(--line)] text-xs">
+          <Link
+            to="/auth/profile"
+            title="Manage Citizen Profile & NDPA Privacy Center"
+            className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-[var(--radius)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)] border border-[var(--line)] text-xs transition-colors cursor-pointer group"
+          >
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]" />
+            <User className="w-3.5 h-3.5 text-[var(--green)] group-hover:scale-110 transition-transform" />
             <span className="text-[var(--ink)] font-medium">
               {identity?.legalName.split(' ')[0] || currentUser.email.split('@')[0]}
             </span>
             <span className="text-[10px] text-[var(--ink-soft)] uppercase tracking-wider font-medium">
               ({activePersona})
             </span>
-          </div>
+          </Link>
         )}
 
         {/* Theme Toggle Button */}

@@ -216,7 +216,15 @@ export default function PITDashboard() {
               2024 TAX YEAR
             </div>
 
-            {/* Quick Switch to PayKaduna or KADVREG */}
+            {/* Quick Switch to PayKaduna, Profile, or KADVREG */}
+            <Link
+              to="/auth/profile"
+              className="text-xs text-slate-300 hover:text-white px-2.5 py-1 rounded border border-slate-700 hover:border-slate-500 transition-colors flex items-center gap-1"
+            >
+              <span>Profile &amp; NDPA</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+
             <Link
               to="/paykaduna"
               className="text-xs text-slate-300 hover:text-white px-2.5 py-1 rounded border border-slate-700 hover:border-slate-500 transition-colors flex items-center gap-1"

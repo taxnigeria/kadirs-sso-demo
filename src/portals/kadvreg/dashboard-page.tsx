@@ -205,6 +205,14 @@ export default function KadVRegDashboard() {
                 </div>
 
                 <Link
+                  to="/auth/profile"
+                  className="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors flex items-center gap-1"
+                  title="Manage Citizen Profile & NDPA Privacy Center"
+                >
+                  <span>Profile</span>
+                </Link>
+
+                <Link
                   to="/paykaduna"
                   className="px-3 py-1.5 rounded-lg border border-emerald-600 bg-emerald-50 text-emerald-800 text-xs font-semibold hover:bg-emerald-100 transition-colors flex items-center gap-1"
                   title="Return to Central PayKaduna Hub"
