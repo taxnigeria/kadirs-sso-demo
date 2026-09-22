@@ -228,7 +228,7 @@ export function IndividualFlow({
       const remaining = Math.max(0, otpAttemptsLeft - 1)
       setOtpAttemptsLeft(remaining)
       if (remaining === 0) {
-        setOtpError('Maximum attempts exceeded (3). Please request a fresh carrier code.')
+        setOtpError('Maximum attempts exceeded (3). Please request a fresh verification code.')
         setOtpSent(false)
       } else {
         setOtpError(`${res.message} (${remaining} attempts remaining)`)
@@ -302,11 +302,11 @@ export function IndividualFlow({
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-[var(--paper-raised)] border border-[var(--line)] p-8 sm:p-9 rounded-[var(--radius)] space-y-6"
+          className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6"
           onSubmit={handleVerifyNIN}
         >
           <div>
-            <h2 className="font-serif font-semibold text-[22px] text-[var(--ink)] mb-1">
+            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
               National identity verification
             </h2>
             <p className="text-[13.5px] text-[var(--ink-soft)]">
@@ -320,7 +320,7 @@ export function IndividualFlow({
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-[var(--danger)] shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-serif font-semibold text-sm text-[var(--danger)]">
+                  <h4 className="text-sm font-semibold text-[var(--danger)]">
                     Identity Record Already Registered (Duplicate Prohibited)
                   </h4>
                   <p className="text-xs text-[var(--ink)] mt-1 leading-relaxed">
@@ -343,7 +343,7 @@ export function IndividualFlow({
                     setDuplicateNINBlocked(null)
                     setNinInput('')
                   }}
-                  className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] underline"
+                  className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] underline cursor-pointer"
                 >
                   Enter different NIN
                 </button>
@@ -378,7 +378,7 @@ export function IndividualFlow({
                 }}
                 placeholder="Enter 11-digit NIN"
                 maxLength={16}
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] font-mono text-[15px] focus:outline-2 focus:outline-[var(--green)] pr-10"
+                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] font-mono text-[14px] focus:outline-2 focus:outline-[var(--green)] pr-10"
                 required
               />
               <button
@@ -403,7 +403,7 @@ export function IndividualFlow({
             <button
               type="button"
               onClick={handleProvisionalNIMC}
-              className="text-[var(--ink-soft)] hover:text-[var(--green)] underline transition-colors"
+              className="text-[var(--ink-soft)] hover:text-[var(--green)] underline transition-colors cursor-pointer"
             >
               NIMC service slow? Request provisional registration &rarr;
             </button>
@@ -414,7 +414,7 @@ export function IndividualFlow({
               <button
                 type="button"
                 onClick={onBackToSelection}
-                className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors"
+                className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
               >
                 &larr; Back
               </button>
@@ -435,70 +435,70 @@ export function IndividualFlow({
       {/* STEP 1: Phone Security Challenge & Contact Information              */}
       {/* ================================================================ */}
       {step === 1 && nimcData && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-8 sm:p-9 rounded-[var(--radius)] space-y-7">
+        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6">
           <div>
-            <h2 className="font-serif font-semibold text-[22px] text-[var(--ink)] mb-1">
+            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
               Identity verification &amp; contact setup
             </h2>
             <p className="text-[13.5px] text-[var(--ink-soft)]">
-              Confirm ownership of your national identity record via your NIN-registered mobile number.
+              Confirm ownership of your national identity record via your registered mobile number.
             </p>
           </div>
 
-          {/* NIMC Verified Summary Box — Name and Gender visible, DOB masked */}
-          <div className="border border-[var(--line)] bg-[var(--paper)] p-4 sm:p-5 rounded-[var(--radius)] text-xs">
-            <div className="text-[var(--green)] font-medium mb-3 flex items-center gap-1.5">
+          {/* Verified Identity Record (NIMC) */}
+          <div className="space-y-3">
+            <div className="text-[var(--green)] font-medium text-xs flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4" />
-              <span>NIMC Identity Verified &middot; Layer 1 Locked Record</span>
+              <span>✓ Verified identity record (NIMC)</span>
               {isProvisionalNIMC && (
                 <span className="ml-2 px-2 py-0.5 rounded bg-[var(--gold)]/20 text-[var(--gold)] text-[10px] font-semibold uppercase">
-                  Provisional (Background NIMC Sync Active)
+                  Provisional (Background Sync Active)
                 </span>
               )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[var(--ink)]">
               <div>
-                <span className="text-[var(--ink-soft)] block text-[10.5px] uppercase font-semibold tracking-wider">
-                  Legal Name (NIMC)
+                <span className="text-[var(--ink-soft)] block text-[11px] font-medium uppercase tracking-wider">
+                  Legal name
                 </span>
                 <span className="font-medium text-sm mt-0.5 block">{nimcData.legalName}</span>
               </div>
               <div>
-                <span className="text-[var(--ink-soft)] block text-[10.5px] uppercase font-semibold tracking-wider">
+                <span className="text-[var(--ink-soft)] block text-[11px] font-medium uppercase tracking-wider">
                   Gender
                 </span>
                 <span className="capitalize font-medium text-sm mt-0.5 block">{nimcData.gender}</span>
               </div>
               <div>
-                <span className="text-[var(--ink-soft)] block text-[10.5px] uppercase font-semibold tracking-wider">
-                  Date of Birth
+                <span className="text-[var(--ink-soft)] block text-[11px] font-medium uppercase tracking-wider">
+                  Date of birth
                 </span>
-                <span className="font-mono text-sm text-[var(--ink-soft)] mt-0.5 block">••••-••-•• (Locked &amp; Masked)</span>
+                <span className="font-mono text-sm text-[var(--ink-soft)] mt-0.5 block">••••-••-•• (Masked)</span>
               </div>
             </div>
           </div>
 
-          {/* Phone Carrier Security Challenge (MOVED ABOVE CONTACT CHANNELS) */}
-          <div className="border border-[var(--line)] bg-[var(--paper)] p-6 rounded-[var(--radius)] space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--line-soft)] pb-3.5">
+          {/* Phone Verification Challenge */}
+          <div className="border-t border-[var(--line-soft)] pt-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h4 className="font-serif font-semibold text-[15.5px] text-[var(--ink)]">
-                  Phone Carrier Security Challenge
-                </h4>
-                <p className="text-xs text-[var(--ink-soft)] mt-0.5">
-                  Verify possession of your NIN-registered phone line via Termii DND bypass route.
+                <h3 className="text-[16px] font-semibold text-[var(--ink)] tracking-tight">
+                  Phone verification challenge
+                </h3>
+                <p className="text-[13px] text-[var(--ink-soft)] mt-0.5">
+                  Verify possession of your registered mobile line to authenticate your identity.
                 </p>
               </div>
-              <span className="text-[11px] font-medium px-2.5 py-1 rounded-[var(--radius)] bg-[var(--line-soft)] text-[var(--ink-soft)] shrink-0 self-start sm:self-auto border border-[var(--line)]">
-                Termii SMS (DND Bypass Route)
+              <span className="text-[11px] font-medium px-2.5 py-1 rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink-soft)] shrink-0 self-start sm:self-auto border border-[var(--line)]">
+                SMS verification
               </span>
             </div>
 
-            {/* If NOT sent yet: Prominent Send Button with Masked NIN Phone */}
+            {/* If NOT sent yet: Prominent Send Button with Masked Phone */}
             {!otpSent && !otpVerified && (
               <div className="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <p className="text-xs text-[var(--ink-soft)]">
-                  An official 6-digit authorization code will be dispatched to your NIN-registered phone:{' '}
+                <p className="text-[13px] text-[var(--ink-soft)]">
+                  A 6-digit verification code will be sent to your registered phone:{' '}
                   <strong className="font-mono font-semibold text-[var(--ink)] tracking-wider">
                     {maskNIMCPhone(nimcRegisteredPhone || nimcData.registeredPhone)}
                   </strong>
@@ -509,7 +509,7 @@ export function IndividualFlow({
                   className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-5 py-2.5 rounded-[var(--radius)] font-sans text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer shrink-0"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Send Verification OTP</span>
+                  <span>Send verification code</span>
                 </button>
               </div>
             )}
@@ -517,8 +517,8 @@ export function IndividualFlow({
             {/* When Sent & Awaiting Code Entry */}
             {otpSent && !otpVerified && (
               <div className="space-y-3.5 animate-in fade-in">
-                <p className="text-xs text-[var(--ink-soft)]">
-                  Enter the 6-digit authorization code dispatched to your NIN-registered phone{' '}
+                <p className="text-[13px] text-[var(--ink-soft)]">
+                  Enter the 6-digit verification code sent to your registered phone{' '}
                   <strong className="font-mono font-semibold text-[var(--ink)]">
                     {maskNIMCPhone(nimcRegisteredPhone || nimcData.registeredPhone)}
                   </strong>:
@@ -531,7 +531,7 @@ export function IndividualFlow({
                     onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="000000"
                     maxLength={6}
-                    className="w-48 px-4 py-2 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper-raised)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-2 focus:outline-[var(--green)]"
+                    className="w-48 px-4 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-2 focus:outline-[var(--green)]"
                   />
                   <button
                     type="button"
@@ -545,7 +545,7 @@ export function IndividualFlow({
                     type="button"
                     onClick={handleSendOTP}
                     disabled={resendCooldown > 0}
-                    className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] disabled:opacity-50 underline px-2 py-1"
+                    className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] disabled:opacity-50 underline px-2 py-1 cursor-pointer"
                   >
                     {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend new code'}
                   </button>
@@ -566,20 +566,16 @@ export function IndividualFlow({
               </div>
             )}
 
-            {/* Dignified Success Confirmation */}
+            {/* Verification Confirmation */}
             {otpVerified && (
-              <div className="border border-[var(--green)]/40 bg-[var(--green)]/10 p-4 rounded-[var(--radius)] text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
+              <div className="border border-[var(--green)]/30 bg-[var(--green)]/5 p-4 rounded-[var(--radius)] text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
                 <CheckCircle2 className="w-5 h-5 text-[var(--green)] shrink-0 mt-0.5" />
                 <div>
                   <div className="font-semibold text-[var(--green)] text-[13.5px]">
-                    ✓ NIN Phone Verification Successful
+                    ✓ Phone verification confirmed
                   </div>
                   <p className="text-[var(--ink-soft)] mt-0.5 leading-relaxed">
-                    Identity ownership confirmed via Termii DND carrier route. Phone line{' '}
-                    <code className="font-mono font-medium text-[var(--ink)]">
-                      {maskNIMCPhone(nimcRegisteredPhone || nimcData.registeredPhone)}
-                    </code>{' '}
-                    has been verified against your NIMC record. Please confirm your primary contact channels below.
+                    Identity ownership confirmed. Please review and confirm your primary contact details below.
                   </p>
                 </div>
               </div>
@@ -588,12 +584,12 @@ export function IndividualFlow({
 
           {/* Contact Information Fields (ONLY SHOWN WHEN OTP IS VERIFIED) */}
           {otpVerified && (
-            <div className="space-y-4 animate-in fade-in duration-200">
+            <div className="border-t border-[var(--line-soft)] pt-6 space-y-4 animate-in fade-in duration-200">
               <div>
-                <h3 className="font-serif font-semibold text-[16px] text-[var(--ink)]">
+                <h3 className="text-[16px] font-semibold text-[var(--ink)] tracking-tight">
                   Contact channels
                 </h3>
-                <p className="text-[12.5px] text-[var(--ink-soft)] mt-0.5">
+                <p className="text-[13px] text-[var(--ink-soft)] mt-0.5">
                   Set your verified primary contact channels for state revenue receipts and official tax assessments.
                 </p>
               </div>
@@ -611,7 +607,7 @@ export function IndividualFlow({
                     value={email}
                     onChange={(e) => handleEmailChange(e.target.value)}
                     placeholder="e.g. yourname@example.com"
-                    className={`w-full px-3.5 py-2.5 border rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 ${
+                    className={`w-full px-3.5 py-2.5 border rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 ${
                       emailDuplicateError
                         ? 'border-[var(--danger)] focus:outline-[var(--danger)]'
                         : 'border-[var(--line)] focus:outline-[var(--green)]'
@@ -644,7 +640,7 @@ export function IndividualFlow({
                     value={phone}
                     onChange={(e) => handlePhoneChange(e.target.value)}
                     placeholder="e.g. +234 814 555 1212"
-                    className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 focus:outline-[var(--green)]"
+                    className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)]"
                     required
                   />
                   <span className="text-[11px] text-[var(--ink-soft)] mt-1.5 block">
@@ -656,20 +652,20 @@ export function IndividualFlow({
           )}
 
           {/* Action Row */}
-          <div className="flex justify-between items-center pt-2 border-t border-[var(--line-soft)]">
-            <button
-              type="button"
-              onClick={() => changeStep(0)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors"
-            >
-              &larr; Back
-            </button>
-            <div className="flex items-center gap-3">
-              {!otpVerified && (
-                <span className="text-xs text-[var(--ink-soft)] hidden sm:inline">
-                  Verify NIN phone number via OTP above to unlock contact setup
-                </span>
-              )}
+          <div className="pt-2">
+            {!otpVerified && (
+              <p className="text-xs text-[var(--ink-soft)] text-right mb-3">
+                Verify phone number above to unlock contact setup
+              </p>
+            )}
+            <div className="flex justify-between items-center border-t border-[var(--line-soft)] pt-5">
+              <button
+                type="button"
+                onClick={() => changeStep(0)}
+                className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
+              >
+                &larr; Back
+              </button>
               <button
                 type="button"
                 disabled={!otpVerified || Boolean(emailDuplicateError) || !email.trim() || !phone.trim()}
@@ -691,9 +687,9 @@ export function IndividualFlow({
       {/* STEP 2: Residential Address & Tax Jurisdiction                     */}
       {/* ================================================================ */}
       {step === 2 && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-8 sm:p-9 rounded-[var(--radius)] space-y-6">
+        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6">
           <div>
-            <h2 className="font-serif font-semibold text-[22px] text-[var(--ink)] mb-1">
+            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
               Residential address &amp; tax jurisdiction
             </h2>
             <p className="text-[13.5px] text-[var(--ink-soft)]">
@@ -708,7 +704,7 @@ export function IndividualFlow({
             <select
               value={selectedLga}
               onChange={(e) => setSelectedLga(e.target.value)}
-              className="w-full px-3 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 focus:outline-[var(--green)]"
+              className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)]"
             >
               {KADUNA_LGAS.map((lga) => (
                 <option key={lga} value={lga}>{lga}</option>
@@ -716,15 +712,16 @@ export function IndividualFlow({
             </select>
           </div>
 
-          <div className="border border-[var(--line)] bg-[var(--paper)] p-4 rounded-[var(--radius)] text-xs">
-            <span className="text-[10px] uppercase font-bold text-[var(--ink-soft)] tracking-wider block mb-1">
-              Assigned KADIRS Tax Office
+          {/* Assigned Tax Office Definition Block */}
+          <div className="border-t border-[var(--line-soft)] pt-4 pb-1 text-xs space-y-1">
+            <span className="text-[11px] uppercase font-medium text-[var(--ink-soft)] tracking-wider block">
+              Assigned KADIRS tax office
             </span>
-            <div className="font-serif font-semibold text-[15px] text-[var(--ink)]">
+            <div className="text-[15px] font-semibold text-[var(--ink)]">
               {taxOffice}
             </div>
-            <p className="text-[var(--ink-soft)] mt-1">
-              Vehicle licensing, personal tax assessments and land rates for this LGA route through this office.
+            <p className="text-[var(--ink-soft)] text-[12.5px]">
+              Vehicle licensing, personal tax assessments, and land rates for this LGA route through this office.
             </p>
           </div>
 
@@ -736,7 +733,7 @@ export function IndividualFlow({
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="e.g. 14 Swimming Pool Road, Kabala Doki"
-              className="w-full px-3 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 focus:outline-[var(--green)]"
+              className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)]"
             />
           </div>
 
@@ -744,7 +741,7 @@ export function IndividualFlow({
             <button
               type="button"
               onClick={() => changeStep(1)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors"
+              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
@@ -763,9 +760,9 @@ export function IndividualFlow({
       {/* STEP 3: Password & Two-Factor Authentication                       */}
       {/* ================================================================ */}
       {step === 3 && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-8 sm:p-9 rounded-[var(--radius)] space-y-6">
+        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6">
           <div>
-            <h2 className="font-serif font-semibold text-[22px] text-[var(--ink)] mb-1">
+            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
               Password &amp; two-factor authentication
             </h2>
             <p className="text-[13.5px] text-[var(--ink-soft)]">
@@ -783,7 +780,7 @@ export function IndividualFlow({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Create secure password"
-                className="w-full px-3 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 focus:outline-[var(--green)] pr-10"
+                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)] pr-10"
               />
               <button
                 type="button"
@@ -825,8 +822,8 @@ export function IndividualFlow({
                     : 'border-[var(--line)] hover:bg-[var(--line-soft)]'
                 }`}
               >
-                <div className="font-serif text-[14px] text-[var(--ink)]">SMS OTP</div>
-                <div className="text-[var(--ink-soft)] mt-0.5">Carrier code to verified phone ({phone})</div>
+                <div className="text-[14px] font-semibold text-[var(--ink)]">SMS verification</div>
+                <div className="text-[var(--ink-soft)] mt-0.5">Verification code sent to verified phone ({phone})</div>
               </div>
 
               <div
@@ -837,7 +834,7 @@ export function IndividualFlow({
                     : 'border-[var(--line)] hover:bg-[var(--line-soft)]'
                 }`}
               >
-                <div className="font-serif text-[14px] text-[var(--ink)]">Authenticator App</div>
+                <div className="text-[14px] font-semibold text-[var(--ink)]">Authenticator App</div>
                 <div className="text-[var(--ink-soft)] mt-0.5">Google Authenticator / Microsoft Auth</div>
               </div>
             </div>
@@ -847,7 +844,7 @@ export function IndividualFlow({
             <button
               type="button"
               onClick={() => changeStep(2)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors"
+              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
@@ -867,9 +864,9 @@ export function IndividualFlow({
       {/* STEP 4: NDPA 2023 Statutory Consent (Event 1)                      */}
       {/* ================================================================ */}
       {step === 4 && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-8 sm:p-9 rounded-[var(--radius)] space-y-6">
+        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6">
           <div>
-            <h2 className="font-serif font-semibold text-[22px] text-[var(--ink)] mb-1">
+            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
               NDPA 2023 statutory consent (Event 1)
             </h2>
             <p className="text-[13.5px] text-[var(--ink-soft)]">
@@ -934,7 +931,7 @@ export function IndividualFlow({
             <button
               type="button"
               onClick={() => changeStep(3)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors"
+              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>

@@ -172,11 +172,11 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
           onSubmit={handleStep0Submit}
         >
           <div>
-            <h2 className="font-serif font-semibold text-[22px] text-[var(--ink)] mb-1">
+            <h2 className="font-semibold text-[22px] tracking-tight text-[var(--ink)] mb-1">
               Government agency &amp; MDA details
             </h2>
             <p className="text-[13.5px] text-[var(--ink-soft)]">
-              Register a state MDA, parastatal or local government council. Layer 1 ghost agency screening is active.
+              Register a state MDA, parastatal or local government council. Real-time agency registry screening is active.
             </p>
           </div>
 
@@ -186,12 +186,12 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-[var(--danger)] shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-serif font-semibold text-sm text-[var(--danger)]">
-                    Duplicate Agency Registration Blocked (Ghost Agency Prevention Layer 1)
+                  <h4 className="font-semibold text-sm text-[var(--danger)]">
+                    Duplicate Agency Registration Blocked
                   </h4>
                   <p className="text-xs text-[var(--ink)] mt-1 leading-relaxed">
                     Agency TIN <span className="font-mono font-bold">{duplicateTINBlocked.tin}</span> is already registered in the KADIRS agency registry (<span className="font-medium">{duplicateTINBlocked.agencyName}</span>, Status: <span className="capitalize font-semibold">{duplicateTINBlocked.status?.replace('_', ' ')}</span>).
-                    To prevent ghost agency proliferation, duplicate registration of the same TIN is strictly blocked.
+                    To maintain registry integrity, duplicate registration of the same TIN is prohibited.
                   </p>
                 </div>
               </div>
@@ -225,7 +225,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
               <select
                 value={jurisdiction}
                 onChange={(e) => setJurisdiction(e.target.value as any)}
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 focus:outline-[var(--green)]"
+                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)]"
               >
                 <option value="State">Kaduna State Government (MDA)</option>
                 <option value="Federal">Federal Parastatal in Kaduna</option>
@@ -252,7 +252,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
 
           <div>
             <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-              Official MDA / parastatal name <span className="text-[var(--danger)]">*</span>
+              Official MDA or parastatal name <span className="text-[var(--danger)]">*</span>
             </label>
             <input
               value={agencyName}
@@ -338,7 +338,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                 value={assignedTaxOffice}
                 readOnly
                 disabled
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--line-soft)]/50 text-[var(--ink-soft)] text-[13px] cursor-not-allowed select-none"
+                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--line-soft)]/50 text-[var(--ink-soft)] text-[13.5px] cursor-not-allowed select-none font-medium"
               />
             </div>
           </div>
@@ -356,11 +356,11 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
             />
           </div>
 
-          <div className="flex justify-between items-center pt-2 border-t border-[var(--line-soft)]">
+          <div className="flex justify-between items-center pt-5 border-t border-[var(--line-soft)]">
             <button
               type="button"
               onClick={onBackToSelection}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors"
+              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
@@ -387,7 +387,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
           }}
         >
           <div>
-            <h2 className="font-serif font-semibold text-[22px] text-[var(--ink)] mb-1">
+            <h2 className="font-semibold text-[22px] tracking-tight text-[var(--ink)] mb-1">
               Mandate document &amp; authorized signatory
             </h2>
             <p className="text-[13.5px] text-[var(--ink-soft)]">
@@ -395,57 +395,67 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
             </p>
           </div>
 
-          {/* Document Upload Area (Encouraged, not hard blocked) */}
-          <div className="border border-dashed border-[var(--line)] rounded-[var(--radius)] p-6 text-center bg-[var(--paper)] space-y-2">
-            {!mandateDocUploaded ? (
-              <div>
-                <UploadCloud className="w-8 h-8 text-[var(--green)] mx-auto mb-2" />
-                <h4 className="font-serif font-semibold text-sm text-[var(--ink)]">
-                  Attach Official Gazette / Mandate Authorization
-                </h4>
-                <p className="text-xs text-[var(--ink-soft)] max-w-[48ch] mx-auto mt-1">
-                  Upload an Executive Council Gazette, TIN Certificate, or ministerial mandate letter (PDF or TIFF).
-                </p>
-                <div className="pt-3">
-                  <button
-                    type="button"
-                    onClick={handleSimulateUpload}
-                    className="border border-[var(--line)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)] text-xs text-[var(--ink)] px-4 py-2 rounded-[var(--radius)] font-medium transition-colors cursor-pointer"
-                  >
-                    Select Official Mandate Document &uarr;
-                  </button>
-                </div>
-                <p className="text-[11px] text-[var(--ink-soft)] mt-2">
-                  Strongly encouraged. If skipped, registration enters <code className="font-mono">Pending_Documents</code> status.
-                </p>
+          {/* Mandate Document Upload Area */}
+          {!mandateDocUploaded ? (
+            <div className="border-2 border-dashed border-[var(--line)] hover:border-[var(--green)]/50 rounded-[var(--radius)] p-6 sm:p-7 text-center bg-[var(--paper)]/50 transition-colors">
+              <div className="w-10 h-10 rounded-full bg-[var(--green)]/10 text-[var(--green)] flex items-center justify-center mx-auto mb-3">
+                <UploadCloud className="w-5 h-5" />
               </div>
-            ) : (
-              <div className="space-y-1 animate-in fade-in">
-                <div className="text-[var(--green)] font-semibold text-xs flex items-center justify-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Mandate Document Encrypted &middot; Attached for Review</span>
+              <h4 className="font-semibold text-[14.5px] text-[var(--ink)]">
+                Official Gazette or Mandate Authorization
+              </h4>
+              <p className="text-[12.5px] text-[var(--ink-soft)] max-w-[50ch] mx-auto mt-1 leading-relaxed">
+                Upload an Executive Council Gazette, TIN Certificate, or ministerial mandate letter (PDF or TIFF up to 10MB).
+              </p>
+              <div className="pt-3">
+                <button
+                  type="button"
+                  onClick={handleSimulateUpload}
+                  className="inline-flex items-center gap-2 border border-[var(--line)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)] text-xs text-[var(--ink)] px-4 py-2 rounded-[var(--radius)] font-medium transition-colors cursor-pointer shadow-2xs"
+                >
+                  <UploadCloud className="w-3.5 h-3.5 text-[var(--ink-soft)]" />
+                  <span>Select mandate document &uarr;</span>
+                </button>
+              </div>
+              <p className="text-[11px] text-[var(--ink-soft)] mt-2.5">
+                Optional but recommended. If omitted, filing enters <span className="font-mono text-[10.5px] bg-[var(--line-soft)] px-1.5 py-0.5 rounded">Pending_Documents</span> review status.
+              </p>
+            </div>
+          ) : (
+            <div className="border border-[var(--green)]/40 bg-[var(--green)]/5 rounded-[var(--radius)] p-5 text-center space-y-2 animate-in fade-in">
+              <div className="w-10 h-10 rounded-full bg-[var(--green)]/15 text-[var(--green)] flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="text-[var(--green)] font-semibold text-[13px] flex items-center justify-center gap-1.5">
+                  <span>✓ Mandate document attached for review</span>
                 </div>
-                <div className="font-mono text-sm text-[var(--ink)] font-medium underline">
+                <div className="font-mono text-[13.5px] text-[var(--ink)] font-medium mt-1">
                   {mandateDocName}
                 </div>
+                <p className="text-[11px] text-[var(--ink-soft)] mt-0.5">
+                  Encrypted AES-256 &middot; Ready for KADIRS Maker/Checker authorization
+                </p>
+              </div>
+              <div className="pt-1">
                 <button
                   type="button"
                   onClick={() => setMandateDocUploaded(false)}
-                  className="text-[11px] text-[var(--danger)] hover:underline pt-1"
+                  className="text-xs text-[var(--danger)] hover:underline cursor-pointer font-medium"
                 >
                   Remove document
                 </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
-          <div className="border border-[var(--line-soft)] bg-[var(--paper)] p-3 rounded-[var(--radius)] text-xs text-[var(--ink-soft)]">
+          <div className="border border-[var(--line-soft)] bg-[var(--paper)] p-3.5 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed">
             <span className="font-medium text-[var(--ink)]">Security Guarantee:</span> Uploaded mandate documents are encrypted using AES-256 and stored strictly for KADIRS Maker/Checker authorization review. Never shared externally.
           </div>
 
           {/* Officer Details */}
-          <div className="space-y-4 pt-2">
-            <h3 className="font-serif font-semibold text-[16px] text-[var(--ink)]">
+          <div className="space-y-4 pt-5 border-t border-[var(--line-soft)]">
+            <h3 className="font-semibold text-[15.5px] tracking-tight text-[var(--ink)]">
               Authorized Accounting Officer Details
             </h3>
 
@@ -504,11 +514,11 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
             </div>
           </div>
 
-          <div className="flex justify-between items-center pt-2 border-t border-[var(--line-soft)]">
+          <div className="flex justify-between items-center pt-5 border-t border-[var(--line-soft)]">
             <button
               type="button"
               onClick={() => changeStep(0)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors"
+              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
@@ -529,7 +539,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {step === 2 && (
         <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-8 sm:p-9 rounded-[var(--radius)] space-y-6">
           <div>
-            <h2 className="font-serif font-semibold text-[22px] text-[var(--ink)] mb-1">
+            <h2 className="font-semibold text-[22px] tracking-tight text-[var(--ink)] mb-1">
               Review agency submission
             </h2>
             <p className="text-[13.5px] text-[var(--ink-soft)]">
@@ -537,50 +547,69 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
             </p>
           </div>
 
-          <dl className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-y-3.5 text-sm border-t border-b border-[var(--line-soft)] py-4">
-            <dt className="text-[var(--ink-soft)]">Agency Name</dt>
-            <dd className="font-semibold text-[var(--ink)]">{agencyName}</dd>
-
-            <dt className="text-[var(--ink-soft)]">TIN</dt>
-            <dd className="font-mono font-medium text-[var(--ink)]">{tin}</dd>
-
-            <dt className="text-[var(--ink-soft)]">Jurisdiction</dt>
-            <dd className="text-[var(--ink)]">{jurisdiction} &middot; {selectedLga} LGA</dd>
-
-            <dt className="text-[var(--ink-soft)]">Assigned Tax Office</dt>
-            <dd className="text-[var(--ink)]">{assignedTaxOffice}</dd>
-
-            <dt className="text-[var(--ink-soft)]">Official Email</dt>
-            <dd className="text-[var(--ink)] font-mono text-xs">{email}</dd>
-
-            <dt className="text-[var(--ink-soft)]">Signatory Officer</dt>
-            <dd className="text-[var(--ink)]">
-              {officerName} &mdash; <span className="font-medium text-[var(--green)]">{officerRole}</span> (NIN: {officerNIN.slice(0, 3)}••••{officerNIN.slice(-3)})
-            </dd>
-
-            <dt className="text-[var(--ink-soft)]">Mandate Document</dt>
-            <dd>
-              {mandateDocUploaded ? (
-                <span className="text-[var(--green)] font-mono text-xs font-semibold">
-                  ✓ {mandateDocName} (Encrypted)
+          {/* High-density Review Summary Table with subtle zebra rows */}
+          <div className="border border-[var(--line-soft)] rounded-[var(--radius)] overflow-hidden">
+            <div className="divide-y divide-[var(--line-soft)] text-[13px]">
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-2.5 bg-[var(--paper)]">
+                <span className="font-medium text-[var(--ink-soft)]">Agency Name</span>
+                <span className="font-semibold text-[var(--ink)]">{agencyName}</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-2.5 bg-[var(--paper-raised)]">
+                <span className="font-medium text-[var(--ink-soft)]">Agency TIN</span>
+                <span className="font-mono font-medium text-[var(--ink)]">{tin}</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-2.5 bg-[var(--paper)]">
+                <span className="font-medium text-[var(--ink-soft)]">Jurisdiction</span>
+                <span className="text-[var(--ink)]">{jurisdiction} &middot; {selectedLga} LGA</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-2.5 bg-[var(--paper-raised)]">
+                <span className="font-medium text-[var(--ink-soft)]">Assigned Tax Office</span>
+                <span className="text-[var(--ink)]">{assignedTaxOffice}</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-2.5 bg-[var(--paper)]">
+                <span className="font-medium text-[var(--ink-soft)]">Official Contact</span>
+                <span className="text-[var(--ink)] font-mono text-[12.5px]">{email} &middot; {phone}</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-2.5 bg-[var(--paper-raised)]">
+                <span className="font-medium text-[var(--ink-soft)]">Headquarters Address</span>
+                <span className="text-[var(--ink)]">{address}</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-2.5 bg-[var(--paper)]">
+                <span className="font-medium text-[var(--ink-soft)]">Accounting Officer</span>
+                <span className="text-[var(--ink)]">
+                  {officerName} &mdash; <span className="font-medium text-[var(--green)]">{officerRole}</span> (NIN: <span className="font-mono">{officerNIN.slice(0, 3)}••••{officerNIN.slice(-3)}</span>)
                 </span>
-              ) : (
-                <span className="text-[var(--gold)] font-medium text-xs">
-                  Not attached (Record will enter Pending_Documents queue)
-                </span>
-              )}
-            </dd>
-          </dl>
-
-          <div className="flex gap-2.5 items-start bg-[var(--line-soft)] border-l-2 border-[var(--gold)] p-3.5 text-[12.5px] text-[var(--ink-soft)] leading-relaxed">
-            Submitting sends this record to the KADIRS Maker/Checker queue for dual-control authorization. You will receive activation updates at <strong className="text-[var(--ink)]">{email}</strong>.
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-2.5 bg-[var(--paper-raised)] items-center">
+                <span className="font-medium text-[var(--ink-soft)]">Mandate Document</span>
+                <div>
+                  {mandateDocUploaded ? (
+                    <span className="inline-flex items-center gap-1.5 text-[var(--green)] font-mono text-xs font-semibold">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      {mandateDocName} (Encrypted)
+                    </span>
+                  ) : (
+                    <span className="text-[var(--gold)] font-medium text-xs">
+                      Not attached (Record will enter Pending_Documents queue)
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="flex justify-between items-center pt-2 border-t border-[var(--line-soft)]">
+          <div className="flex gap-2.5 items-start bg-[var(--paper)] border border-[var(--line-soft)] border-l-2 border-l-[var(--gold)] p-3.5 rounded-[var(--radius)] text-[12.5px] text-[var(--ink-soft)] leading-relaxed">
+            <Info className="w-4 h-4 text-[var(--gold)] shrink-0 mt-0.5" />
+            <span>
+              Submitting sends this record to the KADIRS Maker/Checker queue for dual-control authorization. You will receive activation updates at <strong className="text-[var(--ink)]">{email}</strong>.
+            </span>
+          </div>
+
+          <div className="flex justify-between items-center pt-5 border-t border-[var(--line-soft)]">
             <button
               type="button"
               onClick={() => changeStep(1)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors"
+              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
@@ -600,11 +629,11 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {/* ================================================================ */}
       {step === 3 && (
         <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-10 sm:p-12 text-center rounded-[var(--radius)] space-y-5 animate-in fade-in">
-          <div className="w-14 h-14 rounded-full border-2 border-[var(--green)] flex items-center justify-center text-[var(--green)] text-2xl mx-auto font-serif font-bold bg-[var(--paper)]">
-            ✓
+          <div className="w-14 h-14 rounded-full border-2 border-[var(--green)] flex items-center justify-center text-[var(--green)] mx-auto bg-[var(--paper)]">
+            <CheckCircle2 className="w-8 h-8" />
           </div>
           <div>
-            <h2 className="font-serif font-semibold text-2xl text-[var(--ink)] mb-2">
+            <h2 className="font-semibold text-2xl tracking-tight text-[var(--ink)] mb-2">
               Dispatched to Maker/Checker Queue
             </h2>
             <p className="text-[14px] text-[var(--ink-soft)] max-w-[48ch] mx-auto leading-relaxed">

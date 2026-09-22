@@ -190,10 +190,10 @@ export default function LoginPage() {
     <div className="py-10 sm:py-14 px-4 sm:px-6 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
       {/* Official State Header */}
       <div className="text-center mb-8 max-w-[560px]">
-        <div className="w-12 h-12 rounded-full border-[1.5px] border-[var(--green)] flex items-center justify-center text-[var(--green)] font-serif font-semibold text-lg mb-3.5 mx-auto bg-[var(--paper)]">
+        <div className="w-12 h-12 rounded-full border border-[var(--green)] flex items-center justify-center text-[var(--green)] font-sans font-semibold text-base mb-3 mx-auto bg-[var(--paper-raised)] shadow-2xs">
           KD
         </div>
-        <h1 className="font-serif font-semibold text-[26px] sm:text-[30px] leading-tight text-[var(--ink)] tracking-tight mb-2">
+        <h1 className="font-sans font-semibold text-[24px] sm:text-[28px] leading-tight text-[var(--ink)] tracking-tight mb-2">
           Sign in to Kaduna State Services
         </h1>
         <p className="text-[13.5px] text-[var(--ink-soft)] leading-relaxed max-w-[48ch] mx-auto">
@@ -202,13 +202,13 @@ export default function LoginPage() {
       </div>
 
       {/* Main Authentication Card */}
-      <div className="w-full max-w-[520px] bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-7 sm:p-9 shadow-xs transition-all">
+      <div className="w-full max-w-[480px] bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 sm:p-8 shadow-xs transition-all">
         {/* STEP 1: Credentials */}
         {step === 1 && (
           <form onSubmit={handleCredentialsSubmit} className="space-y-5">
             <div className="border-b border-[var(--line-soft)] pb-4 mb-1">
-              <h2 className="font-serif font-semibold text-[20px] text-[var(--ink)]">
-                Citizen & Business Login
+              <h2 className="font-sans font-semibold text-[18px] sm:text-[20px] text-[var(--ink)] tracking-tight">
+                Citizen &amp; Business Login
               </h2>
               <p className="text-xs text-[var(--ink-soft)] mt-0.5">
                 Enter your email address, registered mobile phone number, or Citizen ID.
@@ -243,8 +243,8 @@ export default function LoginPage() {
 
             {/* Identifier Input */}
             <div>
-              <label className="block text-xs font-medium text-[var(--ink-soft)] mb-1.5">
-                Email, Phone, or Citizen ID
+              <label className="block text-[12.5px] font-medium text-[var(--ink-soft)] mb-1.5">
+                Email, Phone, or Citizen ID <span className="text-[var(--danger)]">*</span>
               </label>
               <div className="relative">
                 <input
@@ -262,8 +262,8 @@ export default function LoginPage() {
             {/* Password Input */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-medium text-[var(--ink-soft)]">
-                  Password
+                <label className="block text-[12.5px] font-medium text-[var(--ink-soft)]">
+                  Password <span className="text-[var(--danger)]">*</span>
                 </label>
                 <button
                   type="button"
@@ -312,7 +312,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLockedOut}
-              className="w-full bg-[var(--green)] hover:bg-[var(--green-deep)] disabled:opacity-50 text-white py-2.5 rounded-[var(--radius)] text-sm font-medium transition-colors flex items-center justify-center gap-2 mt-2"
+              className="w-full bg-[var(--green)] hover:bg-[var(--green-deep)] disabled:opacity-50 text-white py-2.5 rounded-[var(--radius)] text-sm font-medium transition-colors flex items-center justify-center gap-2 mt-2 shadow-2xs"
             >
               <span>Continue to 2-Factor Authentication</span>
               <ArrowRight className="w-4 h-4" />
@@ -341,11 +341,11 @@ export default function LoginPage() {
                 <ShieldCheck className="w-4 h-4" />
                 <span>Two-Factor Authentication</span>
               </div>
-              <h2 className="font-serif font-semibold text-[20px] text-[var(--ink)]">
+              <h2 className="font-sans font-semibold text-[18px] sm:text-[20px] text-[var(--ink)] tracking-tight">
                 Verify Your Identity
               </h2>
               <p className="text-xs text-[var(--ink-soft)] mt-0.5">
-                A one-time challenge code was dispatched to verify your citizen profile.
+                A one-time verification code was dispatched to verify your citizen profile.
               </p>
             </div>
 
@@ -368,7 +368,7 @@ export default function LoginPage() {
                   }`}
                 >
                   <Smartphone className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
-                  <span className="truncate">SMS (Termii DND)</span>
+                  <span className="truncate">SMS Verification</span>
                 </button>
 
                 <button
@@ -384,7 +384,7 @@ export default function LoginPage() {
                   }`}
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
-                  <span className="truncate">WhatsApp API</span>
+                  <span className="truncate">WhatsApp</span>
                 </button>
 
                 <button
@@ -400,7 +400,7 @@ export default function LoginPage() {
                   }`}
                 >
                   <PhoneCall className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
-                  <span className="truncate">Voice Call IVR</span>
+                  <span className="truncate">Voice Call</span>
                 </button>
 
                 <button
@@ -416,18 +416,18 @@ export default function LoginPage() {
                   }`}
                 >
                   <Mail className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
-                  <span className="truncate">Email OTP</span>
+                  <span className="truncate">Email</span>
                 </button>
               </div>
             </div>
 
             {/* Carrier Dispatch Confirmation */}
-            <div className="bg-[var(--line-soft)] border border-[var(--line)] p-3.5 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed">
-              Security challenge dispatched to{' '}
+            <div className="bg-[var(--paper)] border border-[var(--line)] p-3 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed">
+              Verification code dispatched to{' '}
               <strong className="text-[var(--ink)] font-mono">
                 {matchedPersona.profile.phone.replace(/(\+\d{3}\s\d{3})\s\d{3}\s(\d{4})/, '$1 ••• $2')}
               </strong>
-              . Enter the 6-digit verification code below to authorize your session.
+              . Enter the 6-digit code below to authorize your session.
             </div>
 
             {/* OTP Input Form */}
@@ -440,8 +440,8 @@ export default function LoginPage() {
               )}
 
               <div>
-                <label className="block text-xs font-medium text-[var(--ink-soft)] mb-1.5">
-                  Enter 6-digit Code
+                <label className="block text-[12.5px] font-medium text-[var(--ink-soft)] mb-1.5">
+                  Enter 6-digit Code <span className="text-[var(--danger)]">*</span>
                 </label>
                 <input
                   type="text"
@@ -471,13 +471,13 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isVerifying}
-                className="w-full bg-[var(--green)] hover:bg-[var(--green-deep)] text-white py-2.5 rounded-[var(--radius)] text-sm font-medium transition-colors flex items-center justify-center gap-2 mt-2"
+                className="w-full bg-[var(--green)] hover:bg-[var(--green-deep)] text-white py-2.5 rounded-[var(--radius)] text-sm font-medium transition-colors flex items-center justify-center gap-2 mt-2 shadow-2xs"
               >
                 {isVerifying ? (
-                  <span>Verifying Token Claims...</span>
+                  <span>Verifying code...</span>
                 ) : (
                   <>
-                    <span>Verify & Establish Session</span>
+                    <span>Verify &amp; Sign In</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -503,24 +503,24 @@ export default function LoginPage() {
         {step === 3 && (
           <div className="space-y-5 animate-in fade-in duration-300">
             <div className="text-center pb-2">
-              <div className="w-12 h-12 rounded-full bg-[var(--green)]/10 text-[var(--green)] flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 rounded-full bg-[var(--green)]/10 text-[var(--green)] flex items-center justify-center mx-auto mb-3 border border-[var(--green)]/20">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--green)] block mb-1">
-                Authentication Confirmed &middot; Citizen Authenticated {authenticatedPersonaId ? `(${authenticatedPersonaId})` : ''}
+              <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--green)] block mb-1">
+                Identity Verified &middot; Citizen Session Ready{authenticatedPersonaId ? ` (${authenticatedPersonaId})` : ''}
               </span>
-              <h2 className="font-serif font-semibold text-[22px] text-[var(--ink)]">
+              <h2 className="font-sans font-semibold text-[20px] sm:text-[22px] text-[var(--ink)] tracking-tight">
                 Welcome back, {authenticatedName.split(' ')[0]}
               </h2>
               <p className="text-xs text-[var(--ink-soft)] max-w-[40ch] mx-auto mt-1">
-                Your primary identity has been validated. Our account reconciliation engine found 3 unlinked legacy records.
+                Your primary identity has been validated. Our account reconciliation engine found 3 unlinked historical records.
               </p>
             </div>
 
             {/* Found legacy records notice */}
             <div className="border border-[var(--line)] bg-[var(--paper)] p-4 rounded-[var(--radius)] space-y-2.5 text-xs">
               <div className="font-semibold text-[var(--ink)] flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-[var(--gold)]" />
+                <KeyRound className="w-4 h-4 text-[var(--green)]" />
                 <span>Detected Pre-Migration Accounts:</span>
               </div>
               <ul className="space-y-1.5 text-[var(--ink-soft)] pl-6 list-disc">
@@ -544,9 +544,9 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => navigate('/auth/reconciliation')}
-                className="w-full bg-[var(--green)] hover:bg-[var(--green-deep)] text-white py-2.5 rounded-[var(--radius)] text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-xs"
+                className="w-full bg-[var(--green)] hover:bg-[var(--green-deep)] text-white py-2.5 rounded-[var(--radius)] text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-2xs"
               >
-                <span>Reconcile Accounts Now (Hero Feature)</span>
+                <span>Review &amp; Reconcile Accounts</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -566,7 +566,7 @@ export default function LoginPage() {
       <div className="mt-8 text-center text-xs text-[var(--ink-soft)] max-w-[460px] flex items-center justify-center gap-2">
         <Lock className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
         <span>
-          Protected by RS256 token signing, NDPA Section 24 compliance, and Kaduna State Identity Framework 2.0.
+          Protected by Kaduna State Identity Framework 2.0 &middot; NDPA Compliant
         </span>
       </div>
     </div>

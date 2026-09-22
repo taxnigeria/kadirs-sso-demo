@@ -13,9 +13,9 @@ export default function RegisterPage() {
 
   // Single source of truth for the steps of each path
   const steps = selectedPath === 'individual'
-    ? ['Choose path', 'NIN Verification', 'Contact & OTP', 'Tax Jurisdiction', 'Security & 2FA', 'Consent']
+    ? ['Choose path', 'NIN verification', 'Phone verification', 'Tax jurisdiction', 'Security & 2FA', 'Consent']
     : selectedPath === 'corporate'
-    ? ['Choose path', 'CAC RC Lookup', 'Corporate Profile', 'Signatory & Credentials']
+    ? ['Choose path', 'CAC RC lookup', 'Corporate profile', 'Signatory & credentials']
     : ['Choose path', 'Agency details', 'Mandate & signatory', 'Review', 'Submission']
 
   // Master active step index (0 when choosing path, 1+ when inside flow)
@@ -36,7 +36,7 @@ export default function RegisterPage() {
       {/* Editorial Intro Headline — Hidden once a registration path is chosen */}
       {!isStarted && (
         <div className="mb-10 animate-in fade-in">
-          <h1 className="font-serif font-normal text-3xl sm:text-4xl text-[var(--ink)] tracking-tight leading-[1.15] mb-2.5 max-w-[15ch]">
+          <h1 className="font-sans font-semibold text-2xl sm:text-3xl text-[var(--ink)] tracking-tight leading-snug mb-2.5 max-w-[20ch]">
             Register once, reach every state service
           </h1>
           {/* Subtitle formatted strictly onto 2 lines */}
@@ -58,18 +58,18 @@ export default function RegisterPage() {
               className="flex-1 min-w-[120px] px-4 py-3.5 border-r border-[var(--line)] last:border-r-0 relative bg-transparent transition-colors"
             >
               <div
-                className={`font-serif text-[13px] ${
+                className={`font-sans text-[12px] ${
                   isDone
                     ? 'text-[var(--green)] font-semibold'
                     : isActive
                     ? 'text-[var(--ink)] font-semibold'
-                    : 'text-[var(--ink-soft)]'
+                    : 'text-[var(--ink-soft)] font-medium'
                 }`}
               >
                 {isDone ? '✓ ' : ''}{String(idx + 1).padStart(2, '0')}
               </div>
               <div
-                className={`text-[13.5px] mt-0.5 whitespace-nowrap ${
+                className={`font-sans text-[13px] mt-0.5 whitespace-nowrap ${
                   isActive ? 'text-[var(--ink)] font-semibold' : 'text-[var(--ink-soft)]'
                 }`}
               >
@@ -87,29 +87,29 @@ export default function RegisterPage() {
       {!isStarted ? (
         <div className="space-y-7">
           {/* 3 Path Selection Cards in connected 1px border grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-[1px] bg-[var(--line)] border border-[var(--line)]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[1px] bg-[var(--line)] border border-[var(--line)] rounded-[var(--radius)] overflow-hidden">
             {/* Path A: Individual */}
             <div
               onClick={() => setSelectedPath('individual')}
               className={`p-6 sm:p-7 cursor-pointer transition-all flex flex-col justify-between ${
                 selectedPath === 'individual'
-                  ? 'bg-[var(--path-selected-bg)] ring-2 ring-[var(--green)] shadow-xs'
+                  ? 'bg-[var(--path-selected-bg)] ring-1 ring-inset ring-[var(--green)] shadow-xs'
                   : 'bg-[var(--paper-raised)] hover:bg-[var(--line-soft)]/60'
               }`}
             >
               <div className="flex-1 flex flex-col">
-                <div className="text-[11px] text-[var(--ink-soft)] mb-3.5 tracking-wide">
-                  Path A &middot; R1.0
+                <div className="text-[11px] font-medium text-[var(--ink-soft)] mb-3.5 uppercase tracking-wider">
+                  Path A &middot; Individual
                 </div>
-                <h3 className="font-serif font-semibold text-[19px] text-[var(--ink)] mb-2">
+                <h3 className="font-sans font-semibold text-[18px] text-[var(--ink)] tracking-tight mb-2">
                   Individual citizen
                 </h3>
-                <p className="text-[13.5px] text-[var(--ink-soft)] leading-relaxed mb-6">
+                <p className="text-[13px] text-[var(--ink-soft)] leading-relaxed mb-6 flex-1">
                   Personal taxpayers, vehicle owners, drivers, artisans and landlords.
                 </p>
               </div>
               {/* Perfectly aligned footer */}
-              <div className="border-t border-[var(--line-soft)] pt-3 text-[12.5px] text-[var(--green)] font-medium min-h-[46px] flex items-center">
+              <div className="border-t border-[var(--line-soft)] pt-3 text-[12px] text-[var(--green)] font-medium min-h-[44px] flex items-center">
                 11-digit NIN / vNIN token, biometric lock
               </div>
             </div>
@@ -119,23 +119,23 @@ export default function RegisterPage() {
               onClick={() => setSelectedPath('corporate')}
               className={`p-6 sm:p-7 cursor-pointer transition-all flex flex-col justify-between ${
                 selectedPath === 'corporate'
-                  ? 'bg-[var(--path-selected-bg)] ring-2 ring-[var(--green)] shadow-xs'
+                  ? 'bg-[var(--path-selected-bg)] ring-1 ring-inset ring-[var(--green)] shadow-xs'
                   : 'bg-[var(--paper-raised)] hover:bg-[var(--line-soft)]/60'
               }`}
             >
               <div className="flex-1 flex flex-col">
-                <div className="text-[11px] text-[var(--ink-soft)] mb-3.5 tracking-wide">
-                  Path B &middot; R1.0
+                <div className="text-[11px] font-medium text-[var(--ink-soft)] mb-3.5 uppercase tracking-wider">
+                  Path B &middot; Corporate
                 </div>
-                <h3 className="font-serif font-semibold text-[19px] text-[var(--ink)] mb-2">
+                <h3 className="font-sans font-semibold text-[18px] text-[var(--ink)] tracking-tight mb-2">
                   Corporate entity
                 </h3>
-                <p className="text-[13.5px] text-[var(--ink-soft)] leading-relaxed mb-6">
+                <p className="text-[13px] text-[var(--ink-soft)] leading-relaxed mb-6 flex-1">
                   Limited companies, enterprises and registered business partnerships.
                 </p>
               </div>
               {/* Perfectly aligned footer */}
-              <div className="border-t border-[var(--line-soft)] pt-3 text-[12.5px] text-[var(--green)] font-medium min-h-[46px] flex items-center">
+              <div className="border-t border-[var(--line-soft)] pt-3 text-[12px] text-[var(--green)] font-medium min-h-[44px] flex items-center">
                 CAC RC number + representative NIN
               </div>
             </div>
@@ -145,31 +145,31 @@ export default function RegisterPage() {
               onClick={() => setSelectedPath('agency')}
               className={`p-6 sm:p-7 cursor-pointer transition-all flex flex-col justify-between ${
                 selectedPath === 'agency'
-                  ? 'bg-[var(--path-selected-bg)] ring-2 ring-[var(--green)] shadow-xs'
+                  ? 'bg-[var(--path-selected-bg)] ring-1 ring-inset ring-[var(--green)] shadow-xs'
                   : 'bg-[var(--paper-raised)] hover:bg-[var(--line-soft)]/60'
               }`}
             >
               <div className="flex-1 flex flex-col">
-                <div className="text-[11px] text-[var(--ink-soft)] mb-3.5 tracking-wide">
-                  Path C &middot; R1.0
+                <div className="text-[11px] font-medium text-[var(--ink-soft)] mb-3.5 uppercase tracking-wider">
+                  Path C &middot; Agency
                 </div>
-                <h3 className="font-serif font-semibold text-[19px] text-[var(--ink)] mb-2">
+                <h3 className="font-sans font-semibold text-[18px] text-[var(--ink)] tracking-tight mb-2">
                   Government agency
                 </h3>
-                <p className="text-[13.5px] text-[var(--ink-soft)] leading-relaxed mb-6">
+                <p className="text-[13px] text-[var(--ink-soft)] leading-relaxed mb-6 flex-1">
                   Kaduna State MDAs, federal parastatals and LGA council authorities.
                 </p>
               </div>
               {/* Perfectly aligned footer */}
-              <div className="border-t border-[var(--line-soft)] pt-3 text-[12.5px] text-[var(--green)] font-medium min-h-[46px] flex items-center">
+              <div className="border-t border-[var(--line-soft)] pt-3 text-[12px] text-[var(--green)] font-medium min-h-[44px] flex items-center">
                 TIN + gazette mandate, maker/checker review
               </div>
             </div>
           </div>
 
           {/* Action Row */}
-          <div className="flex justify-between items-center pt-2">
-            <span className="text-xs text-[var(--ink-soft)]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-[var(--line-soft)]">
+            <span className="text-[13px] text-[var(--ink-soft)]">
               Already registered?{' '}
               <Link to="/auth/login" className="text-[var(--green)] font-medium hover:underline">
                 Sign in to existing account &rarr;
@@ -178,7 +178,7 @@ export default function RegisterPage() {
 
             <button
               onClick={handleStart}
-              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-6 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors"
+              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-6 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors cursor-pointer self-end sm:self-auto"
             >
               Continue &nbsp;&rarr;
             </button>

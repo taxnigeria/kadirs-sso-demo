@@ -17,10 +17,10 @@ export function Sidebar({ portal }: SidebarProps) {
     <aside className="w-60 shrink-0 h-full border-r border-[var(--line)] bg-[var(--paper)] flex flex-col transition-colors overflow-hidden">
       {/* Portal info */}
       <div className="p-4 border-b border-[var(--line)] shrink-0">
-        <p className="font-serif font-semibold text-sm text-[var(--ink)]">
+        <p className="font-sans font-semibold text-sm text-[var(--ink)] tracking-tight">
           {portal.name}
         </p>
-        <p className="text-[11.5px] text-[var(--ink-soft)] mt-0.5 leading-snug">
+        <p className="font-sans text-[11.5px] text-[var(--ink-soft)] mt-0.5 leading-snug">
           {portal.description}
         </p>
       </div>
@@ -38,7 +38,7 @@ export function Sidebar({ portal }: SidebarProps) {
                 to={item.path}
                 className={`flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius)] text-xs font-medium transition-colors ${
                   isActive
-                    ? 'bg-[var(--green)] text-white font-semibold'
+                    ? 'bg-[var(--green)] text-white font-medium'
                     : 'text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--line-soft)]'
                 }`}
               >

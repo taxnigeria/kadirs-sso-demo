@@ -52,37 +52,37 @@ export default function PayKadunaDashboard() {
   return (
     <div className="p-6 sm:p-9 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
       {/* Hero Welcome Banner */}
-      <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-9 rounded-[var(--radius)] relative overflow-hidden">
+      <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-6 sm:p-8 rounded-[var(--radius)] relative overflow-hidden shadow-2xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[var(--radius)] text-[11px] font-medium bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20">
                 <CheckCircle2 className="w-3 h-3" />
-                NIMC Layer 1 Anchored
+                Identity Verified (NIMC)
               </span>
               <span className="text-xs text-[var(--ink-soft)]">&middot;</span>
               <span className="text-xs font-mono text-[var(--ink-soft)]">{citizenId}</span>
             </div>
 
-            <h1 className="font-serif font-semibold text-[26px] sm:text-[32px] text-[var(--ink)] leading-tight">
+            <h1 className="font-sans font-semibold text-[24px] sm:text-[28px] text-[var(--ink)] tracking-tight leading-tight">
               Good day, {citizenName}
             </h1>
-            <p className="text-sm text-[var(--ink-soft)] mt-1 max-w-[65ch] leading-relaxed">
+            <p className="text-sm text-[var(--ink-soft)] mt-1.5 max-w-[65ch] leading-relaxed">
               Welcome to PayKaduna. All municipal levies, land charges, and state taxes are reconciled under your verified citizen identity.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-[var(--ink-soft)]">
-              <span><strong>Tax Office:</strong> {taxOffice}</span>
-              <span>&bull;</span>
-              <span><strong>LGA:</strong> {lga}</span>
-              <span>&bull;</span>
-              <span><strong>Assurance Level:</strong> AAL2 (2FA Protected)</span>
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4 text-xs text-[var(--ink-soft)]">
+              <span><strong className="text-[var(--ink)]">Tax Office:</strong> {taxOffice}</span>
+              <span className="text-[var(--line)]">&bull;</span>
+              <span><strong className="text-[var(--ink)]">LGA:</strong> {lga}</span>
+              <span className="text-[var(--line)]">&bull;</span>
+              <span><strong className="text-[var(--ink)]">Security:</strong> Level 2 (2FA Protected)</span>
             </div>
           </div>
 
           {/* Active Persona Badge & Switcher */}
           <div className="md:text-right shrink-0">
-            <div className="text-[11px] uppercase tracking-wider text-[var(--ink-soft)] font-semibold mb-1.5">
+            <div className="text-[11px] uppercase tracking-wider text-[var(--ink-soft)] font-medium mb-1.5">
               Active Context
             </div>
             <div className="inline-flex rounded-[var(--radius)] border border-[var(--line)] p-1 bg-[var(--paper)]">
@@ -110,13 +110,13 @@ export default function PayKadunaDashboard() {
 
       {/* HERO RECONCILIATION NOTICE (For Fatima & Legacy Users) */}
       {hasUnreconciledAccounts && (
-        <div className="bg-[var(--gold)]/10 border border-[var(--gold)]/40 p-6 rounded-[var(--radius)] flex flex-col md:flex-row md:items-center justify-between gap-5 animate-in fade-in">
+        <div className="bg-[var(--paper-raised)] border border-[var(--gold)]/40 p-6 rounded-[var(--radius)] flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-2xs animate-in fade-in">
           <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-full bg-[var(--gold)]/20 text-[var(--gold)] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-9 h-9 rounded-[var(--radius)] bg-[var(--gold)]/15 text-[var(--gold)] flex items-center justify-center shrink-0 mt-0.5 border border-[var(--gold)]/30">
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-serif font-semibold text-lg text-[var(--ink)]">
+              <h2 className="font-sans font-semibold text-[16px] text-[var(--ink)]">
                 3 Pre-Migration Accounts Detected Across Kaduna Agencies
               </h2>
               <p className="text-xs text-[var(--ink-soft)] mt-1 max-w-[70ch] leading-relaxed">
@@ -127,9 +127,9 @@ export default function PayKadunaDashboard() {
           <button
             type="button"
             onClick={() => navigate('/auth/reconciliation')}
-            className="bg-[var(--gold)] hover:bg-[var(--gold)]/90 text-black font-medium px-5 py-2.5 rounded-[var(--radius)] text-xs flex items-center gap-2 shrink-0 transition-all shadow-xs"
+            className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white font-medium px-5 py-2.5 rounded-[var(--radius)] text-xs flex items-center gap-2 shrink-0 transition-colors shadow-2xs"
           >
-            <span>Launch Reconciliation (Hero Demo)</span>
+            <span>Review &amp; Unify Accounts</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -138,66 +138,78 @@ export default function PayKadunaDashboard() {
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Stat 1: Revenue Contributed */}
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-5 rounded-[var(--radius)] shadow-2xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-[var(--ink-soft)] font-medium">Total State Revenue Paid</span>
-            <div className="p-1.5 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)]">
-              <CreditCard className="w-4 h-4" />
+        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-5 rounded-[var(--radius)] shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] uppercase tracking-wider text-[var(--ink-soft)] font-medium">Total State Revenue Paid</span>
+              <div className="p-1.5 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)]">
+                <CreditCard className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="font-sans font-semibold text-2xl text-[var(--ink)] tracking-tight">
+              {activePersona === 'corporate' ? '₦285,000.00' : '₦15,000.00'}
             </div>
           </div>
-          <div className="font-serif font-semibold text-2xl text-[var(--ink)]">
-            {activePersona === 'corporate' ? '₦285,000.00' : '₦15,000.00'}
-          </div>
-          <div className="text-[11.5px] text-[var(--green)] mt-1 flex items-center gap-1 font-medium">
-            <span>&bull; Verified Receipts Active</span>
+          <div className="text-[12px] text-[var(--ink-soft)] mt-2 flex items-center gap-1.5 font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]"></span>
+            <span className="text-[var(--green)]">Verified receipts active</span>
           </div>
         </div>
 
         {/* Stat 2: Active Identity Level */}
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-5 rounded-[var(--radius)] shadow-2xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-[var(--ink-soft)] font-medium">Identity Assurance</span>
-            <div className="p-1.5 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)]">
-              <ShieldCheck className="w-4 h-4" />
+        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-5 rounded-[var(--radius)] shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] uppercase tracking-wider text-[var(--ink-soft)] font-medium">Identity Assurance</span>
+              <div className="p-1.5 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)]">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="font-sans font-semibold text-2xl text-[var(--ink)] tracking-tight">
+              Level 2 (NIMC)
             </div>
           </div>
-          <div className="font-serif font-semibold text-2xl text-[var(--ink)]">
-            Level 2 (NIMC)
-          </div>
-          <div className="text-[11.5px] text-[var(--ink-soft)] mt-1">
-            Biometric-backed NIN Anchor
+          <div className="text-[12px] text-[var(--ink-soft)] mt-2 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]"></span>
+            <span>Biometric NIN anchor</span>
           </div>
         </div>
 
         {/* Stat 3: Connected Portals */}
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-5 rounded-[var(--radius)] shadow-2xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-[var(--ink-soft)] font-medium">SSO Connected TSPs</span>
-            <div className="p-1.5 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)]">
-              <Layers className="w-4 h-4" />
+        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-5 rounded-[var(--radius)] shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] uppercase tracking-wider text-[var(--ink-soft)] font-medium">Connected Services</span>
+              <div className="p-1.5 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)]">
+                <Layers className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="font-sans font-semibold text-2xl text-[var(--ink)] tracking-tight">
+              {connectedTsps.length} of 14 Portals
             </div>
           </div>
-          <div className="font-serif font-semibold text-2xl text-[var(--ink)]">
-            {connectedTsps.length} of 14 Portals
-          </div>
-          <div className="text-[11.5px] text-[var(--ink-soft)] mt-1">
-            Zero re-authentication needed
+          <div className="text-[12px] text-[var(--ink-soft)] mt-2 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]"></span>
+            <span>Single sign-on active</span>
           </div>
         </div>
 
         {/* Stat 4: Tax Compliance */}
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-5 rounded-[var(--radius)] shadow-2xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-[var(--ink-soft)] font-medium">Tax Assessment 2024</span>
-            <div className="p-1.5 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)]">
-              <UserCheck className="w-4 h-4" />
+        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-5 rounded-[var(--radius)] shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] uppercase tracking-wider text-[var(--ink-soft)] font-medium">Tax Assessment 2024</span>
+              <div className="p-1.5 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)]">
+                <UserCheck className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="font-sans font-semibold text-2xl text-[var(--ink)] tracking-tight">
+              In Good Standing
             </div>
           </div>
-          <div className="font-serif font-semibold text-2xl text-[var(--ink)]">
-            In Good Standing
-          </div>
-          <div className="text-[11.5px] text-[var(--ink-soft)] mt-1">
-            Next assessment: Dec 2024
+          <div className="text-[12px] text-[var(--ink-soft)] mt-2 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]"></span>
+            <span>Next assessment: Dec 2024</span>
           </div>
         </div>
       </div>
@@ -206,8 +218,8 @@ export default function PayKadunaDashboard() {
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--line)] pb-3">
           <div>
-            <h2 className="font-serif font-semibold text-xl text-[var(--ink)]">
-              Kaduna State Revenue & Service Directory (14 TSPs)
+            <h2 className="font-sans font-semibold text-[18px] sm:text-[20px] text-[var(--ink)] tracking-tight">
+              Kaduna State Revenue &amp; Service Directory (14 TSPs)
             </h2>
             <p className="text-xs text-[var(--ink-soft)] mt-0.5">
               Access any Kaduna State service instantly using your single authenticated SSO token.
@@ -215,7 +227,7 @@ export default function PayKadunaDashboard() {
           </div>
 
           {/* Category Filter Tabs */}
-          <div className="flex items-center gap-1.5 bg-[var(--line-soft)] p-1 rounded-[var(--radius)] text-xs">
+          <div className="flex items-center gap-1 bg-[var(--paper)] border border-[var(--line)] p-1 rounded-[var(--radius)] text-xs">
             {(['all', 'individual', 'corporate', 'government'] as const).map((cat) => (
               <button
                 key={cat}
@@ -244,40 +256,40 @@ export default function PayKadunaDashboard() {
             return (
               <div
                 key={tsp.id}
-                className={`p-5 rounded-[var(--radius)] border transition-all flex flex-col justify-between ${
+                className={`p-5 rounded-[var(--radius)] border transition-all flex flex-col justify-between shadow-2xs ${
                   isCurrent
-                    ? 'border-[var(--green)] bg-[var(--green)]/5'
+                    ? 'border-[var(--green)]/60 bg-[var(--green)]/5'
                     : 'border-[var(--line)] bg-[var(--paper-raised)] hover:border-[var(--green)]/60'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-[var(--radius)] bg-[var(--line-soft)] border border-[var(--line)] flex items-center justify-center text-[var(--ink)]">
-                        <tsp.icon className="w-4 h-4 text-[var(--green)]" />
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-[var(--radius)] bg-[var(--line-soft)] border border-[var(--line)] flex items-center justify-center text-[var(--green)] shrink-0">
+                        <tsp.icon className="w-4 h-4" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-sm text-[var(--ink)]">
                           {tsp.name}
                         </h3>
-                        <span className="text-[10.5px] font-mono text-[var(--ink-soft)] uppercase">
+                        <span className="text-[11px] font-mono text-[var(--ink-soft)] uppercase">
                           {tsp.id}
                         </span>
                       </div>
                     </div>
 
                     {isCurrent ? (
-                      <span className="text-[10.5px] font-semibold text-[var(--green)] bg-[var(--green)]/10 px-2 py-0.5 rounded-[var(--radius)]">
-                        Current
+                      <span className="text-[11px] font-medium text-[var(--green)] bg-[var(--green)]/10 border border-[var(--green)]/20 px-2 py-0.5 rounded-[var(--radius)]">
+                        Current Portal
                       </span>
                     ) : isConnected ? (
-                      <span className="text-[10.5px] font-medium text-[var(--green)] bg-[var(--green)]/10 px-2 py-0.5 rounded-[var(--radius)] flex items-center gap-1">
+                      <span className="text-[11px] font-medium text-[var(--green)] bg-[var(--green)]/10 border border-[var(--green)]/20 px-2 py-0.5 rounded-[var(--radius)] flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" />
                         SSO Connected
                       </span>
                     ) : (
-                      <span className="text-[10.5px] text-[var(--ink-soft)] bg-[var(--line-soft)] px-2 py-0.5 rounded-[var(--radius)]">
-                        1-Click Access
+                      <span className="text-[11px] text-[var(--ink-soft)] bg-[var(--line-soft)] border border-[var(--line)] px-2 py-0.5 rounded-[var(--radius)]">
+                        Single Sign-On
                       </span>
                     )}
                   </div>
@@ -288,7 +300,7 @@ export default function PayKadunaDashboard() {
                 </div>
 
                 <div className="pt-3 border-t border-[var(--line-soft)] flex items-center justify-between text-xs">
-                  <span className="text-[11px] text-[var(--ink-soft)]">
+                  <span className="text-[11px] text-[var(--ink-soft)] font-medium">
                     {tsp.personas}
                   </span>
 
@@ -330,10 +342,10 @@ export default function PayKadunaDashboard() {
       </div>
 
       {/* Recent Activity / Receipts Section */}
-      <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 sm:p-8">
+      <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 sm:p-8 shadow-2xs">
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h2 className="font-serif font-semibold text-xl text-[var(--ink)]">
+            <h2 className="font-sans font-semibold text-[18px] sm:text-[20px] text-[var(--ink)] tracking-tight">
               Unified Revenue Receipts
             </h2>
             <p className="text-xs text-[var(--ink-soft)] mt-0.5">
@@ -352,7 +364,7 @@ export default function PayKadunaDashboard() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-[var(--line)] text-[var(--ink-soft)]">
+              <tr className="border-b border-[var(--line)] text-[var(--ink-soft)] text-[11px] uppercase tracking-wider">
                 <th className="py-2.5 font-medium">Receipt Ref</th>
                 <th className="py-2.5 font-medium">Origin Agency</th>
                 <th className="py-2.5 font-medium">Description</th>
@@ -363,25 +375,25 @@ export default function PayKadunaDashboard() {
             </thead>
             <tbody className="divide-y divide-[var(--line-soft)] text-[var(--ink)]">
               <tr>
-                <td className="py-3 font-mono">RCP-KD-2024-0982</td>
-                <td className="py-3 font-medium">PayKaduna Gateway</td>
-                <td className="py-3 text-[var(--ink-soft)]">Vehicle Registration & Plate Licensing</td>
-                <td className="py-3 text-[var(--ink-soft)]">14 Mar 2024</td>
-                <td className="py-3 font-mono font-medium text-right">₦15,000.00</td>
+                <td className="py-3 font-mono text-[12px]">RCP-KD-2024-0982</td>
+                <td className="py-3 font-medium text-[13px]">PayKaduna Gateway</td>
+                <td className="py-3 text-[12.5px] text-[var(--ink-soft)]">Vehicle Registration &amp; Plate Licensing</td>
+                <td className="py-3 text-[12px] text-[var(--ink-soft)]">14 Mar 2024</td>
+                <td className="py-3 font-mono font-medium text-right text-[13px]">₦15,000.00</td>
                 <td className="py-3 text-center">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-medium bg-[var(--green)]/10 text-[var(--green)]">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-[var(--radius)] text-[11px] font-medium bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20">
                     Settled
                   </span>
                 </td>
               </tr>
               <tr>
-                <td className="py-3 font-mono">RCP-KD-2024-0411</td>
-                <td className="py-3 font-medium">Kaduna Central Revenue</td>
-                <td className="py-3 text-[var(--ink-soft)]">State Signage & Municipal Development Charge</td>
-                <td className="py-3 text-[var(--ink-soft)]">22 Jan 2024</td>
-                <td className="py-3 font-mono font-medium text-right">₦5,000.00</td>
+                <td className="py-3 font-mono text-[12px]">RCP-KD-2024-0411</td>
+                <td className="py-3 font-medium text-[13px]">Kaduna Central Revenue</td>
+                <td className="py-3 text-[12.5px] text-[var(--ink-soft)]">State Signage &amp; Municipal Development Charge</td>
+                <td className="py-3 text-[12px] text-[var(--ink-soft)]">22 Jan 2024</td>
+                <td className="py-3 font-mono font-medium text-right text-[13px]">₦5,000.00</td>
                 <td className="py-3 text-center">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-medium bg-[var(--green)]/10 text-[var(--green)]">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-[var(--radius)] text-[11px] font-medium bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20">
                     Settled
                   </span>
                 </td>
@@ -398,7 +410,7 @@ export default function PayKadunaDashboard() {
             <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
               <div className="flex items-center gap-2">
                 <inspectingTsp.icon className="w-5 h-5 text-[var(--green)]" />
-                <h3 className="font-serif font-semibold text-lg text-[var(--ink)]">
+                <h3 className="font-sans font-semibold text-[16px] text-[var(--ink)]">
                   {inspectingTsp.name} SSO Bridge
                 </h3>
               </div>
@@ -412,15 +424,15 @@ export default function PayKadunaDashboard() {
             </div>
 
             <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
-              When a citizen navigates to <strong>{inspectingTsp.name}</strong>, KADIRS Central Auth issues an audience-scoped RS256 token scoped strictly to <code>aud: {inspectingTsp.id}</code> with minimum necessary permissions.
+              When a citizen navigates to <strong>{inspectingTsp.name}</strong>, KADIRS Central Auth issues an audience-scoped security token scoped strictly to <code>aud: {inspectingTsp.id}</code> with minimum necessary permissions.
             </p>
 
             <div className="bg-[var(--paper)] border border-[var(--line)] p-3.5 rounded-[var(--radius)] text-xs font-mono space-y-1 text-[var(--ink)]">
               <div><strong className="text-[var(--ink-soft)]">Audience:</strong> {inspectingTsp.id}</div>
               <div><strong className="text-[var(--ink-soft)]">Subject ID:</strong> {citizenId}</div>
-              <div><strong className="text-[var(--ink-soft)]">Raw NIN Excluded:</strong> true (NDPA compliance)</div>
-              <div><strong className="text-[var(--ink-soft)]">Assurance Level:</strong> AAL{currentToken?.acr || '2'}</div>
-              <div><strong className="text-[var(--ink-soft)]">Token ID:</strong> {currentToken?.jti || 'tok-live-01'}</div>
+              <div><strong className="text-[var(--ink-soft)]">Data Protection:</strong> NDPA Compliant (NIN masked)</div>
+              <div><strong className="text-[var(--ink-soft)]">Assurance Level:</strong> Level {currentToken?.acr || '2'}</div>
+              <div><strong className="text-[var(--ink-soft)]">Token Ref:</strong> {currentToken?.jti || 'tok-live-01'}</div>
               <div><strong className="text-[var(--ink-soft)]">Permitted Scopes:</strong> profile:read, services:access</div>
             </div>
 
