@@ -118,7 +118,7 @@ export interface ReconciliationMatch {
 export interface SystemEvent {
   id: string
   timestamp: string
-  category: 'auth' | 'kyc' | 'consent' | 'reconciliation' | 'profile' | 'admin' | 'webhook'
+  category: 'auth' | 'kyc' | 'consent' | 'reconciliation' | 'profile' | 'admin' | 'webhook' | 'security'
   action: string          // e.g. 'NIN_VERIFIED', 'TOKEN_ISSUED', 'CONSENT_GRANTED'
   actor: string           // citizenId or 'admin' or 'system'
   details: Record<string, unknown>

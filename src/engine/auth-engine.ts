@@ -12,6 +12,20 @@ import { buildToken } from './token-builder'
 import { useEventLogger } from './event-logger'
 import { useVehicleStore } from '../data/vehicle-store'
 
+export interface PendingContactChange {
+  type: 'email' | 'phone'
+  oldValue: string
+  newValue: string
+  initiatedAt: string
+  expiresAt: string
+}
+
+export interface PendingDeletion {
+  requestedAt: string
+  coolingPeriodExpiresAt: string
+  reason?: string
+}
+
 interface AuthState {
   // Current authenticated state
   currentUser: CitizenProfile | null
@@ -30,6 +44,10 @@ interface AuthState {
   connectedTsps: string[] // List of TSPs citizen has authorized
   reconciledRecordIds: string[] // List of legacy record IDs already linked
 
+  // NDPA Security & Privacy Lifecycle State
+  pendingContactChange: PendingContactChange | null
+  pendingDeletion: PendingDeletion | null
+
   // Actions
   login: (identifier: string, password?: string) => { success: boolean; citizen: CitizenProfile; personaId?: string }
   loginAsPersona: (personaId: string) => void
@@ -44,6 +62,11 @@ interface AuthState {
   rejectAgency: (tin: string, reason: string) => void
   revokeTspConsent: (tspId: string) => void
   reconcileRecord: (recordId: string) => void
+  initiateContactChange: (type: 'email' | 'phone', newValue: string) => void
+  cancelContactChange: () => void
+  applyContactChangeImmediately: () => void
+  initiateAccountDeletion: (reason?: string) => void
+  cancelAccountDeletion: () => void
   isNINRegistered: (nin: string) => boolean
   isEmailRegistered: (email: string) => { registered: boolean; isPersonal: boolean; ownerName?: string }
   isRCRegistered: (rc: string) => { registered: boolean; companyName?: string }
@@ -132,7 +155,9 @@ function getInitialState() {
     corporateEntities: [amara.corporate!],
     agencies: [aliyu.agency!],
     connectedTsps: ['paykaduna', 'kadvreg'],
-    reconciledRecordIds: [] as string[]
+    reconciledRecordIds: [] as string[],
+    pendingContactChange: null as PendingContactChange | null,
+    pendingDeletion: null as PendingDeletion | null
   }
 }
 
@@ -522,6 +547,121 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
     set((state) => ({
       connectedTsps: state.connectedTsps.filter((id) => id !== tspId)
     }))
+  },
+
+  initiateContactChange: (type, newValue) => {
+    const user = get().currentUser
+    if (!user) return
+    const now = new Date()
+    const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+    const oldValue = type === 'email' ? user.email : user.phone
+
+    useEventLogger.getState().logEvent({
+      category: 'security',
+      action: 'CONTACT_UPDATE_HOLD_INITIATED',
+      actor: user.citizenId,
+      details: {
+        changeType: type,
+        oldValue,
+        newValue,
+        securityWindowHours: 24,
+        coolingExpiry: expires.toISOString(),
+        alertDispatchedTo: oldValue
+      }
+    })
+
+    set({
+      pendingContactChange: {
+        type,
+        oldValue,
+        newValue,
+        initiatedAt: now.toISOString(),
+        expiresAt: expires.toISOString()
+      }
+    })
+  },
+
+  cancelContactChange: () => {
+    const user = get().currentUser
+    const pending = get().pendingContactChange
+    if (pending && user) {
+      useEventLogger.getState().logEvent({
+        category: 'security',
+        action: 'CONTACT_UPDATE_CANCELLED',
+        actor: user.citizenId,
+        details: {
+          changeType: pending.type,
+          newValueCancelled: pending.newValue
+        }
+      })
+    }
+    set({ pendingContactChange: null })
+  },
+
+  applyContactChangeImmediately: () => {
+    const user = get().currentUser
+    const pending = get().pendingContactChange
+    if (!user || !pending) return
+
+    const updates: Partial<CitizenProfile> = {}
+    if (pending.type === 'email') updates.email = pending.newValue
+    if (pending.type === 'phone') updates.phone = pending.newValue
+
+    useEventLogger.getState().logEvent({
+      category: 'security',
+      action: 'CONTACT_UPDATE_APPLIED',
+      actor: user.citizenId,
+      details: {
+        changeType: pending.type,
+        appliedValue: pending.newValue
+      }
+    })
+
+    get().updateProfile(updates)
+    set({ pendingContactChange: null })
+  },
+
+  initiateAccountDeletion: (reason?: string) => {
+    const user = get().currentUser
+    if (!user) return
+    const now = new Date()
+    const expires = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+    useEventLogger.getState().logEvent({
+      category: 'consent',
+      action: 'NDPA_RIGHT_TO_ERASURE_REQUESTED',
+      actor: user.citizenId,
+      details: {
+        statutorySection: 'NDPA 2023 Section 36',
+        coolingPeriodDays: 30,
+        coolingExpiry: expires.toISOString(),
+        reason: reason || 'Citizen requested account deletion'
+      }
+    })
+
+    set({
+      pendingDeletion: {
+        requestedAt: now.toISOString(),
+        coolingPeriodExpiresAt: expires.toISOString(),
+        reason
+      }
+    })
+  },
+
+  cancelAccountDeletion: () => {
+    const user = get().currentUser
+    if (user) {
+      useEventLogger.getState().logEvent({
+        category: 'consent',
+        action: 'NDPA_ERASURE_CANCELLED_BY_USER',
+        actor: user.citizenId,
+        details: {
+          restoredStatus: 'active',
+          timestamp: new Date().toISOString()
+        }
+      })
+    }
+    set({ pendingDeletion: null })
   },
 
   isNINRegistered: (nin: string) => checkNINRegistered(nin, get().identity),

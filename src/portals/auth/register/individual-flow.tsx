@@ -149,13 +149,14 @@ export function IndividualFlow({
       const res = await verifyNINWithNIMC(clean)
       setNimcData(res)
       setIsProvisionalNIMC(false)
-      setNimcRegisteredPhone(res.registeredPhone)
+      const safePhone = res.registeredPhone.includes('NaN') ? '0803 456 7890' : res.registeredPhone
+      setNimcRegisteredPhone(safePhone)
 
       // Seed initial contact info derived from NIMC carrier record
       const defaultEmail = `${res.legalName.toLowerCase().replace(/\s+/g, '.')}@outlook.com`
       setEmail(defaultEmail)
       setInitialEmail(defaultEmail)
-      setPhone(res.registeredPhone)
+      setPhone(safePhone)
       setAddress('42 Constitution Road, Kaduna')
 
       changeStep(1)

@@ -78,26 +78,51 @@ export async function verifyNINWithNIMC(input: string): Promise<NIMCVerification
     }
   }
 
-  // Synthesize realistic verified Nigerian citizen data if random 11-digit NIN is tested
+  // Synthesize realistic verified Nigerian citizen data if random 11-digit NIN or 16-char vNIN is tested
+  // Generate deterministic seed from cleanInput to ensure reproducible, valid, non-NaN attributes
+  let seed = 0
+  for (let i = 0; i < cleanInput.length; i++) {
+    seed = (seed * 31 + cleanInput.charCodeAt(i)) >>> 0
+  }
+
+  const digits = cleanInput.replace(/\D/g, '')
   const randomFirstNames = ['Abubakar', 'Zainab', 'Mohammed', 'Grace', 'Usman', 'Bello', 'Khadija', 'Sunday']
   const randomLastNames = ['Sani', 'Garba', 'Shehu', 'Yakubu', 'Danjuma', 'Ali', 'Audu', 'Liman']
-  const randomGender: 'male' | 'female' = parseInt(cleanInput[cleanInput.length - 1], 10) % 2 === 0 ? 'female' : 'male'
-  const firstName = randomFirstNames[parseInt(cleanInput[0], 10) % randomFirstNames.length]
-  const lastName = randomLastNames[parseInt(cleanInput[1], 10) % randomLastNames.length]
+  
+  const firstName = randomFirstNames[seed % randomFirstNames.length]
+  const lastName = randomLastNames[(seed >>> 3) % randomLastNames.length]
+  const randomGender: 'male' | 'female' = seed % 2 === 0 ? 'female' : 'male'
 
   const synthPrefixes = ['0803', '0806', '0814', '0802', '0805', '0703', '0901', '0812']
-  const prefix = synthPrefixes[parseInt(cleanInput.slice(0, 2), 10) % synthPrefixes.length]
-  const phoneMid = String(100 + (parseInt(cleanInput.slice(2, 5), 10) % 900))
-  const phoneEnd = String(1000 + (parseInt(cleanInput.slice(5, 9), 10) % 9000))
+  const prefixIndex = digits.length >= 2
+    ? Math.abs(parseInt(digits.slice(0, 2), 10) || seed) % synthPrefixes.length
+    : seed % synthPrefixes.length
+  const prefix = synthPrefixes[prefixIndex]
+
+  const midNum = digits.length >= 5
+    ? Math.abs(parseInt(digits.slice(2, 5), 10) || 0) % 900
+    : (seed % 900)
+  const phoneMid = String(100 + midNum).padStart(3, '0')
+
+  const endNum = digits.length >= 9
+    ? Math.abs(parseInt(digits.slice(5, 9), 10) || 0) % 9000
+    : ((seed >>> 4) % 9000)
+  const phoneEnd = String(1000 + endNum).padStart(4, '0')
+
   const synthPhone = `${prefix} ${phoneMid} ${phoneEnd}`
+
+  const birthYear = 1970 + (seed % 32)
+  const birthMonth = String(1 + ((seed >>> 5) % 12)).padStart(2, '0')
+  const birthDay = String(1 + ((seed >>> 9) % 28)).padStart(2, '0')
+  const dateOfBirth = `${birthYear}-${birthMonth}-${birthDay}`
 
   return {
     success: true,
     legalName: `${firstName} ${lastName}`,
-    dateOfBirth: `19${75 + (parseInt(cleanInput[2], 10) % 25)}-0${1 + (parseInt(cleanInput[3], 10) % 9)}-15`,
+    dateOfBirth,
     gender: randomGender,
     photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    vnin: `VNIN-${cleanInput.slice(0, 4)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}-KAD`,
+    vnin: `VNIN-${cleanInput.slice(0, 4).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}-KAD`,
     registeredPhone: synthPhone,
     provider: 'Dojah (NIMC Authorised)',
     verifiedAt: new Date().toISOString()
@@ -132,11 +157,13 @@ export async function lookupCAC(rcInput: string): Promise<CACLookupResponse> {
 
   // Synthesize corporate response
   const numPart = cleanRC.replace(/\D/g, '') || '1029384'
+  const companySuffixes = ['Enterprises', 'Ventures', 'Integrated Services', 'Consulting']
+  const suffixIndex = Math.abs(parseInt(numPart[0] || '1', 10) || 0) % companySuffixes.length
   return {
     success: true,
     rcNumber: `RC-${numPart}`,
-    companyName: `Kaduna Prime ${['Enterprises', 'Ventures', 'Integrated Services', 'Consulting'][parseInt(numPart[0], 10) % 4]} Ltd`,
-    tin: `24${numPart.slice(0, 6)}-0001`,
+    companyName: `Kaduna Prime ${companySuffixes[suffixIndex]} Ltd`,
+    tin: `24${numPart.slice(0, 6).padEnd(6, '0')}-0001`,
     status: 'active',
     industry: 'Commercial Trade & Services',
     directors: ['Malam Haruna Bello', 'Hajiya Maryam Idris'],
