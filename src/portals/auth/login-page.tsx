@@ -91,14 +91,17 @@ export default function LoginPage() {
 
   // Dispatch OTP on entering step 2 or switching channel
   const dispatchOTP = (channel: OTPChannel = selectedChannel) => {
-    // Determine phone destination for current identifier
+    // Determine destination for current identifier and channel
     const found = DEMO_PERSONAS.find(
       (p) =>
         p.profile.email.toLowerCase() === identifier.trim().toLowerCase() ||
         p.identity.nin === identifier.trim()
     )
     const phone = found ? found.profile.phone : '+234 803 123 4567'
-    sendSimulatedOTP(phone, channel)
+    const email = identifier.includes('@') ? identifier.trim() : (found ? found.profile.email : 'citizen@kaduna.ng')
+    const destination = channel === 'email' ? email : phone
+
+    sendSimulatedOTP(destination, channel)
     setEnteredOtp('')
     setOtpError(null)
     setResendCooldown(30)
@@ -185,6 +188,15 @@ export default function LoginPage() {
       p.profile.email.toLowerCase() === identifier.trim().toLowerCase() ||
       p.identity.nin === identifier.trim()
   ) || DEMO_PERSONAS[0]
+
+  const maskedPhone = matchedPersona.profile.phone.replace(/(\+\d{3}\s\d{3})\s\d{3}\s(\d{4})/, '$1 ••• $2')
+  const maskedEmail = (() => {
+    const rawEmail = identifier.includes('@') ? identifier.trim() : matchedPersona.profile.email
+    const [user, domain] = rawEmail.split('@')
+    if (!user || !domain) return rawEmail
+    const visible = user.length > 2 ? user.slice(0, 2) : user.slice(0, 1)
+    return `${visible}•••••@${domain}`
+  })()
 
   return (
     <div className="py-10 sm:py-14 px-4 sm:px-6 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
@@ -421,13 +433,44 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Carrier Dispatch Confirmation */}
-            <div className="bg-[var(--paper)] border border-[var(--line)] p-3 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed">
-              Verification code dispatched to{' '}
-              <strong className="text-[var(--ink)] font-mono">
-                {matchedPersona.profile.phone.replace(/(\+\d{3}\s\d{3})\s\d{3}\s(\d{4})/, '$1 ••• $2')}
-              </strong>
-              . Enter the 6-digit code below to authorize your session.
+            {/* Carrier Dispatch Confirmation — Tailored per channel */}
+            <div className="bg-[var(--paper)] border border-[var(--line)] p-3.5 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed flex items-start gap-2.5 transition-all">
+              {selectedChannel === 'termii_sms_dnd' && (
+                <>
+                  <Smartphone className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                  <div>
+                    Verification code dispatched via SMS to{' '}
+                    <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Enter the 6-digit code below to authorize your session.
+                  </div>
+                </>
+              )}
+              {selectedChannel === 'whatsapp' && (
+                <>
+                  <MessageSquare className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                  <div>
+                    Verification code sent via WhatsApp message to{' '}
+                    <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Check your WhatsApp chats and enter the 6-digit code below.
+                  </div>
+                </>
+              )}
+              {selectedChannel === 'voice_call' && (
+                <>
+                  <PhoneCall className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                  <div>
+                    Automated voice call dialing{' '}
+                    <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Answer the incoming call to hear your 6-digit audio verification code.
+                  </div>
+                </>
+              )}
+              {selectedChannel === 'email' && (
+                <>
+                  <Mail className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                  <div>
+                    Verification code dispatched to your registered email{' '}
+                    <strong className="text-[var(--ink)] font-mono">{maskedEmail}</strong>. Check your inbox or spam folder and enter the 6-digit code below.
+                  </div>
+                </>
+              )}
             </div>
 
             {/* OTP Input Form */}
