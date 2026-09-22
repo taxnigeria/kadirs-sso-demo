@@ -1,0 +1,179 @@
+/* ========================================================================= */
+/* DEDICATED STYLING FOR KADIRS PIT (PERSONAL INCOME TAX) E-TAX PLATFORM    */
+/* Deep Corporate Navy (#0B1E36) + Gold/Amber Accents (#D97706 / #B45309)   */
+/* ========================================================================= */
+
+.pit-root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #0f172a08;
+  color: #0f172a;
+  min-height: 100vh;
+}
+
+/* PIT Institutional Navy Top Navbar */
+.pit-navbar {
+  background: linear-gradient(135deg, #091a2e 0%, #0d2644 60%, #0f3057 100%);
+  border-bottom: 2px solid #b45309;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(11, 30, 54, 0.15);
+}
+
+.pit-navlink {
+  color: #cbd5e1;
+  font-size: 0.825rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.5rem 0.85rem;
+  border-radius: 6px;
+  transition: all 0.15s ease-in-out;
+  text-decoration: none;
+}
+
+.pit-navlink:hover {
+  color: #fbbf24;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.pit-navlink.active {
+  color: #fbbf24;
+  background-color: rgba(217, 119, 6, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+/* Financial Tax Cards */
+.pit-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.pit-card-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  background-color: #f8fafc;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+
+/* PIT Alert / Ribbon Callouts */
+.pit-alert-amber {
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-left: 4px solid #d97706;
+  color: #92400e;
+  border-radius: 6px;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.875rem;
+}
+
+.pit-alert-blue {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-left: 4px solid #1d4ed8;
+  color: #1e40af;
+  border-radius: 6px;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.875rem;
+}
+
+/* Formal Form Controls */
+.pit-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.pit-input,
+.pit-select {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #0f172a;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  transition: all 0.15s ease-in-out;
+}
+
+.pit-input:focus,
+.pit-select:focus {
+  border-color: #d97706;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.18);
+}
+
+/* Formal Action Buttons */
+.pit-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(180deg, #d97706 0%, #b45309 100%);
+  border: 1px solid #92400e;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(180, 83, 9, 0.25);
+  transition: all 0.15s ease-in-out;
+}
+
+.pit-btn-primary:hover {
+  background: linear-gradient(180deg, #b45309 0%, #92400e 100%);
+  box-shadow: 0 2px 5px rgba(180, 83, 9, 0.35);
+}
+
+.pit-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f172a;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.pit-btn-secondary:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* TCC Certificate Styling (Gold Borders, Security Watermark) */
+.pit-tcc-certificate {
+  background-color: #fcfbf9;
+  border: 3px double #b45309;
+  border-radius: 8px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.pit-tcc-certificate::before {
+  content: "KADIRS TAX COMPLIANCE";
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: rgba(180, 83, 9, 0.04);
+  pointer-events: none;
+  white-space: nowrap;
+}

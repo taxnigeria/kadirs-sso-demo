@@ -43,10 +43,8 @@ export default function App() {
         <Route path="kadvreg" element={<KadVRegDashboard />} />
         <Route path="kadvreg/vehicles" element={<KadVRegDashboard />} />
 
-        {/* PIT Portal — with sidebar */}
-        <Route path="pit" element={<PortalShell portal={PORTALS.pit} />}>
-          <Route index element={<RequireAuth><PITDashboard /></RequireAuth>} />
-        </Route>
+        {/* PIT Portal — Standalone External TSP Application (Distinct e-Tax Financial UI) */}
+        <Route path="pit" element={<RequireAuth><PITDashboard /></RequireAuth>} />
 
         {/* Admin — with sidebar */}
         <Route path="admin" element={<PortalShell portal={PORTALS.admin} noSidebar />}>

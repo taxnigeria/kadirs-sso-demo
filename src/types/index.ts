@@ -30,6 +30,9 @@ export interface CitizenProfile {
   employmentType?: 'employed' | 'self_employed' | 'contractor' | 'unemployed'
   employerName?: string
   tin?: string
+  occupation?: string
+  sector?: string
+  incomeBand?: string
 }
 
 // Corporate Entity (CAC-verified)
