@@ -47,8 +47,9 @@ export default function LoginPage() {
   const [lockoutSeconds, setLockoutSeconds] = useState(0)
   const [credError, setCredError] = useState<string | null>(null)
 
-  // 2FA state
-  const [selectedChannel, setSelectedChannel] = useState<OTPChannel>('termii_sms_dnd')
+  // 2FA state: TOTP (primary documented AAL2) or SMS OTP with fallback chain
+  const [twoFactorMethod, setTwoFactorMethod] = useState<'totp' | 'sms'>('totp')
+  const [smsFallbackRoute, setSmsFallbackRoute] = useState<'sms' | 'whatsapp' | 'voice_call' | 'email'>('sms')
   const [enteredOtp, setEnteredOtp] = useState('')
   const [otpError, setOtpError] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState(false)
@@ -90,7 +91,7 @@ export default function LoginPage() {
   }
 
   // Dispatch OTP on entering step 2 or switching channel
-  const dispatchOTP = (channel: OTPChannel = selectedChannel) => {
+  const dispatchOTP = (channel: OTPChannel = 'termii_sms_dnd') => {
     // Determine destination for current identifier and channel
     const found = DEMO_PERSONAS.find(
       (p) =>
@@ -134,26 +135,50 @@ export default function LoginPage() {
 
     // Credentials accepted -> move to Step 2 (2FA)
     setStep(2)
-    dispatchOTP(selectedChannel)
+    if (twoFactorMethod === 'sms') {
+      dispatchOTP('termii_sms_dnd')
+    } else {
+      setEnteredOtp('')
+      setOtpError(null)
+    }
   }
 
-  // Step 2 Submission: Verify OTP
+  // Step 2 Submission: Verify OTP or TOTP
   const handleVerifyOtp = (e: React.FormEvent) => {
     e.preventDefault()
     setOtpError(null)
 
     if (enteredOtp.length < 6) {
-      setOtpError('Please enter the complete 6-digit verification code.')
+      setOtpError(
+        twoFactorMethod === 'totp'
+          ? 'Please enter the 6-digit code from your authenticator app.'
+          : 'Please enter the complete 6-digit verification code.'
+      )
       return
     }
 
     setIsVerifying(true)
     setTimeout(() => {
-      const result = verifySimulatedOTP(enteredOtp)
+      let isValid = false
+      let errMsg = ''
+
+      if (twoFactorMethod === 'totp') {
+        // Authenticator app TOTP simulation: accept 6-digit input or standard universal test codes
+        if (enteredOtp.length === 6) {
+          isValid = true
+        } else {
+          errMsg = 'Invalid authenticator code. Please check your app.'
+        }
+      } else {
+        const result = verifySimulatedOTP(enteredOtp)
+        isValid = result.valid
+        errMsg = result.message
+      }
+
       setIsVerifying(false)
 
-      if (!result.valid) {
-        setOtpError(result.message)
+      if (!isValid) {
+        setOtpError(errMsg || 'Verification failed. Please check the code and try again.')
         return
       }
 
@@ -223,7 +248,7 @@ export default function LoginPage() {
                 Citizen &amp; Business Login
               </h2>
               <p className="text-xs text-[var(--ink-soft)] mt-0.5">
-                Enter your email address, registered mobile phone number, or Citizen ID.
+                Enter your registered official email address and password to sign in.
               </p>
             </div>
 
@@ -245,7 +270,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={handleResetLockout}
-                    className="underline text-[11px] font-semibold shrink-0"
+                    className="underline text-[11px] font-semibold shrink-0 cursor-pointer"
                   >
                     Reset
                   </button>
@@ -253,22 +278,25 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Identifier Input */}
+            {/* Registered Email Input */}
             <div>
               <label className="block text-[12.5px] font-medium text-[var(--ink-soft)] mb-1.5">
-                Email, Phone, or Citizen ID <span className="text-[var(--danger)]">*</span>
+                Registered Email Address <span className="text-[var(--danger)]">*</span>
               </label>
               <div className="relative">
                 <input
-                  type="text"
+                  type="email"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   disabled={isLockedOut}
-                  placeholder="e.g. fatimah.a@gmail.com or 08031234567"
+                  placeholder="e.g. fatimah.a@gmail.com or tax@company.ng"
                   className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-2 focus:outline-[var(--green)] disabled:opacity-50"
                   required
                 />
               </div>
+              <span className="text-[11px] text-[var(--ink-soft)] mt-1 block">
+                Official KADIRS login credential requires your registered email address.
+              </span>
             </div>
 
             {/* Password Input */}
@@ -351,127 +379,196 @@ export default function LoginPage() {
             <div className="border-b border-[var(--line-soft)] pb-4 mb-1">
               <div className="flex items-center gap-2 text-[var(--green)] text-xs font-semibold uppercase tracking-wider mb-1">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Two-Factor Authentication</span>
+                <span>Two-Factor Authentication (AAL2)</span>
               </div>
               <h2 className="font-sans font-semibold text-[18px] sm:text-[20px] text-[var(--ink)] tracking-tight">
                 Verify Your Identity
               </h2>
               <p className="text-xs text-[var(--ink-soft)] mt-0.5">
-                A one-time verification code was dispatched to verify your citizen profile.
+                Two-factor authentication is mandatory for accessing high-security state revenue and municipal services.
               </p>
             </div>
 
-            {/* Channel Tabs */}
+            {/* Documented 2FA Method Selector: TOTP (Primary) vs SMS OTP */}
             <div>
               <label className="block text-[11.5px] font-medium text-[var(--ink-soft)] mb-2">
-                Delivery Channel
+                Authentication Method
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedChannel('termii_sms_dnd')
-                    dispatchOTP('termii_sms_dnd')
+                    setTwoFactorMethod('totp')
+                    setEnteredOtp('')
+                    setOtpError(null)
                   }}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-[var(--radius)] border text-xs font-medium transition-all ${
-                    selectedChannel === 'termii_sms_dnd'
-                      ? 'border-[var(--green)] bg-[var(--line-soft)] text-[var(--ink)] font-semibold'
-                      : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                  className={`p-3 rounded-[var(--radius)] border text-left transition-all cursor-pointer ${
+                    twoFactorMethod === 'totp'
+                      ? 'border-[var(--green)] bg-[var(--line-soft)]/50 ring-1 ring-[var(--green)] shadow-2xs'
+                      : 'border-[var(--line)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)]/40 text-[var(--ink-soft)]'
                   }`}
                 >
-                  <Smartphone className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
-                  <span className="truncate">SMS Verification</span>
+                  <div className="flex items-center gap-2 mb-1">
+                    <KeyRound className="w-4 h-4 text-[var(--green)]" />
+                    <span className="font-semibold text-xs text-[var(--ink)]">Authenticator App</span>
+                  </div>
+                  <div className="text-[10.5px] text-[var(--green)] font-semibold uppercase tracking-wider">
+                    Primary &middot; TOTP (AAL2)
+                  </div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedChannel('whatsapp')
-                    dispatchOTP('whatsapp')
+                    setTwoFactorMethod('sms')
+                    setEnteredOtp('')
+                    setOtpError(null)
+                    dispatchOTP(smsFallbackRoute === 'sms' ? 'termii_sms_dnd' : smsFallbackRoute)
                   }}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-[var(--radius)] border text-xs font-medium transition-all ${
-                    selectedChannel === 'whatsapp'
-                      ? 'border-[var(--green)] bg-[var(--line-soft)] text-[var(--ink)] font-semibold'
-                      : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                  className={`p-3 rounded-[var(--radius)] border text-left transition-all cursor-pointer ${
+                    twoFactorMethod === 'sms'
+                      ? 'border-[var(--green)] bg-[var(--line-soft)]/50 ring-1 ring-[var(--green)] shadow-2xs'
+                      : 'border-[var(--line)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)]/40 text-[var(--ink-soft)]'
                   }`}
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
-                  <span className="truncate">WhatsApp</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedChannel('voice_call')
-                    dispatchOTP('voice_call')
-                  }}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-[var(--radius)] border text-xs font-medium transition-all ${
-                    selectedChannel === 'voice_call'
-                      ? 'border-[var(--green)] bg-[var(--line-soft)] text-[var(--ink)] font-semibold'
-                      : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
-                  }`}
-                >
-                  <PhoneCall className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
-                  <span className="truncate">Voice Call</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedChannel('email')
-                    dispatchOTP('email')
-                  }}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-[var(--radius)] border text-xs font-medium transition-all ${
-                    selectedChannel === 'email'
-                      ? 'border-[var(--green)] bg-[var(--line-soft)] text-[var(--ink)] font-semibold'
-                      : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
-                  }`}
-                >
-                  <Mail className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
-                  <span className="truncate">Email</span>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Smartphone className="w-4 h-4 text-[var(--green)]" />
+                    <span className="font-semibold text-xs text-[var(--ink)]">SMS Verification</span>
+                  </div>
+                  <div className="text-[10.5px] text-[var(--ink-soft)] font-medium">
+                    Carrier Route &middot; Fallbacks
+                  </div>
                 </button>
               </div>
             </div>
 
-            {/* Carrier Dispatch Confirmation — Tailored per channel */}
-            <div className="bg-[var(--paper)] border border-[var(--line)] p-3.5 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed flex items-start gap-2.5 transition-all">
-              {selectedChannel === 'termii_sms_dnd' && (
-                <>
-                  <Smartphone className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
-                  <div>
-                    Verification code dispatched via SMS to{' '}
-                    <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Enter the 6-digit code below to authorize your session.
+            {/* TOTP Active State */}
+            {twoFactorMethod === 'totp' && (
+              <div className="bg-[var(--paper)] border border-[var(--line)] p-3.5 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed flex items-start gap-2.5">
+                <KeyRound className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                <div>
+                  Enter the 6-digit rotating security code from your <strong>Authenticator App</strong> (e.g. Google Authenticator, Microsoft Authenticator, or 1Password). TOTP codes operate offline without mobile carrier delays.
+                </div>
+              </div>
+            )}
+
+            {/* SMS Active State with Automated Fallback Chain */}
+            {twoFactorMethod === 'sms' && (
+              <div className="space-y-3">
+                {/* Active Carrier Dispatch Message */}
+                <div className="bg-[var(--paper)] border border-[var(--line)] p-3.5 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed flex items-start gap-2.5 transition-all">
+                  {smsFallbackRoute === 'sms' && (
+                    <>
+                      <Smartphone className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                      <div>
+                        Verification code dispatched via SMS to{' '}
+                        <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Enter the 6-digit code below to authorize your session.
+                      </div>
+                    </>
+                  )}
+                  {smsFallbackRoute === 'whatsapp' && (
+                    <>
+                      <MessageSquare className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                      <div>
+                        Automated fallback: Verification code sent via WhatsApp message to{' '}
+                        <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Check your WhatsApp chats and enter the 6-digit code below.
+                      </div>
+                    </>
+                  )}
+                  {smsFallbackRoute === 'voice_call' && (
+                    <>
+                      <PhoneCall className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                      <div>
+                        Automated fallback: Voice call dialing{' '}
+                        <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Answer the call to hear your 6-digit audio verification code.
+                      </div>
+                    </>
+                  )}
+                  {smsFallbackRoute === 'email' && (
+                    <>
+                      <Mail className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                      <div>
+                        Automated fallback: Transactional email dispatched to{' '}
+                        <strong className="text-[var(--ink)] font-mono">{maskedEmail}</strong>. Check your inbox or spam folder and enter the 6-digit code below.
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Documented Automatic Delivery Fallback Chain */}
+                <div className="p-3 bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] text-xs space-y-2">
+                  <div className="text-[11.5px] text-[var(--ink-soft)] flex items-center justify-between">
+                    <span>Didn&apos;t receive SMS? Try automated fallback route:</span>
+                    <span className="text-[10.5px] font-mono text-[var(--gold)]">Carrier Fallbacks</span>
                   </div>
-                </>
-              )}
-              {selectedChannel === 'whatsapp' && (
-                <>
-                  <MessageSquare className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
-                  <div>
-                    Verification code sent via WhatsApp message to{' '}
-                    <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Check your WhatsApp chats and enter the 6-digit code below.
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSmsFallbackRoute('sms')
+                        dispatchOTP('termii_sms_dnd')
+                      }}
+                      className={`px-2.5 py-1.5 rounded-[var(--radius)] border text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                        smsFallbackRoute === 'sms'
+                          ? 'border-[var(--green)] bg-[var(--green)]/10 text-[var(--green)] font-semibold'
+                          : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                      }`}
+                    >
+                      <Smartphone className="w-3 h-3" />
+                      <span>Primary SMS</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSmsFallbackRoute('whatsapp')
+                        dispatchOTP('whatsapp')
+                      }}
+                      className={`px-2.5 py-1.5 rounded-[var(--radius)] border text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                        smsFallbackRoute === 'whatsapp'
+                          ? 'border-[var(--green)] bg-[var(--green)]/10 text-[var(--green)] font-semibold'
+                          : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                      }`}
+                    >
+                      <MessageSquare className="w-3 h-3" />
+                      <span>WhatsApp</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSmsFallbackRoute('voice_call')
+                        dispatchOTP('voice_call')
+                      }}
+                      className={`px-2.5 py-1.5 rounded-[var(--radius)] border text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                        smsFallbackRoute === 'voice_call'
+                          ? 'border-[var(--green)] bg-[var(--green)]/10 text-[var(--green)] font-semibold'
+                          : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                      }`}
+                    >
+                      <PhoneCall className="w-3 h-3" />
+                      <span>Voice Call</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSmsFallbackRoute('email')
+                        dispatchOTP('email')
+                      }}
+                      className={`px-2.5 py-1.5 rounded-[var(--radius)] border text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                        smsFallbackRoute === 'email'
+                          ? 'border-[var(--green)] bg-[var(--green)]/10 text-[var(--green)] font-semibold'
+                          : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                      }`}
+                    >
+                      <Mail className="w-3 h-3" />
+                      <span>Email</span>
+                    </button>
                   </div>
-                </>
-              )}
-              {selectedChannel === 'voice_call' && (
-                <>
-                  <PhoneCall className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
-                  <div>
-                    Automated voice call dialing{' '}
-                    <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Answer the incoming call to hear your 6-digit audio verification code.
-                  </div>
-                </>
-              )}
-              {selectedChannel === 'email' && (
-                <>
-                  <Mail className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
-                  <div>
-                    Verification code dispatched to your registered email{' '}
-                    <strong className="text-[var(--ink)] font-mono">{maskedEmail}</strong>. Check your inbox or spam folder and enter the 6-digit code below.
-                  </div>
-                </>
-              )}
-            </div>
+                </div>
+              </div>
+            )}
 
             {/* OTP Input Form */}
             <form onSubmit={handleVerifyOtp} className="space-y-4">
@@ -484,7 +581,8 @@ export default function LoginPage() {
 
               <div>
                 <label className="block text-[12.5px] font-medium text-[var(--ink-soft)] mb-1.5">
-                  Enter 6-digit Code <span className="text-[var(--danger)]">*</span>
+                  {twoFactorMethod === 'totp' ? 'Enter 6-digit Authenticator Code' : 'Enter 6-digit Verification Code'}{' '}
+                  <span className="text-[var(--danger)]">*</span>
                 </label>
                 <input
                   type="text"
@@ -499,16 +597,22 @@ export default function LoginPage() {
               </div>
 
               <div className="flex items-center justify-between text-xs text-[var(--ink-soft)]">
-                <span>Code expires in 5:00</span>
-                <button
-                  type="button"
-                  disabled={resendCooldown > 0}
-                  onClick={() => dispatchOTP()}
-                  className="text-[var(--green)] font-medium hover:underline disabled:opacity-50 disabled:no-underline flex items-center gap-1"
-                >
-                  <RefreshCw className="w-3 h-3" />
-                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
-                </button>
+                {twoFactorMethod === 'totp' ? (
+                  <span className="text-[11px] text-[var(--ink-soft)]">Codes rotate automatically every 30 seconds</span>
+                ) : (
+                  <span>Code expires in 5:00</span>
+                )}
+                {twoFactorMethod === 'sms' && (
+                  <button
+                    type="button"
+                    disabled={resendCooldown > 0}
+                    onClick={() => dispatchOTP(smsFallbackRoute === 'sms' ? 'termii_sms_dnd' : smsFallbackRoute)}
+                    className="text-[var(--green)] font-medium hover:underline disabled:opacity-50 disabled:no-underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
+                  </button>
+                )}
               </div>
 
               <button

@@ -152,19 +152,18 @@ export default function ReconciliationPage() {
           </div>
         </div>
 
-        {/* 1-Click Link All CTA */}
-        {!allLinked && (
-          <div className="shrink-0">
-            <button
-              type="button"
-              onClick={handleLinkAll}
-              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-5 py-2.5 rounded-[var(--radius)] text-xs font-medium transition-colors shadow-2xs flex items-center gap-2"
-            >
-              <Check className="w-4 h-4" />
-              <span>Unify All Verified Accounts in 1-Click</span>
-            </button>
-          </div>
-        )}
+        {/* Statutory Consent Event 3 Indicator */}
+        <div className="sm:text-right shrink-0">
+          <span className="text-[11px] uppercase tracking-wider font-semibold text-[var(--ink-soft)] block">
+            Statutory Consent Event 3
+          </span>
+          <span className="text-xs text-[var(--ink)] font-medium block mt-0.5">
+            Individual Card Review Required
+          </span>
+          <span className="text-[11px] text-[var(--ink-soft)] block mt-0.5 max-w-[28ch] sm:ml-auto">
+            NDPA 2023 mandates deliberate individual consent per service record.
+          </span>
+        </div>
       </div>
 
       {/* Completion Banner (When all accounts are unified) */}
@@ -202,6 +201,25 @@ export default function ReconciliationPage() {
 
       {/* RECOGNITION CARDS LIST */}
       <div className="space-y-4">
+        {!allLinked && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-[var(--paper-raised)] border border-dashed border-[var(--line)] rounded-[var(--radius)] text-xs mb-2">
+            <div className="flex items-center gap-2 text-[var(--ink-soft)]">
+              <Info className="w-4 h-4 text-[var(--gold)] shrink-0" />
+              <span>
+                <strong className="text-[var(--ink)]">NDPA 2023 Rule:</strong> Each record requires individual review and confirmation (Consent Event 3).
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={handleLinkAll}
+              className="text-[11.5px] font-semibold text-[var(--green)] hover:underline flex items-center gap-1.5 shrink-0 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[var(--gold)]" />
+              <span>[⚡ Demo Shortcut] Fast-track link verified records &rarr;</span>
+            </button>
+          </div>
+        )}
+
         <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
           <div>
             <h2 className="font-sans font-semibold text-[18px] sm:text-[20px] text-[var(--ink)] tracking-tight">
