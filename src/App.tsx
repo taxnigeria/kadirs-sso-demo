@@ -11,6 +11,7 @@ import LoginPage from "@/portals/auth/login-page"
 import ProfilePage from "@/portals/auth/profile-page"
 import ReconciliationPage from "@/portals/auth/reconciliation-page"
 import PayKadunaDashboard from "@/portals/paykaduna/dashboard-page"
+import ServicesPage from "@/portals/paykaduna/services-page"
 import KadVRegDashboard from "@/portals/kadvreg/dashboard-page"
 import PITDashboard from "@/portals/pit/dashboard-page"
 import AdminLoginPage from "@/portals/admin/admin-login-page"
@@ -25,18 +26,30 @@ export default function App() {
           <Route index element={<HomePage />} />
         </Route>
 
-        {/* Auth Portal — no sidebar (registration/login are full-width) */}
+        {/* Auth Standalone Pages — no sidebar */}
         <Route path="auth" element={<PortalShell portal={PORTALS.auth} noSidebar />}>
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
           <Route path="reconciliation" element={<RequireAuth><ReconciliationPage /></RequireAuth>} />
         </Route>
+
+        {/* Profile Page with persistent citizen sidebar */}
+        <Route
+          path="auth/profile"
+          element={
+            <PortalShell portal={PORTALS.paykaduna}>
+              <RequireAuth>
+                <ProfilePage />
+              </RequireAuth>
+            </PortalShell>
+          }
+        />
 
         {/* PayKaduna — with sidebar */}
         <Route path="paykaduna" element={<PortalShell portal={PORTALS.paykaduna} />}>
           <Route index element={<RequireAuth><PayKadunaDashboard /></RequireAuth>} />
-          <Route path="services" element={<RequireAuth><PayKadunaDashboard /></RequireAuth>} />
+          <Route path="services" element={<RequireAuth><ServicesPage /></RequireAuth>} />
+          <Route path="profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         </Route>
 
         {/* KADVREG — Standalone External TSP Application (Distinct Revmate UI) */}

@@ -8,9 +8,10 @@ import { useAuthEngine } from '@/engine/auth-engine'
 interface PortalShellProps {
   portal: PortalConfig
   noSidebar?: boolean
+  children?: React.ReactNode
 }
 
-export function PortalShell({ portal, noSidebar }: PortalShellProps) {
+export function PortalShell({ portal, noSidebar, children }: PortalShellProps) {
   const currentUser = useAuthEngine((s) => s.currentUser)
   const currentTspContext = useAuthEngine((s) => s.currentTspContext)
   const switchTspContext = useAuthEngine((s) => s.switchTspContext)
@@ -34,7 +35,7 @@ export function PortalShell({ portal, noSidebar }: PortalShellProps) {
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {!noSidebar && <Sidebar portal={portal} />}
         <main className="flex-1 overflow-y-auto min-h-0">
-          <Outlet />
+          {children ?? <Outlet />}
         </main>
       </div>
     </div>
