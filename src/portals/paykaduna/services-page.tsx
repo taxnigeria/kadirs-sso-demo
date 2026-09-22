@@ -9,7 +9,6 @@ import {
   Lock,
   ArrowRight,
   ArrowLeft,
-  Sparkles,
   Building2,
   Eye,
   Car,
@@ -308,70 +307,37 @@ export default function ServicesPage() {
 
   return (
     <div className="p-6 sm:p-9 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
-      {/* ========================================================================= */}
-      {/* HEADER BREADCRUMB & HERO BANNER                                           */}
-      {/* ========================================================================= */}
-      <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
-        <div className="flex items-center gap-2 text-xs">
-          <Link
-            to="/paykaduna"
-            className="text-[var(--ink-soft)] hover:text-[var(--green)] flex items-center gap-1 font-medium transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>PayKaduna Dashboard</span>
-          </Link>
-          <span className="text-[var(--line)]">/</span>
-          <span className="text-[var(--ink)] font-semibold">State Services Directory</span>
+      {/* Compact Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--line)] pb-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs text-[var(--ink-soft)] mb-1">
+            <Link
+              to="/paykaduna"
+              className="hover:text-[var(--green)] flex items-center gap-1 font-medium transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>PayKaduna Dashboard</span>
+            </Link>
+            <span>/</span>
+            <span className="text-[var(--ink)] font-semibold">Services</span>
+          </div>
+
+          <h1 className="font-sans font-semibold text-[22px] sm:text-[24px] text-[var(--ink)] tracking-tight leading-tight">
+            Kaduna State Services Directory
+          </h1>
+          <p className="text-xs text-[var(--ink-soft)] mt-0.5">
+            Single sign-on access to all 14 connected state revenue, transport, and municipal agencies.
+          </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20 font-semibold">
-            14 MDAs Integrated
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[var(--radius)] text-xs font-medium bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20 font-semibold">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>NIN Segregated &middot; RS256 Scoped</span>
           </span>
-        </div>
-      </div>
-
-      {/* Hero Welcome Card */}
-      <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-6 sm:p-8 rounded-[var(--radius)] relative overflow-hidden shadow-2xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[var(--radius)] text-[11px] font-medium bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                Auth 2.0 Central SSO Mesh
-              </span>
-              <span className="text-xs text-[var(--ink-soft)]">&middot;</span>
-              <span className="text-xs font-mono text-[var(--ink-soft)]">{citizenId}</span>
-            </div>
-
-            <h1 className="font-sans font-semibold text-[24px] sm:text-[28px] text-[var(--ink)] tracking-tight leading-tight">
-              Kaduna State Digital Services Directory
-            </h1>
-            <p className="text-sm text-[var(--ink-soft)] mt-1.5 max-w-[70ch] leading-relaxed">
-              Every connected Touchpoint Service Provider (TSP) in Kaduna State is accessible using your single verified citizen credential. Under NDPA 2023 guidelines, each agency receives only audience-scoped, pseudonymized security tokens.
-            </p>
-          </div>
-
-          {/* Quick Metrics */}
-          <div className="flex md:flex-col gap-3 shrink-0 text-xs">
-            <div className="bg-[var(--paper)] border border-[var(--line)] p-3 rounded-[var(--radius)] min-w-[150px]">
-              <div className="text-[10px] uppercase font-bold text-[var(--ink-soft)]">
-                Active SSO Tokens
-              </div>
-              <div className="font-mono text-base font-bold text-[var(--green)] mt-0.5">
-                RS256 &middot; Scoped
-              </div>
-            </div>
-            <div className="bg-[var(--paper)] border border-[var(--line)] p-3 rounded-[var(--radius)] min-w-[150px]">
-              <div className="text-[10px] uppercase font-bold text-[var(--ink-soft)]">
-                Citizen Privacy Bar
-              </div>
-              <div className="font-sans text-xs font-semibold text-[var(--ink)] mt-0.5 flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[var(--green)]" />
-                <span>NIN Segregated</span>
-              </div>
-            </div>
-          </div>
+          <span className="text-xs font-mono text-[var(--ink-soft)] px-2 py-1 bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)]">
+            {citizenId}
+          </span>
         </div>
       </div>
 
@@ -431,135 +397,6 @@ export default function ServicesPage() {
               {c.label}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* FEATURED INTERACTIVE PROTOCOLS (KADVREG & PIT e-Tax)                      */}
-      {/* ========================================================================= */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="font-sans font-semibold text-[16px] text-[var(--ink)] tracking-tight flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[var(--green)]" />
-            <span>Featured Live Applications in Prototype</span>
-          </h2>
-          <span className="text-xs text-[var(--ink-soft)]">
-            Full external standalone portals with dedicated branding
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* KADVREG Highlight Card */}
-          <div className="bg-gradient-to-br from-blue-900 to-slate-900 text-white p-6 rounded-[var(--radius)] border border-blue-800 shadow-md relative overflow-hidden flex flex-col justify-between">
-            <div className="space-y-3 relative z-10">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-lg bg-blue-600/30 border border-blue-400/40 flex items-center justify-center text-blue-300">
-                  <Car className="w-5 h-5" />
-                </div>
-                <span className="px-2.5 py-0.5 rounded text-[10.5px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-400/30">
-                  Motor Licensing TSP
-                </span>
-              </div>
-
-              <div>
-                <h3 className="font-bold text-lg text-white">KADVREG — Motor Vehicle Administration</h3>
-                <p className="text-xs text-blue-200 mt-1 leading-relaxed">
-                  Vehicle fleet renewals, roadworthiness certificate validation, digital plate allocations, and automated driver records.
-                </p>
-              </div>
-
-              <div className="pt-2 flex flex-wrap items-center gap-2 text-[11px] text-blue-300 font-mono">
-                <span className="px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800">aud: kadvreg</span>
-                <span className="px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800">RS256 JWT</span>
-                <span className="px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800">Zero-Friction SSO</span>
-              </div>
-            </div>
-
-            <div className="pt-5 border-t border-blue-800/80 mt-4 flex items-center justify-between relative z-10">
-              <button
-                type="button"
-                onClick={() =>
-                  setInspectingService(
-                    SERVICES_CATALOG.find((s) => s.id === 'kadvreg') || null
-                  )
-                }
-                className="text-xs text-blue-300 hover:text-white underline cursor-pointer"
-              >
-                Inspect Token Scopes
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setTransitioningTsp({
-                    name: 'KADVREG Vehicle Licensing',
-                    url: '/kadvreg',
-                    audience: 'kadvreg'
-                  })
-                }
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition-all shadow flex items-center gap-1.5 cursor-pointer"
-              >
-                <span>Launch KADVREG Portal</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* PIT Highlight Card */}
-          <div className="bg-gradient-to-br from-slate-950 via-[#0B1E36] to-amber-950 text-white p-6 rounded-[var(--radius)] border border-amber-800/60 shadow-md flex flex-col justify-between">
-            <div className="space-y-3 relative z-10">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <span className="px-2.5 py-0.5 rounded text-[10.5px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                  Direct Assessment TSP
-                </span>
-              </div>
-
-              <div>
-                <h3 className="font-bold text-lg text-white">PIT Portal — Personal Income Tax Platform</h3>
-                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                  Interactive PITA tax calculator, annual self-assessment returns, Remita RRR settlement, electronic Tax Clearance Certificate (e-TCC), and progressive profiling.
-                </p>
-              </div>
-
-              <div className="pt-2 flex flex-wrap items-center gap-2 text-[11px] text-amber-300 font-mono">
-                <span className="px-2 py-0.5 rounded bg-slate-900 border border-amber-900/60">aud: pit</span>
-                <span className="px-2 py-0.5 rounded bg-slate-900 border border-amber-900/60">Progressive Profiling</span>
-                <span className="px-2 py-0.5 rounded bg-slate-900 border border-amber-900/60">e-TCC Verified</span>
-              </div>
-            </div>
-
-            <div className="pt-5 border-t border-amber-900/60 mt-4 flex items-center justify-between relative z-10">
-              <button
-                type="button"
-                onClick={() =>
-                  setInspectingService(
-                    SERVICES_CATALOG.find((s) => s.id === 'pit') || null
-                  )
-                }
-                className="text-xs text-amber-300 hover:text-white underline cursor-pointer"
-              >
-                Inspect Token Scopes
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setTransitioningTsp({
-                    name: 'PIT Personal Income Tax',
-                    url: '/pit',
-                    audience: 'pit'
-                  })
-                }
-                className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded text-xs font-bold transition-all shadow flex items-center gap-1.5 cursor-pointer"
-              >
-                <span>Launch PIT e-Tax Portal</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
