@@ -39,10 +39,9 @@ export default function App() {
           <Route path="services" element={<RequireAuth><PayKadunaDashboard /></RequireAuth>} />
         </Route>
 
-        {/* KADVREG — with sidebar */}
-        <Route path="kadvreg" element={<PortalShell portal={PORTALS.kadvreg} />}>
-          <Route index element={<RequireAuth><KadVRegDashboard /></RequireAuth>} />
-        </Route>
+        {/* KADVREG — Standalone External TSP Application (Distinct Revmate UI) */}
+        <Route path="kadvreg" element={<KadVRegDashboard />} />
+        <Route path="kadvreg/vehicles" element={<KadVRegDashboard />} />
 
         {/* PIT Portal — with sidebar */}
         <Route path="pit" element={<PortalShell portal={PORTALS.pit} />}>

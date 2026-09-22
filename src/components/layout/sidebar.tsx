@@ -38,7 +38,7 @@ export function Sidebar({ portal }: SidebarProps) {
                 to={item.path}
                 className={`flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius)] text-xs font-medium transition-colors ${
                   isActive
-                    ? 'bg-[var(--green)] text-white font-medium'
+                    ? `${portal.color || 'bg-[var(--green)]'} text-white font-medium`
                     : 'text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--line-soft)]'
                 }`}
               >

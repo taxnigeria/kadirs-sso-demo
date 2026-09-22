@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useState, useCallback } from 'react'
+import { useNavigate } from 'react-router'
 import {
   ShieldCheck,
   CreditCard,
@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { TSP_REGISTRY } from '@/components/layout/portal-branding'
+import { SSOTransitionModal } from '@/components/auth/sso-transition-modal'
 import type { PersonaType } from '@/types'
 
 export default function PayKadunaDashboard() {
@@ -29,6 +30,17 @@ export default function PayKadunaDashboard() {
 
   // Quick state for viewing TSP token details modal
   const [inspectingTsp, setInspectingTsp] = useState<typeof TSP_REGISTRY[number] | null>(null)
+
+  // State for SSO Transition Handshake Modal with delay
+  const [transitioningTsp, setTransitioningTsp] = useState<{
+    name: string
+    url: string
+    audience: string
+  } | null>(null)
+
+  const handleCloseTransition = useCallback(() => {
+    setTransitioningTsp(null)
+  }, [])
 
   // Fallback defaults for safety
   const citizenName = identity?.legalName || currentUser?.email.split('@')[0] || 'Citizen'
@@ -305,21 +317,35 @@ export default function PayKadunaDashboard() {
                   </span>
 
                   {isKadvreg ? (
-                    <Link
-                      to="/kadvreg"
-                      className="text-[var(--green)] font-semibold hover:underline flex items-center gap-1"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setTransitioningTsp({
+                          name: 'KADVREG Vehicle Administration',
+                          url: '/kadvreg',
+                          audience: 'kadvreg'
+                        })
+                      }
+                      className="text-[var(--green)] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       <span>Launch KADVREG</span>
                       <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                    </button>
                   ) : isPit ? (
-                    <Link
-                      to="/pit"
-                      className="text-[var(--green)] font-semibold hover:underline flex items-center gap-1"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setTransitioningTsp({
+                          name: 'PIT Personal Income Tax',
+                          url: '/pit',
+                          audience: 'pit'
+                        })
+                      }
+                      className="text-[var(--green)] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       <span>Launch PIT Portal</span>
                       <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                    </button>
                   ) : isCurrent ? (
                     <span className="text-[var(--green)] font-medium">
                       Active Portal
@@ -447,6 +473,16 @@ export default function PayKadunaDashboard() {
             </div>
           </div>
         </div>
+      )}
+      {/* SSO Handshake Transition Modal with delay */}
+      {transitioningTsp && (
+        <SSOTransitionModal
+          isOpen={Boolean(transitioningTsp)}
+          targetTspName={transitioningTsp.name}
+          targetTspUrl={transitioningTsp.url}
+          targetAudience={transitioningTsp.audience}
+          onClose={handleCloseTransition}
+        />
       )}
     </div>
   )

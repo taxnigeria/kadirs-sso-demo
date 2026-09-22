@@ -10,6 +10,7 @@ import type {
 import { DEMO_PERSONAS } from '../data/personas'
 import { buildToken } from './token-builder'
 import { useEventLogger } from './event-logger'
+import { useVehicleStore } from '../data/vehicle-store'
 
 interface AuthState {
   // Current authenticated state
@@ -542,6 +543,7 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
   resetDemo: () => {
     localStorage.removeItem(STORAGE_KEY_AUTH)
     useEventLogger.getState().clearEvents()
+    useVehicleStore.getState().resetToInitial()
     set(getInitialState())
   }
 }))

@@ -1,0 +1,133 @@
+/* Dedicated Bootstrap-like Styling for KADVREG External TSP Portal */
+
+.kadvreg-root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #ffffff;
+  color: #212529;
+  min-height: 100vh;
+}
+
+/* KADVREG Navbar */
+.kadvreg-navbar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #dee2e6;
+  padding: 0.85rem 1.5rem;
+}
+
+.kadvreg-navlink {
+  color: #212529;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: color 0.15s ease-in-out;
+  text-decoration: none;
+}
+
+.kadvreg-navlink:hover {
+  color: #0d6efd;
+}
+
+.kadvreg-navlink.active {
+  color: #0d6efd;
+}
+
+/* Card Container with Rounded Edges */
+.kadvreg-card {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  box-shadow: 0 0.15rem 0.4rem rgba(0, 0, 0, 0.05);
+}
+
+/* Green Notice Banner (Exact screenshot match) */
+.kadvreg-alert-green {
+  background-color: #d1e7dd;
+  border: 1px solid #badbcc;
+  color: #0f5132;
+  border-radius: 12px;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+/* Form Controls with Rounded Corners & Soft Glow */
+.kadvreg-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 0.4rem;
+}
+
+.kadvreg-input,
+.kadvreg-select {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 12px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.kadvreg-input:focus,
+.kadvreg-select:focus {
+  color: #212529;
+  background-color: #ffffff;
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.kadvreg-input::placeholder {
+  color: #6c757d;
+  opacity: 0.8;
+}
+
+/* Buttons */
+.kadvreg-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #0d6efd;
+  border: 1px solid #0d6efd;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.kadvreg-btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+  box-shadow: 0 0.15rem 0.35rem rgba(13, 110, 253, 0.25);
+}
+
+.kadvreg-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #495057;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.kadvreg-btn-outline:hover {
+  background-color: #e9ecef;
+  color: #212529;
+}

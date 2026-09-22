@@ -65,15 +65,15 @@ export const PORTALS: Record<string, PortalConfig> = {
   },
   kadvreg: {
     id: "kadvreg",
-    name: "KADVREG",
+    name: "KADVREG — Vehicle Licensing",
     shortName: "KADVREG",
-    description: "Vehicle registration & licence renewal",
+    description: "Kaduna State Motor Vehicle Administration",
     icon: Car,
     color: "bg-blue-600",
     textColor: "text-blue-600",
     navItems: [
       { label: "Dashboard", path: "/kadvreg", icon: LayoutDashboard },
-      { label: "My Vehicles", path: "/kadvreg/vehicles", icon: CarFront },
+      { label: "Vehicle Fleet", path: "/kadvreg", icon: CarFront },
     ],
   },
   pit: {

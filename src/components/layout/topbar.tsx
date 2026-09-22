@@ -36,7 +36,7 @@ export function Topbar({ portal }: TopbarProps) {
         {/* Portal Breadcrumb / Identifier */}
         {portal.id !== 'home' && portal.id !== 'auth' && (
           <div className="hidden md:flex items-center gap-2 pl-4 ml-4 border-l border-[var(--line)]">
-            <span className="text-xs uppercase tracking-wider font-semibold text-[var(--green)]">
+            <span className={`text-xs uppercase tracking-wider font-semibold ${portal.textColor || 'text-[var(--green)]'}`}>
               {portal.name}
             </span>
           </div>
