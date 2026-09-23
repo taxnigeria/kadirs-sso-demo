@@ -63,8 +63,8 @@ export function Topbar({ portal, hasSidebar, onToggleMobileNav }: TopbarProps) {
       {/* Center/Right: Navigation & User info */}
       <div className="flex items-center gap-2.5">
 
-        {/* Current user pill if logged in */}
-        {currentUser && (
+        {/* Current user pill if logged in (Citizen Portals Only) */}
+        {currentUser && portal.id !== 'admin' && (
           <Link
             to="/auth/profile"
             title="Manage Citizen Profile & NDPA Privacy Center"

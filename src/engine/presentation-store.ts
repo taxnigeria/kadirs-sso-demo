@@ -89,6 +89,11 @@ export const usePresentationStore = create<PresentationState>((set, get) => ({
     const officer = DEMO_ADMIN_STAFF.find((s) => s.staffId === staffId)
     if (!officer) return
 
+    // Ensure citizen session is deactivated when switching to admin officer
+    if (useAuthEngine.getState().currentUser) {
+      useAuthEngine.getState().logout()
+    }
+
     // Perform FIDO2 login ceremony
     await useAdminEngine.getState().loginAdminWithFido2(officer.staffId, 'valid_fido2_signature')
 

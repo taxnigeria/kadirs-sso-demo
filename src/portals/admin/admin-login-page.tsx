@@ -16,6 +16,7 @@ import {
   Loader2
 } from 'lucide-react'
 import { useAdminEngine, DEMO_ADMIN_STAFF } from '@/engine/admin-engine'
+import { useAuthEngine } from '@/engine/auth-engine'
 import { useEventLogger } from '@/engine/event-logger'
 
 type LoginView = 'step1_auth' | 'step2_attribution' | 'break_glass' | 'unregistered_key'
@@ -78,6 +79,9 @@ export default function AdminLoginPage() {
     const success = await loginAdminWithFido2(activeOfficer.staffId, simulatedSignature)
 
     if (success) {
+      if (useAuthEngine.getState().currentUser) {
+        useAuthEngine.getState().logout()
+      }
       setView('step2_attribution')
     }
   }
@@ -98,6 +102,9 @@ export default function AdminLoginPage() {
 
     const success = activateBreakGlass(envelopeRef.trim(), breakGlassReason.trim())
     if (success) {
+      if (useAuthEngine.getState().currentUser) {
+        useAuthEngine.getState().logout()
+      }
       navigate('/admin/dashboard')
     } else {
       setBreakGlassError('Invalid emergency key. Use demo physical envelope key: EMERGENCY-KD-IT-HEAD-KEY')
