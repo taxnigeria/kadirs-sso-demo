@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Outlet } from 'react-router'
+import { useState, useEffect } from 'react'
+import { Outlet, useLocation } from 'react-router'
 import { Topbar } from './topbar'
 import { Sidebar } from './sidebar'
 import { type PortalConfig } from './portal-branding'
@@ -12,9 +12,16 @@ interface PortalShellProps {
 }
 
 export function PortalShell({ portal, noSidebar, children }: PortalShellProps) {
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
+  const location = useLocation()
   const currentUser = useAuthEngine((s) => s.currentUser)
   const currentTspContext = useAuthEngine((s) => s.currentTspContext)
   const switchTspContext = useAuthEngine((s) => s.switchTspContext)
+
+  // Auto-close mobile navigation on route change
+  useEffect(() => {
+    setIsMobileNavOpen(false)
+  }, [location.pathname])
 
   // SSO Context Manager: Automatically exchange scoped audience token when entering TSP portal
   useEffect(() => {
@@ -29,12 +36,24 @@ export function PortalShell({ portal, noSidebar, children }: PortalShellProps) {
     }
   }, [currentUser, portal.id, currentTspContext, switchTspContext])
 
+  const hasSidebar = !noSidebar && portal.navItems.length > 0
+
   return (
-    <div className="h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)] transition-colors overflow-hidden">
-      <Topbar portal={portal} />
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-        {!noSidebar && <Sidebar portal={portal} />}
-        <main className="flex-1 overflow-y-auto min-h-0">
+    <div className="h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)] transition-colors overflow-hidden w-full max-w-full">
+      <Topbar
+        portal={portal}
+        hasSidebar={hasSidebar}
+        onToggleMobileNav={() => setIsMobileNavOpen((prev) => !prev)}
+      />
+      <div className="flex flex-1 min-h-0 overflow-hidden w-full max-w-full">
+        {hasSidebar && (
+          <Sidebar
+            portal={portal}
+            isOpenOnMobile={isMobileNavOpen}
+            onCloseMobile={() => setIsMobileNavOpen(false)}
+          />
+        )}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 min-w-0 w-full max-w-full">
           {children ?? <Outlet />}
         </main>
       </div>

@@ -63,7 +63,7 @@ export default function PayKadunaDashboard() {
   })
 
   return (
-    <div className="p-6 sm:p-9 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
+    <div className="p-4 sm:p-6 lg:p-9 max-w-7xl mx-auto space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
       {/* Hero Welcome Banner */}
       <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-6 sm:p-8 rounded-[var(--radius)] relative overflow-hidden shadow-2xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">

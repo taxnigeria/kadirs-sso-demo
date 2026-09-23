@@ -306,7 +306,7 @@ export default function ServicesPage() {
   ]
 
   return (
-    <div className="p-6 sm:p-9 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
+    <div className="p-4 sm:p-6 lg:p-9 max-w-7xl mx-auto space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
       {/* Compact Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--line)] pb-4">
         <div>

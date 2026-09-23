@@ -181,11 +181,11 @@ export default function ProfilePage() {
   const handleConfirmAccountDeletion = () => {
     setDeleteError(null)
     if (deleteConfirmationText.trim().toUpperCase() !== 'DELETE') {
-      setDeleteError('Type DELETE in all capitals to confirm statutory erasure.')
+      setDeleteError('Please type DELETE in all capital letters to confirm.')
       return
     }
     if (!deletePassword) {
-      setDeleteError('Your password is required to verify identity for erasure.')
+      setDeleteError('Please enter your password to confirm it is really you.')
       return
     }
 
@@ -202,7 +202,7 @@ export default function ProfilePage() {
   const completeness = currentUser?.profileCompleteness || 85
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 animate-in fade-in duration-300">
+    <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
       {/* ========================================================================= */}
       {/* BREADCRUMB NAVIGATION & RETURN TO PAYKADUNA HUB                           */}
       {/* ========================================================================= */}
@@ -269,11 +269,11 @@ export default function ProfilePage() {
             <AlertTriangle className="w-4 h-4 text-red-700 shrink-0 mt-0.5" />
             <div>
               <strong className="font-semibold block text-red-900">
-                Statutory 30-Day Cooling-off Period Active (Right to Erasure)
+                Account Deletion in Progress (30-Day Grace Period)
               </strong>
               <span>
-                An erasure request was logged under NDPA 2023 Sec. 36. Active PII is scheduled for permanent purge on{' '}
-                <strong className="font-mono">{new Date(pendingDeletion.coolingPeriodExpiresAt).toLocaleDateString()}</strong>.
+                Your request to close this account has been received. Your personal information is scheduled to be permanently erased on{' '}
+                <strong className="font-mono">{new Date(pendingDeletion.coolingPeriodExpiresAt).toLocaleDateString()}</strong>. You can cancel this request at any time before then.
               </span>
             </div>
           </div>
@@ -282,7 +282,7 @@ export default function ProfilePage() {
             onClick={cancelAccountDeletion}
             className="px-3 py-1.5 rounded bg-red-700 hover:bg-red-800 text-white font-semibold cursor-pointer transition-colors shrink-0"
           >
-            Cancel Erasure &amp; Restore Account
+            Cancel Deletion &amp; Keep Account
           </button>
         </div>
       )}
@@ -1002,53 +1002,53 @@ export default function ProfilePage() {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 6: DANGER ZONE (NDPA SEC. 36 RIGHT TO ERASURE)                        */}
+      {/* TAB 6: DANGER ZONE (ACCOUNT DELETION & DATA ERASURE)                      */}
       {/* ========================================================================= */}
       {activeTab === 'danger' && (
         <div className="bg-red-50/50 border border-red-200 rounded-[var(--radius)] p-6 space-y-6">
           <div className="border-b border-red-200 pb-4">
             <h2 className="font-sans font-semibold text-lg text-red-950 flex items-center gap-2">
               <Trash2 className="w-4 h-4 text-red-700" />
-              <span>Danger Zone: NDPA Statutory Right to Erasure (Sec. 36)</span>
+              <span>Danger Zone: Delete Your Account &amp; Personal Data</span>
             </h2>
             <p className="text-xs text-red-800 mt-0.5">
-              Exercise your legal right to delete personal identity data under the Nigeria Data Protection Act 2023.
+              Permanently close your Kaduna State unified account and remove your personal identity records under NDPA 2023 guidelines.
             </p>
           </div>
 
           {/* Retention Category Explanation Cards */}
           <div className="space-y-3 text-xs">
             <span className="font-bold text-red-950 uppercase tracking-wider block">
-              Statutory Three-Tier Data Retention Schedule:
+              What happens to your information when you delete your account:
             </span>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="bg-white p-3.5 rounded border border-red-200 space-y-1">
                 <span className="text-[10.5px] font-bold text-red-700 uppercase block">
-                  Category A &middot; Must Purge
+                  1. Permanently Deleted
                 </span>
-                <span className="font-semibold text-slate-900 block">Active PII &amp; Contact Records</span>
+                <span className="font-semibold text-slate-900 block">Personal &amp; Contact Details</span>
                 <p className="text-[11px] text-slate-600 leading-relaxed">
-                  Upon completion of cooling period, name, phone, email, credentials, and biometrics link are deleted permanently.
+                  After the 30-day grace period, your name, phone number, email address, password, and linked NIN are completely erased from our servers.
                 </p>
               </div>
 
               <div className="bg-white p-3.5 rounded border border-amber-200 space-y-1">
                 <span className="text-[10.5px] font-bold text-amber-700 uppercase block">
-                  Category B &middot; Statutory Audit
+                  2. Kept by Law for Audits
                 </span>
-                <span className="font-semibold text-slate-900 block">Consent &amp; Financial Ledger</span>
+                <span className="font-semibold text-slate-900 block">Past Payments &amp; Consent History</span>
                 <p className="text-[11px] text-slate-600 leading-relaxed">
-                  Consent records (indefinite under NDPA Sec. 24) and completed revenue payment receipts (2 years per Public Finance Law) must be retained.
+                  Official receipts for past tax and revenue payments (kept for 2 years) and records of permissions you previously granted must be preserved for government auditing.
                 </p>
               </div>
 
               <div className="bg-white p-3.5 rounded border border-slate-300 space-y-1">
                 <span className="text-[10.5px] font-bold text-slate-700 uppercase block">
-                  Category C &middot; Anonymized Reference
+                  3. De-Identified ID Number
                 </span>
-                <span className="font-semibold text-slate-900 block">Anonymized Citizen ID Only</span>
+                <span className="font-semibold text-slate-900 block">Anonymous System ID</span>
                 <p className="text-[11px] text-slate-600 leading-relaxed">
-                  Citizen ID (<code className="font-mono">CIT-KAD-...</code>) is preserved with all PII nulled to prevent dangling references in historical state receipts.
+                  Your ID number (<code className="font-mono">CIT-KAD-...</code>) is kept without any name or contact info attached, so previous state revenue receipts remain valid without pointing to you.
                 </p>
               </div>
             </div>
@@ -1058,10 +1058,10 @@ export default function ProfilePage() {
           <div className="pt-2 border-t border-red-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <strong className="text-red-950 text-xs block font-semibold">
-                Mandatory 30-Day Cooling-off Period:
+                30-Day Grace Period:
               </strong>
               <span className="text-[11px] text-red-800">
-                You can cancel deletion and restore your account at any time within 30 days of request.
+                Changed your mind? You can log in and restore your account at any time within 30 days of your request.
               </span>
             </div>
 
@@ -1070,7 +1070,7 @@ export default function ProfilePage() {
               onClick={() => setIsDeleteModalOpen(true)}
               className="px-4 py-2.5 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-[var(--radius)] transition-colors cursor-pointer shrink-0 shadow-xs"
             >
-              Request Account Erasure &rarr;
+              Delete My Account &rarr;
             </button>
           </div>
         </div>
@@ -1085,12 +1085,12 @@ export default function ProfilePage() {
             <div className="flex items-center gap-3 text-red-700">
               <AlertTriangle className="w-6 h-6 shrink-0" />
               <h3 className="text-base font-bold text-slate-900">
-                Confirm Statutory Account Erasure
+                Are you sure you want to delete your account?
               </h3>
             </div>
 
             <p className="text-xs text-slate-600 leading-relaxed">
-              This initiates the statutory <strong>30-day cooling-off window</strong> under NDPA Section 36. Your account access across all 14 state TSPs will be locked.
+              This starts a <strong>30-day grace period</strong> before permanent deletion. During this time, your logins to PayKaduna, KADVREG, PIT, and all other state services will be paused. If you don't cancel within 30 days, your account and personal details will be permanently removed.
             </p>
 
             {deleteError && (
@@ -1102,23 +1102,23 @@ export default function ProfilePage() {
             <div className="space-y-3 text-xs">
               <div>
                 <label className="font-semibold text-slate-700 block mb-1">
-                  Reason for Erasure Request:
+                  Why are you deleting your account?
                 </label>
                 <select
                   value={deleteReason}
                   onChange={(e) => setDeleteReason(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded bg-white text-xs"
                 >
-                  <option value="Personal privacy preference">Personal privacy preference (NDPA)</option>
-                  <option value="Relocated outside Kaduna State">Relocated outside Kaduna State</option>
-                  <option value="Account consolidation duplicate">Account consolidation / duplicate</option>
-                  <option value="Other">Other statutory grounds</option>
+                  <option value="Personal privacy preference">I want to remove my personal data (Privacy preference)</option>
+                  <option value="Relocated outside Kaduna State">I moved outside Kaduna State</option>
+                  <option value="Account consolidation duplicate">I have another account / duplicate account</option>
+                  <option value="Other">Other reason</option>
                 </select>
               </div>
 
               <div>
                 <label className="font-semibold text-slate-700 block mb-1">
-                  Type <strong className="text-red-700">DELETE</strong> to confirm:
+                  Type <strong className="text-red-700">DELETE</strong> in capital letters to confirm:
                 </label>
                 <input
                   type="text"
@@ -1131,13 +1131,13 @@ export default function ProfilePage() {
 
               <div>
                 <label className="font-semibold text-slate-700 block mb-1">
-                  Account Password *
+                  Enter Your Password:
                 </label>
                 <input
                   type="password"
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
-                  placeholder="Enter current password"
+                  placeholder="Enter your current password"
                   className="w-full px-3 py-2 border border-slate-300 rounded text-xs"
                 />
               </div>
@@ -1156,7 +1156,7 @@ export default function ProfilePage() {
                 onClick={handleConfirmAccountDeletion}
                 className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded cursor-pointer transition-colors"
               >
-                Confirm &amp; Begin 30-Day Cooling
+                Yes, Delete My Account
               </button>
             </div>
           </div>

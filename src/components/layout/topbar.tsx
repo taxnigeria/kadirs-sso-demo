@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { Sun, Moon, Code2, RotateCcw, User, Search } from 'lucide-react'
+import { Sun, Moon, Code2, RotateCcw, User, Search, Menu } from 'lucide-react'
 import { useThemeStore } from '@/engine/theme-store'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
@@ -9,9 +9,11 @@ import { type PortalConfig } from './portal-branding'
 
 interface TopbarProps {
   portal: PortalConfig
+  hasSidebar?: boolean
+  onToggleMobileNav?: () => void
 }
 
-export function Topbar({ portal }: TopbarProps) {
+export function Topbar({ portal, hasSidebar, onToggleMobileNav }: TopbarProps) {
   const { theme, toggleTheme } = useThemeStore()
   const currentUser = useAuthEngine((s) => s.currentUser)
   const identity = useAuthEngine((s) => s.identity)
@@ -20,26 +22,37 @@ export function Topbar({ portal }: TopbarProps) {
   const logoutAdmin = useAdminEngine((s) => s.logoutAdmin)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur-md px-6 py-3.5 flex items-center justify-between transition-colors">
-      {/* Left: Official KD Seal + Org Heading */}
-      <div className="flex items-center gap-3.5">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-[30px] h-[30px] rounded-full border-[1.5px] border-[var(--green)] flex items-center justify-center text-[var(--green)] font-sans font-semibold text-xs tracking-tight">
+    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur-md px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between transition-colors w-full max-w-full overflow-hidden">
+      {/* Left: Mobile Menu Trigger + Official KD Seal + Org Heading */}
+      <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
+        {hasSidebar && onToggleMobileNav && (
+          <button
+            type="button"
+            onClick={onToggleMobileNav}
+            aria-label="Toggle navigation menu"
+            className="md:hidden p-1.5 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)] text-[var(--ink)] cursor-pointer shrink-0"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+        )}
+
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 group min-w-0">
+          <div className="w-[30px] h-[30px] rounded-full border-[1.5px] border-[var(--green)] flex items-center justify-center text-[var(--green)] font-sans font-semibold text-xs tracking-tight shrink-0">
             KD
           </div>
-          <div>
-            <div className="font-sans font-semibold text-[16px] leading-tight text-[var(--ink)] tracking-tight">
+          <div className="min-w-0">
+            <div className="font-sans font-semibold text-sm sm:text-[16px] leading-tight text-[var(--ink)] tracking-tight truncate">
               Kaduna State Revenue Service
             </div>
-            <span className="block font-sans font-normal text-[11.5px] text-[var(--ink-soft)] mt-0.5">
-              Unified Identity & Access Platform &mdash; Auth 2.0
+            <span className="hidden sm:block font-sans font-normal text-[11.5px] text-[var(--ink-soft)] mt-0.5 truncate">
+              Unified Identity &amp; Access Platform &mdash; Auth 2.0
             </span>
           </div>
         </Link>
 
         {/* Portal Breadcrumb / Identifier */}
         {portal.id !== 'home' && portal.id !== 'auth' && (
-          <div className="hidden md:flex items-center gap-2 pl-4 ml-4 border-l border-[var(--line)]">
+          <div className="hidden md:flex items-center gap-2 pl-4 ml-4 border-l border-[var(--line)] shrink-0">
             <span className={`text-xs uppercase tracking-wider font-semibold ${portal.textColor || 'text-[var(--green)]'}`}>
               {portal.name}
             </span>

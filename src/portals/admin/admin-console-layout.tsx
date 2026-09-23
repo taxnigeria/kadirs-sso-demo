@@ -80,7 +80,7 @@ export function AdminConsoleLayout({ children }: AdminConsoleLayoutProps) {
   const shortKeyId = keyIdMatch ? keyIdMatch[1] : 'KD-FIDO-9182'
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-5 animate-in fade-in duration-300">
+    <div className="p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-5 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
       {/* ========================================================================= */}
       {/* BREAK-GLASS HIGH PRIORITY EMERGENCY BANNER (If Active)                   */}
       {/* ========================================================================= */}

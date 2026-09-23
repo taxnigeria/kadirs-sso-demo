@@ -139,6 +139,10 @@
     @apply border-border;
     box-sizing: border-box;
   }
+  html, body, #root {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
   body {
     background: var(--paper);
     color: var(--ink);

@@ -50,14 +50,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Presentation Shell: Evaluator Quick-Switch Hint */}
-        <div className="mt-4 pt-3 flex items-center justify-center gap-1.5 text-[11px] text-[var(--ink-soft)]">
-          <span>Press</span>
-          <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-[var(--paper)] border border-[var(--line)] rounded font-semibold text-[var(--ink)]">
-            ⌘K
-          </kbd>
-          <span>or click Quick Switch to jump to any demo persona</span>
-        </div>
 
         <div className="mt-4 pt-3 border-t border-[var(--line-soft)] flex items-center justify-between text-[11px] text-[var(--ink-soft)]">
           <span>Kaduna State Government</span>

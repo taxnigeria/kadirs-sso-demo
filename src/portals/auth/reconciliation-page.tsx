@@ -160,9 +160,6 @@ export default function ReconciliationPage() {
           <span className="text-xs text-[var(--ink)] font-medium block mt-0.5">
             Individual Card Review Required
           </span>
-          <span className="text-[11px] text-[var(--ink-soft)] block mt-0.5 max-w-[28ch] sm:ml-auto">
-            NDPA 2023 mandates deliberate individual consent per service record.
-          </span>
         </div>
       </div>
 
