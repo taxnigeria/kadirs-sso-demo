@@ -82,7 +82,7 @@ export function Topbar({ portal }: TopbarProps) {
               type="button"
               onClick={() => {
                 logoutAdmin()
-                window.location.href = '/admin'
+                window.location.href = '/'
               }}
               className="ml-1 text-red-600 hover:text-red-700 text-[11px] font-semibold cursor-pointer hover:underline"
             >

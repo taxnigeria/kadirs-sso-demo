@@ -32,7 +32,7 @@ export function AdminConsoleLayout({ children }: AdminConsoleLayoutProps) {
         if (prev <= 1) {
           clearInterval(timer)
           logoutAdmin()
-          navigate('/admin')
+          navigate('/')
           return 0
         }
         return prev - 1
