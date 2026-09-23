@@ -1,11 +1,14 @@
 import { Code2 } from 'lucide-react'
 import { useInspectorStore } from '@/engine/inspector-store'
+import { useAdminEngine } from '@/engine/admin-engine'
 
 export function FloatingInspectorTrigger() {
   const isOpen = useInspectorStore((s) => s.isOpen)
   const toggleInspector = useInspectorStore((s) => s.toggleInspector)
+  const currentAdmin = useAdminEngine((s) => s.currentAdmin)
 
-  if (isOpen) return null
+  // Only display for authenticated administrators
+  if (isOpen || !currentAdmin) return null
 
   return (
     <button

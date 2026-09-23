@@ -13,6 +13,7 @@ import { TokenInspectorView } from './token-inspector-view'
 import { KafkaEventsView } from './kafka-events-view'
 import { AuthFlowTimelineView } from './auth-flow-timeline-view'
 import { TopologyMapView } from './topology-map-view'
+import { useAdminEngine } from '@/engine/admin-engine'
 
 export function ArchitectureInspectorDrawer() {
   const isOpen = useInspectorStore((s) => s.isOpen)
@@ -20,23 +21,27 @@ export function ArchitectureInspectorDrawer() {
   const activeTab = useInspectorStore((s) => s.activeTab)
   const setActiveTab = useInspectorStore((s) => s.setActiveTab)
   const getActiveToken = useInspectorStore((s) => s.getActiveToken)
+  const currentAdmin = useAdminEngine((s) => s.currentAdmin)
 
-  // Close on Escape key
+  // Close on Escape key or toggle on Alt+I (only for admins)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
         closeInspector()
       }
-      // Alt+I toggle shortcut
+      // Alt+I toggle shortcut — restricted to authenticated administrators
       if (e.altKey && (e.key === 'i' || e.key === 'I')) {
-        useInspectorStore.getState().toggleInspector()
+        if (useAdminEngine.getState().currentAdmin) {
+          useInspectorStore.getState().toggleInspector()
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, closeInspector])
 
-  if (!isOpen) return null
+  // Strictly hidden if closed or user is not an authenticated administrator
+  if (!isOpen || !currentAdmin) return null
 
   const tabs: { id: InspectorTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: 'token', label: 'RS256 JWT Token', icon: Code2 },

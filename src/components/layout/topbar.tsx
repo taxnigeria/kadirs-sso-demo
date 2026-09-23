@@ -119,16 +119,18 @@ export function Topbar({ portal }: TopbarProps) {
           <RotateCcw className="w-4 h-4" />
         </button>
 
-        {/* Technical Architecture Inspector Button */}
-        <button
-          type="button"
-          onClick={() => useInspectorStore.getState().openInspector()}
-          title="Open Technical Architecture Inspector (Alt+I)"
-          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-[var(--ink)] bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] hover:bg-[var(--line-soft)] transition-colors cursor-pointer shadow-2xs group"
-        >
-          <Code2 className="w-3.5 h-3.5 text-[var(--green)] group-hover:rotate-12 transition-transform" />
-          <span>Inspect Auth 2.0</span>
-        </button>
+        {/* Technical Architecture Inspector Button — Only shown to authenticated administrators */}
+        {Boolean(currentAdmin) && (
+          <button
+            type="button"
+            onClick={() => useInspectorStore.getState().openInspector()}
+            title="Open Technical Architecture Inspector (Alt+I)"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-[var(--ink)] bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] hover:bg-[var(--line-soft)] transition-colors cursor-pointer shadow-2xs group"
+          >
+            <Code2 className="w-3.5 h-3.5 text-[var(--green)] group-hover:rotate-12 transition-transform" />
+            <span>Inspect Auth 2.0</span>
+          </button>
+        )}
       </div>
     </header>
   )
