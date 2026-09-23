@@ -15,7 +15,12 @@ import ServicesPage from "@/portals/paykaduna/services-page"
 import KadVRegDashboard from "@/portals/kadvreg/dashboard-page"
 import PITDashboard from "@/portals/pit/dashboard-page"
 import AdminLoginPage from "@/portals/admin/admin-login-page"
-import AdminDashboard from "@/portals/admin/dashboard-page"
+import AdminOverviewPage from "@/portals/admin/overview-page"
+import AdminApprovalsPage from "@/portals/admin/approvals-page"
+import AdminCitizensPage from "@/portals/admin/citizens-page"
+import AdminEntitiesPage from "@/portals/admin/entities-page"
+import AdminTspsPage from "@/portals/admin/tsps-page"
+import AdminReportsPage from "@/portals/admin/reports-page"
 
 export default function App() {
   return (
@@ -64,10 +69,14 @@ export default function App() {
           <Route index element={<AdminLoginPage />} />
         </Route>
         <Route path="admin" element={<PortalShell portal={PORTALS.admin} />}>
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="approvals" element={<AdminDashboard />} />
-          <Route path="disputes" element={<AdminDashboard />} />
-          <Route path="audit" element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminOverviewPage />} />
+          <Route path="approvals" element={<AdminApprovalsPage />} />
+          <Route path="citizens" element={<AdminCitizensPage />} />
+          <Route path="entities" element={<AdminEntitiesPage />} />
+          <Route path="tsps" element={<AdminTspsPage />} />
+          <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="audit" element={<AdminReportsPage />} />
+          <Route path="disputes" element={<AdminApprovalsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

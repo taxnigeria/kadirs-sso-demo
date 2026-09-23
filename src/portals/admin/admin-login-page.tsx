@@ -1,79 +1,103 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 import {
   Lock,
   ShieldCheck,
   ArrowLeft,
-  KeyRound,
   Fingerprint,
   Cpu,
-  AlertTriangle,
   CheckCircle2,
-  AlertCircle,
   ShieldAlert,
-  Flame
+  Flame,
+  AlertTriangle,
+  ArrowRight,
+  Shield,
+  Key
 } from 'lucide-react'
 import { useAdminEngine, DEMO_ADMIN_STAFF } from '@/engine/admin-engine'
+import { useEventLogger } from '@/engine/event-logger'
+
+type LoginView = 'step1_auth' | 'step2_attribution' | 'break_glass' | 'unregistered_key'
 
 export default function AdminLoginPage() {
   const navigate = useNavigate()
+  const currentAdmin = useAdminEngine((s) => s.currentAdmin)
   const loginAdminWithFido2 = useAdminEngine((s) => s.loginAdminWithFido2)
   const activateBreakGlass = useAdminEngine((s) => s.activateBreakGlass)
 
-  const [selectedStaffId, setSelectedStaffId] = useState<string>(DEMO_ADMIN_STAFF[0].staffId)
-  const [securityPin, setSecurityPin] = useState('9922')
-  const [isCeremonyOpen, setIsCeremonyOpen] = useState(false)
-  const [ceremonyStep, setCeremonyStep] = useState<'prompt' | 'pulsing' | 'verified'>('prompt')
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  // Selected key for simulation
+  const [selectedKeyId, setSelectedKeyId] = useState<string>('KD-FIDO-9182')
+  const [view, setView] = useState<LoginView>('step1_auth')
+  const [isCeremonyPulsing, setIsCeremonyPulsing] = useState(false)
 
-  // Break-Glass Modal State
-  const [isBreakGlassModalOpen, setIsBreakGlassModalOpen] = useState(false)
-  const [breakGlassKey, setBreakGlassKey] = useState('')
+  // Break-Glass state
+  const [envelopeRef, setEnvelopeRef] = useState('EMERGENCY-KD-IT-HEAD-KEY')
   const [breakGlassReason, setBreakGlassReason] = useState('')
   const [breakGlassError, setBreakGlassError] = useState<string | null>(null)
 
-  const activeOfficer = DEMO_ADMIN_STAFF.find((s) => s.staffId === selectedStaffId) || DEMO_ADMIN_STAFF[0]
+  // Active officer based on key
+  const activeOfficer = DEMO_ADMIN_STAFF.find((s) => s.fido2KeyName.includes(selectedKeyId)) || DEMO_ADMIN_STAFF[0]
 
-  const handleStartFido2 = (e: React.FormEvent) => {
-    e.preventDefault()
-    setErrorMessage(null)
+  // Step 2 auto-redirect countdown
+  const [countdown, setCountdown] = useState(3)
 
-    if (securityPin.length < 4) {
-      setErrorMessage('Please enter your 4-digit staff PIN.')
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval>
+    if (view === 'step2_attribution') {
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer)
+            navigate('/admin/dashboard')
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+    }
+    return () => clearInterval(timer)
+  }, [view, navigate])
+
+  // FIDO2 Key Touch Handler
+  const handleTouchSecurityKey = async () => {
+    setIsCeremonyPulsing(true)
+
+    // Simulate CTAP2 hardware key communication
+    await new Promise((r) => setTimeout(r, 900))
+    setIsCeremonyPulsing(false)
+
+    if (selectedKeyId === 'UNREGISTERED-KEY') {
+      // Unregistered key hard stop
+      useEventLogger.getState().logEvent({
+        category: 'security',
+        action: 'UNREGISTERED_HARDWARE_KEY_REJECTED',
+        actor: 'admin@kadirs.gov.ng',
+        details: {
+          keyAssertion: 'fido2_ctap2_unknown_cert_hash',
+          ipAddress: '192.168.10.4',
+          alertLevel: 'HIGH_PRIORITY_INCIDENT'
+        }
+      })
+      setView('unregistered_key')
       return
     }
 
-    // Launch simulated WebAuthn ceremony
-    setIsCeremonyOpen(true)
-    setCeremonyStep('prompt')
-  }
-
-  const handleTouchSecurityKey = async () => {
-    setCeremonyStep('pulsing')
     const simulatedSignature = `sig_ctap2_${Math.random().toString(36).substring(2, 12)}_${Date.now()}`
-    
-    // Simulate CTAP2 hardware key communication
     const success = await loginAdminWithFido2(activeOfficer.staffId, simulatedSignature)
 
     if (success) {
-      setCeremonyStep('verified')
-      setTimeout(() => {
-        setIsCeremonyOpen(false)
-        navigate('/admin/dashboard')
-      }, 1000)
-    } else {
-      setCeremonyStep('prompt')
-      setErrorMessage('FIDO2 hardware key assertion rejected. Please verify your credentials.')
-      setIsCeremonyOpen(false)
+      setCountdown(3)
+      setView('step2_attribution')
     }
   }
 
+  // Break-Glass Execution Handler
   const handleConfirmBreakGlass = (e: React.FormEvent) => {
     e.preventDefault()
     setBreakGlassError(null)
 
-    if (!breakGlassKey.trim()) {
-      setBreakGlassError('Please enter the physical envelope emergency keycode.')
+    if (!envelopeRef.trim()) {
+      setBreakGlassError('Please enter the physical envelope reference number.')
       return
     }
     if (!breakGlassReason.trim() || breakGlassReason.trim().length < 10) {
@@ -81,9 +105,8 @@ export default function AdminLoginPage() {
       return
     }
 
-    const success = activateBreakGlass(breakGlassKey.trim(), breakGlassReason.trim())
+    const success = activateBreakGlass(envelopeRef.trim(), breakGlassReason.trim())
     if (success) {
-      setIsBreakGlassModalOpen(false)
       navigate('/admin/dashboard')
     } else {
       setBreakGlassError('Invalid emergency key. Use demo physical envelope key: EMERGENCY-KD-IT-HEAD-KEY')
@@ -93,316 +116,381 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-[calc(100vh-140px)] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
       <div className="w-full max-w-xl bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 sm:p-8 shadow-md">
-        {/* Top Header Badge */}
-        <div className="text-center space-y-2 mb-6">
-          <div className="w-12 h-12 rounded-full bg-[var(--green)]/10 border border-[var(--green)]/20 text-[var(--green)] flex items-center justify-center mx-auto shadow-2xs">
-            <Lock className="w-6 h-6" />
-          </div>
-
-          <div className="flex items-center justify-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[var(--radius)] text-[11px] font-medium bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20 font-semibold">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Kaduna Gov PKI &middot; AAL3 High Assurance
-            </span>
-          </div>
-
-          <h1 className="font-sans font-semibold text-[22px] sm:text-[24px] text-[var(--ink)] tracking-tight">
-            KADIRS Central Administration Console
-          </h1>
-          <p className="text-xs text-[var(--ink-soft)] max-w-[46ch] mx-auto leading-relaxed">
-            Restricted to authorized Kaduna State revenue supervisors, compliance auditors, and dispute adjudicators.
-          </p>
-        </div>
-
-        {/* Quick Officer Selector Cards */}
-        <div className="space-y-2 mb-6">
-          <label className="text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider block">
-            Select Officer Profile (Demo Simulation):
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            {DEMO_ADMIN_STAFF.map((staff) => {
-              const isSelected = selectedStaffId === staff.staffId
-              return (
-                <button
-                  key={staff.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedStaffId(staff.staffId)
-                    setErrorMessage(null)
-                  }}
-                  className={`p-3 rounded-[var(--radius)] border text-left transition-all cursor-pointer ${
-                    isSelected
-                      ? 'border-[var(--green)] bg-[var(--green)]/5 ring-1 ring-[var(--green)] shadow-2xs'
-                      : 'border-[var(--line)] bg-[var(--paper)] hover:bg-[var(--line-soft)]'
-                  }`}
-                >
-                  <div className="font-semibold text-xs text-[var(--ink)] truncate">
-                    {staff.name}
-                  </div>
-                  <div className="text-[10px] text-[var(--green)] font-medium capitalize mt-0.5">
-                    {staff.role.replace('_', ' ')}
-                  </div>
-                  <div className="text-[9.5px] font-mono text-[var(--ink-soft)] mt-1 truncate">
-                    {staff.staffId}
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Login Form */}
-        <form onSubmit={handleStartFido2} className="space-y-4">
-          {errorMessage && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-800 text-xs rounded-[var(--radius)] flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[var(--ink)] block">
-              Staff Official Email
-            </label>
-            <input
-              type="email"
-              value={activeOfficer.email}
-              readOnly
-              className="w-full px-3 py-2 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] text-xs font-mono text-[var(--ink)] cursor-not-allowed opacity-80"
-            />
-            <span className="text-[11px] text-[var(--ink-soft)] block">
-              Department: {activeOfficer.department}
-            </span>
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-[var(--ink)] block">
-                Staff Security PIN
-              </label>
-              <span className="text-[10.5px] text-[var(--ink-soft)]">
-                Demo PIN: <code className="font-bold text-[var(--ink)]">9922</code>
+        
+        {/* Active Session Notice if already authenticated */}
+        {currentAdmin && view === 'step1_auth' && (
+          <div className="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 rounded-[var(--radius)] flex items-center justify-between gap-3 text-xs animate-in slide-in-from-top-2">
+            <div className="flex items-center gap-2 text-emerald-900">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>
+                Active Session: Operating as <strong>{currentAdmin.name}</strong> ({currentAdmin.role.replace('_', ' ')})
               </span>
             </div>
-            <div className="relative">
-              <KeyRound className="w-4 h-4 text-[var(--ink-soft)] absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="password"
-                maxLength={6}
-                value={securityPin}
-                onChange={(e) => setSecurityPin(e.target.value)}
-                placeholder="Enter 4-6 digit PIN"
-                className="w-full pl-9 pr-3 py-2 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] text-xs font-mono tracking-widest text-[var(--ink)] focus:outline-none focus:border-[var(--green)]"
-              />
-            </div>
+            <Link
+              to="/admin/dashboard"
+              className="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded text-[11px] shrink-0"
+            >
+              Resume Console &rarr;
+            </Link>
           </div>
+        )}
 
-          <div className="p-3 rounded-[var(--radius)] bg-[var(--paper)] border border-[var(--line)] flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-[var(--green)] shrink-0" />
-              <div>
-                <span className="font-medium text-[var(--ink)] block">Registered FIDO2 Key:</span>
-                <span className="text-[10.5px] font-mono text-[var(--ink-soft)]">
-                  {activeOfficer.fido2KeyName}
+        {/* ========================================================================= */}
+        {/* STEP 1: AUTHENTICATION (SPEC-LITERAL, INSTITUTIONAL ACCOUNT)               */}
+        {/* ========================================================================= */}
+        {view === 'step1_auth' && (
+          <div className="space-y-6">
+            {/* Header with Institutional Identity */}
+            <div className="text-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-[var(--green)]/10 border border-[var(--green)]/20 text-[var(--green)] flex items-center justify-center mx-auto shadow-2xs">
+                <Lock className="w-6 h-6" />
+              </div>
+
+              <div className="flex items-center justify-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[var(--radius)] text-[11px] font-semibold bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  Kaduna Gov PKI &middot; AAL3 High Assurance
                 </span>
               </div>
-            </div>
-            <span className="px-2 py-0.5 rounded bg-[var(--green)]/10 text-[var(--green)] text-[10.5px] font-bold border border-[var(--green)]/20">
-              CTAP2 Bound
-            </span>
-          </div>
 
-          <button
-            type="submit"
-            className="w-full py-2.5 px-4 bg-[var(--green)] hover:bg-[var(--green-deep)] text-white text-xs font-bold rounded-[var(--radius)] transition-colors shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <Fingerprint className="w-4 h-4" />
-            <span>Authenticate with FIDO2 Hardware Key &rarr;</span>
-          </button>
-        </form>
-
-        {/* Break-Glass Emergency Access */}
-        <div className="mt-6 pt-5 border-t border-[var(--line)] flex items-center justify-between text-xs">
-          <div className="flex items-center gap-1.5 text-amber-700">
-            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-            <span className="text-[11px] font-semibold">Break-Glass Emergency:</span>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsBreakGlassModalOpen(true)}
-            className="text-xs text-red-700 hover:text-red-800 font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
-          >
-            <Flame className="w-3.5 h-3.5" />
-            <span>Physical Envelope Protocol #KD-BG-01</span>
-          </button>
-        </div>
-
-        {/* Bottom Navigation Links */}
-        <div className="mt-4 pt-4 border-t border-[var(--line-soft)] flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--ink-soft)]">
-          <Link
-            to="/paykaduna"
-            className="hover:text-[var(--ink)] flex items-center gap-1 font-medium transition-colors"
-          >
-            <ArrowLeft className="w-3 h-3" />
-            <span>Return to PayKaduna</span>
-          </Link>
-          <Link
-            to="/auth/login"
-            className="hover:text-[var(--green)] font-medium transition-colors"
-          >
-            Citizen Sign In &rarr;
-          </Link>
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* SIMULATED FIDO2 WEBAUTHN HARDWARE KEY CEREMONY MODAL                      */}
-      {/* ========================================================================= */}
-      {isCeremonyOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] max-w-md w-full p-6 text-center space-y-5 shadow-2xl animate-in zoom-in-95">
-            <div className="space-y-1">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--green)] font-bold">
-                WebAuthn CTAP2 Protocol
-              </span>
-              <h3 className="font-sans font-semibold text-lg text-[var(--ink)]">
-                Security Key Touch Verification
-              </h3>
-              <p className="text-xs text-[var(--ink-soft)]">
-                Insert your registered token and press the gold contact to verify physical presence.
+              <h1 className="font-sans font-semibold text-[22px] sm:text-[24px] text-[var(--ink)] tracking-tight">
+                KADIRS Central Administration Console
+              </h1>
+              <p className="text-xs text-[var(--ink-soft)] max-w-[46ch] mx-auto leading-relaxed">
+                Administrative session for authorized Kaduna State revenue supervisors, compliance auditors, and dispute adjudicators.
               </p>
             </div>
 
-            {/* Hardware Key Animated Visual */}
-            <div className="p-6 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] flex flex-col items-center justify-center space-y-3 relative overflow-hidden">
-              {ceremonyStep === 'prompt' && (
-                <div
-                  onClick={handleTouchSecurityKey}
-                  className="w-16 h-16 rounded-full bg-[var(--green)]/15 border-2 border-[var(--green)] text-[var(--green)] flex items-center justify-center cursor-pointer hover:scale-105 transition-all shadow-md group animate-pulse"
+            {/* Institutional Identity Card (Shown, not typed) */}
+            <div className="p-3.5 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] flex items-center justify-between">
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--ink-soft)] block">
+                  Institutional Account
+                </span>
+                <div className="font-mono text-xs font-bold text-[var(--ink)] flex items-center gap-2">
+                  <Shield className="w-3.5 h-3.5 text-[var(--green)]" />
+                  <span>admin@kadirs.gov.ng</span>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20">
+                Single Account Rule
+              </span>
+            </div>
+
+            {/* Demo Registered Key Selector (Reframed as Key Simulation) */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider block">
+                  Select Registered Hardware Key to Touch (Demo):
+                </label>
+                <span className="text-[10.5px] text-[var(--ink-soft)]">
+                  Personal key &middot; Institutional account
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {DEMO_ADMIN_STAFF.map((staff) => {
+                  const keyId = staff.fido2KeyName.match(/#(KD-FIDO-\d+)/)?.[1] || 'KD-FIDO-9182'
+                  const isSelected = selectedKeyId === keyId
+                  return (
+                    <button
+                      key={staff.id}
+                      type="button"
+                      onClick={() => setSelectedKeyId(keyId)}
+                      className={`p-3 rounded-[var(--radius)] border text-left transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-[var(--green)] bg-[var(--green)]/5 ring-1 ring-[var(--green)] shadow-2xs'
+                          : 'border-[var(--line)] bg-[var(--paper)] hover:bg-[var(--line-soft)]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="font-semibold text-xs text-[var(--ink)] flex items-center gap-1.5 truncate">
+                          <Cpu className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
+                          <span>{staff.fido2KeyName.split(' #')[0]}</span>
+                        </div>
+                        <span className="font-mono text-[9px] text-[var(--ink-soft)] font-bold">
+                          {keyId}
+                        </span>
+                      </div>
+                      <div className="text-[10.5px] text-[var(--ink-soft)] mt-1 truncate">
+                        Bound to: <strong className="text-[var(--ink)]">{staff.name}</strong>
+                      </div>
+                      <div className="text-[9.5px] text-[var(--green)] font-medium capitalize mt-0.5">
+                        {staff.role.replace('_', ' ')}
+                      </div>
+                    </button>
+                  )
+                })}
+
+                {/* Unregistered Key Option to demonstrate rejection */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedKeyId('UNREGISTERED-KEY')}
+                  className={`p-3 rounded-[var(--radius)] border text-left transition-all cursor-pointer ${
+                    selectedKeyId === 'UNREGISTERED-KEY'
+                      ? 'border-red-400 bg-red-50/50 ring-1 ring-red-400'
+                      : 'border-[var(--line)] bg-[var(--paper)] hover:bg-[var(--line-soft)]'
+                  }`}
                 >
-                  <Fingerprint className="w-8 h-8 group-hover:scale-110 transition-transform" />
-                </div>
-              )}
-
-              {ceremonyStep === 'pulsing' && (
-                <div className="w-16 h-16 rounded-full bg-amber-500/15 border-2 border-amber-500 text-amber-600 flex items-center justify-center animate-spin">
-                  <Cpu className="w-8 h-8" />
-                </div>
-              )}
-
-              {ceremonyStep === 'verified' && (
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 text-emerald-600 flex items-center justify-center animate-in zoom-in">
-                  <CheckCircle2 className="w-8 h-8" />
-                </div>
-              )}
-
-              <div>
-                <div className="text-xs font-semibold text-[var(--ink)]">
-                  {ceremonyStep === 'prompt' && 'Click or touch sensor above'}
-                  {ceremonyStep === 'pulsing' && 'Validating cryptographic signature...'}
-                  {ceremonyStep === 'verified' && 'AAL3 Assurance Token Issued!'}
-                </div>
-                <div className="text-[11px] font-mono text-[var(--ink-soft)] mt-0.5">
-                  Device: {activeOfficer.fido2KeyName}
-                </div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-semibold text-xs text-red-700 flex items-center gap-1.5">
+                      <AlertTriangle className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                      <span>Unregistered Key</span>
+                    </div>
+                    <span className="font-mono text-[9px] text-red-600 font-bold">
+                      #UNKNOWN
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-red-600 mt-1">
+                    Demonstrate rejection &amp; security incident log
+                  </div>
+                </button>
               </div>
             </div>
 
-            <div className="pt-2 flex items-center justify-between text-xs border-t border-[var(--line)]">
-              <span className="text-[11px] text-[var(--ink-soft)]">
-                Staff: {activeOfficer.name} ({activeOfficer.staffId})
-              </span>
+            {/* Hardware Key CTA */}
+            <div className="pt-2">
               <button
                 type="button"
-                onClick={() => setIsCeremonyOpen(false)}
-                className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] cursor-pointer"
+                onClick={handleTouchSecurityKey}
+                disabled={isCeremonyPulsing}
+                className="w-full py-3 px-4 bg-[var(--green)] hover:bg-[var(--green-deep)] text-white text-xs font-bold rounded-[var(--radius)] transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                Cancel
+                {isCeremonyPulsing ? (
+                  <>
+                    <Fingerprint className="w-4 h-4 animate-ping text-white" />
+                    <span>Communicating with Hardware Key (CTAP2)...</span>
+                  </>
+                ) : (
+                  <>
+                    <Key className="w-4 h-4" />
+                    <span>Insert and Touch Your Registered Hardware Key</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Demoted Tertiary Link for Break-Glass */}
+            <div className="pt-4 border-t border-[var(--line)] flex items-center justify-between text-xs">
+              <Link
+                to="/"
+                className="text-[var(--ink-soft)] hover:text-[var(--ink)] flex items-center gap-1 transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Return to Citizen Portal</span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setView('break_glass')}
+                className="text-[var(--ink-soft)] hover:text-red-700 text-[11px] underline cursor-pointer transition-colors"
+              >
+                Emergency access (break-glass) &rarr;
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ========================================================================= */}
-      {/* BREAK-GLASS EMERGENCY ACCESS MODAL                                        */}
-      {/* ========================================================================= */}
-      {isBreakGlassModalOpen && (
-        <div className="fixed inset-0 z-50 bg-red-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-[var(--paper-raised)] border border-red-300 rounded-[var(--radius)] max-w-md w-full p-6 space-y-4 shadow-2xl animate-in zoom-in-95">
-            <div className="flex items-center gap-3 text-red-700 border-b border-red-200 pb-3">
-              <ShieldAlert className="w-6 h-6 shrink-0" />
-              <div>
-                <h3 className="font-bold text-base text-[var(--ink)]">
-                  Break-Glass Emergency Protocol
-                </h3>
-                <span className="text-[10px] font-mono text-red-800 uppercase tracking-wider block">
-                  Physical Envelope Ref: #KD-BG-01
-                </span>
+        {/* ========================================================================= */}
+        {/* STEP 2: OFFICER ATTRIBUTION (POST-KEY-TOUCH SCREEN)                       */}
+        {/* ========================================================================= */}
+        {view === 'step2_attribution' && (
+          <div className="space-y-6 animate-in zoom-in-95 duration-300">
+            <div className="text-center space-y-2">
+              <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-2xs">
+                <CheckCircle2 className="w-7 h-7" />
+              </div>
+              <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase">
+                Hardware Key Assertion Verified &middot; CTAP2 Passed
+              </span>
+              <h2 className="font-sans font-bold text-xl text-[var(--ink)]">
+                Key Recognized &mdash; {activeOfficer.name}
+              </h2>
+              <p className="text-xs text-[var(--ink-soft)]">
+                {activeOfficer.role.replace('_', ' ')} &middot; {activeOfficer.department}
+              </p>
+            </div>
+
+            {/* Attribution Statement Card */}
+            <div className="p-4 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] space-y-3 text-xs">
+              <div className="flex items-start gap-2.5">
+                <ShieldCheck className="w-5 h-5 text-[var(--green)] shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-bold text-[var(--ink)]">
+                    Beginning session as operator of the KADIRS administrative account
+                  </div>
+                  <div className="text-[var(--ink-soft)] text-[11px] mt-0.5">
+                    Account: <code className="font-mono text-[var(--ink)] font-bold">admin@kadirs.gov.ng</code>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 bg-[var(--paper-raised)] border border-[var(--line)] rounded text-[11px] leading-relaxed text-[var(--ink-soft)]">
+                <strong className="text-[var(--ink)]">Governance Invariant:</strong> This is an individual attribution step, not a separate administrative account. All supervisory actions, approvals, and dispute adjudications during this session will be cryptographically bound to <strong className="text-[var(--ink)]">{activeOfficer.name}</strong> ({activeOfficer.staffId}) in the immutable audit log.
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
+                <div>
+                  <span className="text-[var(--ink-soft)] block text-[10px]">Registered Hardware Token:</span>
+                  <span className="font-mono font-bold text-[var(--ink)]">{activeOfficer.fido2KeyName}</span>
+                </div>
+                <div>
+                  <span className="text-[var(--ink-soft)] block text-[10px]">Assurance Level:</span>
+                  <span className="font-bold text-[var(--green)]">AAL3 High Assurance</span>
+                </div>
               </div>
             </div>
 
-            <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
-              This procedure is strictly reserved for critical outages or executive failover when standard FIDO2 tokens are inaccessible.
-              <strong> Every break-glass session triggers high-priority tamper-evident audit logging.</strong>
-            </p>
+            {/* Direct Proceed Button */}
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => navigate('/admin/dashboard')}
+                className="w-full py-3 px-4 bg-[var(--green)] hover:bg-[var(--green-deep)] text-white text-xs font-bold rounded-[var(--radius)] transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Enter Administrative Console ({countdown}s)</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <p className="text-center text-[10.5px] text-[var(--ink-soft)]">
+                Automatic redirect in {countdown} seconds...
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* UNREGISTERED KEY REJECTION HARD STOP                                      */}
+        {/* ========================================================================= */}
+        {view === 'unregistered_key' && (
+          <div className="space-y-6 animate-in zoom-in-95 duration-300 text-center">
+            <div className="w-14 h-14 rounded-full bg-red-100 text-red-700 flex items-center justify-center mx-auto shadow-2xs">
+              <ShieldAlert className="w-7 h-7" />
+            </div>
+
+            <div className="space-y-1">
+              <h2 className="font-sans font-bold text-xl text-red-800">
+                Unregistered Hardware Key Detected
+              </h2>
+              <p className="text-xs text-red-600">
+                Cryptographic assertion rejected &mdash; Key public key hash is not bound to institutional administrative account.
+              </p>
+            </div>
+
+            <div className="p-4 bg-red-50 border border-red-200 rounded-[var(--radius)] text-xs text-left space-y-2 text-red-900">
+              <div className="font-bold flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-red-700 shrink-0" />
+                <span>Security Policy Enforcement:</span>
+              </div>
+              <p className="text-[11px] leading-relaxed">
+                Under Kaduna State Central Identity Policy, unauthenticated hardware devices are barred from administrative console access. This attempted assertion has been logged to the immutable security stream before effect.
+              </p>
+              <div className="font-mono text-[10.5px] bg-white p-2 rounded border border-red-200">
+                EVENT: UNREGISTERED_HARDWARE_KEY_REJECTED &middot; ACTOR: admin@kadirs.gov.ng
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedKeyId('KD-FIDO-9182')
+                setView('step1_auth')
+              }}
+              className="py-2.5 px-6 bg-[var(--ink)] hover:bg-slate-800 text-white text-xs font-semibold rounded-[var(--radius)] cursor-pointer transition-colors"
+            >
+              &larr; Return to Key Selection
+            </button>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* BREAK-GLASS EMERGENCY ACCESS INTERSTITIAL SCREEN                          */}
+        {/* ========================================================================= */}
+        {view === 'break_glass' && (
+          <div className="space-y-5 animate-in fade-in duration-300">
+            <div className="text-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-red-100 text-red-700 flex items-center justify-center mx-auto">
+                <Flame className="w-6 h-6 text-red-700" />
+              </div>
+              <span className="px-2 py-0.5 rounded text-[10.5px] font-mono font-bold bg-red-100 text-red-800 border border-red-200">
+                PROTOCOL #KD-BG-01
+              </span>
+              <h2 className="font-sans font-bold text-lg text-[var(--ink)]">
+                Break-Glass Emergency Access
+              </h2>
+              <p className="text-xs text-[var(--ink-soft)] max-w-[46ch] mx-auto">
+                For catastrophic hardware key loss, severe system incidents, or emergency disaster recovery.
+              </p>
+            </div>
+
+            {/* Critical Warning Banner */}
+            <div className="p-3.5 bg-red-50 border border-red-200 rounded-[var(--radius)] text-xs text-red-900 space-y-1">
+              <div className="font-bold flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-red-700 shrink-0" />
+                <span>Supervisory Controls Bypassed:</span>
+              </div>
+              <p className="text-[11px] leading-relaxed">
+                Break-glass access bypasses standard approval chains. All actions taken during this session will be watermarked, flagged, and submitted directly to the Kaduna State Auditor General and NDPC.
+              </p>
+            </div>
 
             {breakGlassError && (
-              <div className="p-2.5 bg-red-50 border border-red-200 text-red-800 text-xs rounded-[var(--radius)]">
+              <div className="p-3 bg-red-100 border border-red-300 text-red-900 text-xs rounded-[var(--radius)]">
                 {breakGlassError}
               </div>
             )}
 
-            <form onSubmit={handleConfirmBreakGlass} className="space-y-3 text-xs">
+            <form onSubmit={handleConfirmBreakGlass} className="space-y-3.5 text-xs">
               <div className="space-y-1">
                 <label className="font-semibold text-[var(--ink)] block">
-                  Physical Envelope Emergency Key *
+                  Physical Envelope Reference Code *
                 </label>
                 <input
                   type="text"
-                  value={breakGlassKey}
-                  onChange={(e) => setBreakGlassKey(e.target.value)}
+                  required
+                  value={envelopeRef}
+                  onChange={(e) => setEnvelopeRef(e.target.value)}
                   placeholder="e.g. EMERGENCY-KD-IT-HEAD-KEY"
-                  className="w-full px-3 py-2 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] font-mono text-xs text-[var(--ink)] focus:outline-none focus:border-red-600"
+                  className="w-full px-3 py-2 bg-[var(--paper)] border border-[var(--line)] rounded font-mono text-xs text-[var(--ink)]"
                 />
-                <span className="text-[10px] text-[var(--ink-soft)] block">
-                  Demo code: <code className="font-mono font-bold text-red-700">EMERGENCY-KD-IT-HEAD-KEY</code>
+                <span className="text-[10.5px] text-[var(--ink-soft)] block">
+                  Demo code: <code className="font-mono font-bold text-[var(--ink)]">EMERGENCY-KD-IT-HEAD-KEY</code>
                 </span>
               </div>
 
               <div className="space-y-1">
                 <label className="font-semibold text-[var(--ink)] block">
-                  Statutory Incident Justification *
+                  Statutory Incident Justification (Min 10 characters) *
                 </label>
                 <textarea
-                  rows={2}
+                  rows={3}
+                  required
                   value={breakGlassReason}
                   onChange={(e) => setBreakGlassReason(e.target.value)}
-                  placeholder="Explain operational emergency justification..."
-                  className="w-full px-3 py-2 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] text-xs text-[var(--ink)] focus:outline-none focus:border-red-600"
+                  placeholder="State the incident ticket number, nature of emergency, and authorizing ministry..."
+                  className="w-full px-3 py-2 bg-[var(--paper)] border border-[var(--line)] rounded text-xs text-[var(--ink)]"
                 />
               </div>
 
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-[var(--line)]">
+              <div className="pt-2 flex items-center justify-between">
                 <button
                   type="button"
-                  onClick={() => setIsBreakGlassModalOpen(false)}
-                  className="px-3 py-2 border border-[var(--line)] rounded-[var(--radius)] text-xs text-[var(--ink)] hover:bg-[var(--line-soft)] cursor-pointer"
+                  onClick={() => setView('step1_auth')}
+                  className="px-3 py-1.5 border border-[var(--line)] hover:bg-[var(--line-soft)] text-xs rounded cursor-pointer"
                 >
-                  Cancel
+                  &larr; Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white font-bold rounded-[var(--radius)] text-xs shadow-xs cursor-pointer transition-colors"
+                  className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white font-bold text-xs rounded cursor-pointer shadow-sm transition-colors flex items-center gap-1.5"
                 >
-                  Activate Emergency Access &rarr;
+                  <Flame className="w-4 h-4" />
+                  <span>Activate Emergency Elevated Session</span>
                 </button>
               </div>
             </form>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
