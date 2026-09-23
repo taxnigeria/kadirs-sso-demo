@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router'
 import {
   Lock,
-  LogOut,
   Flame,
   ShieldAlert,
   Cpu,
@@ -161,19 +160,6 @@ export function AdminConsoleLayout({ children }: AdminConsoleLayoutProps) {
               <span className="hidden xl:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius)] text-[11px] bg-slate-100 text-slate-700 border border-slate-200 font-medium">
                 Single Active Session
               </span>
-
-              {/* Sign Out Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  logoutAdmin()
-                  navigate('/admin')
-                }}
-                className="px-3 py-1.5 border border-[var(--line)] bg-[var(--paper)] hover:bg-[var(--line-soft)] text-xs font-semibold rounded-[var(--radius)] text-red-700 hover:text-red-800 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Sign Out Admin</span>
-              </button>
             </div>
           </div>
 

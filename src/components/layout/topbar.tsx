@@ -1,8 +1,9 @@
 import { Link } from 'react-router'
-import { Sun, Moon, Search, RotateCcw, User } from 'lucide-react'
+import { Sun, Moon, Code2, RotateCcw, User } from 'lucide-react'
 import { useThemeStore } from '@/engine/theme-store'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
+import { useInspectorStore } from '@/engine/inspector-store'
 import { type PortalConfig } from './portal-branding'
 
 interface TopbarProps {
@@ -118,13 +119,15 @@ export function Topbar({ portal }: TopbarProps) {
           <RotateCcw className="w-4 h-4" />
         </button>
 
-        {/* Inspector Button */}
+        {/* Technical Architecture Inspector Button */}
         <button
-          onClick={() => alert('Technical Architecture Inspector (RS256 JWT & Kafka Webhooks) will be active in Phase 11.')}
-          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] hover:bg-[var(--line-soft)] transition-colors cursor-pointer"
+          type="button"
+          onClick={() => useInspectorStore.getState().openInspector()}
+          title="Open Technical Architecture Inspector (Alt+I)"
+          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-[var(--ink)] bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] hover:bg-[var(--line-soft)] transition-colors cursor-pointer shadow-2xs group"
         >
-          <Search className="w-3.5 h-3.5 text-[var(--green)]" />
-          <span>Inspector</span>
+          <Code2 className="w-3.5 h-3.5 text-[var(--green)] group-hover:rotate-12 transition-transform" />
+          <span>Inspect Auth 2.0</span>
         </button>
       </div>
     </header>

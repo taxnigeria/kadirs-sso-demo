@@ -22,6 +22,10 @@ import AdminEntitiesPage from "@/portals/admin/entities-page"
 import AdminTspsPage from "@/portals/admin/tsps-page"
 import AdminReportsPage from "@/portals/admin/reports-page"
 
+// Phase 11: Technical Architecture Transparency Suite
+import { ArchitectureInspectorDrawer } from "@/components/inspector/architecture-inspector-drawer"
+import { FloatingInspectorTrigger } from "@/components/inspector/floating-inspector-trigger"
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -79,6 +83,10 @@ export default function App() {
           <Route path="disputes" element={<AdminApprovalsPage />} />
         </Route>
       </Routes>
+
+      {/* Global Technical Architecture Transparency Suite (Phase 11) */}
+      <ArchitectureInspectorDrawer />
+      <FloatingInspectorTrigger />
     </BrowserRouter>
   )
 }
