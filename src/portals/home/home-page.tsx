@@ -41,7 +41,7 @@ export default function HomePage() {
             </Link>
 
             <Link
-              to="/admin/login"
+              to="/admin"
               className="flex items-center justify-center gap-1.5 border border-[var(--line)] bg-[var(--paper)] hover:bg-[var(--line-soft)] text-[var(--ink)] text-xs font-medium py-2.5 rounded-[var(--radius)] transition-colors"
             >
               <Lock className="w-3.5 h-3.5 text-[var(--green)]" />

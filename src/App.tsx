@@ -68,9 +68,10 @@ export default function App() {
         {/* PIT Portal — Standalone External TSP Application (Distinct e-Tax Financial UI) */}
         <Route path="pit" element={<RequireAuth><PITDashboard /></RequireAuth>} />
 
-        {/* Admin — with sidebar */}
+        {/* Admin Login — no sidebar */}
         <Route path="admin" element={<PortalShell portal={PORTALS.admin} noSidebar />}>
           <Route index element={<AdminLoginPage />} />
+          <Route path="login" element={<AdminLoginPage />} />
         </Route>
         <Route path="admin" element={<PortalShell portal={PORTALS.admin} />}>
           <Route path="dashboard" element={<AdminOverviewPage />} />
