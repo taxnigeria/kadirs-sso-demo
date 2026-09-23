@@ -51,11 +51,11 @@ function SSOTransitionModalContent({
       setIsBarActive(true)
     })
 
-    // 3. Auto-redirect on complete
+    // 3. Auto-redirect on complete (7 seconds)
     const navigateTimer = setTimeout(() => {
       onClose()
       navigate(targetTspUrl)
-    }, 2000)
+    }, 7000)
 
     return () => {
       cancelAnimationFrame(barFrame)
@@ -113,7 +113,7 @@ function SSOTransitionModalContent({
                 </span>
                 <div className="w-full h-1.5 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden relative">
                   <div
-                    className={`h-full bg-gradient-to-r from-[#1F6F4A] via-[#4FAE80] to-[#1F6F4A] transition-all duration-[2000ms] ease-out ${
+                    className={`h-full bg-gradient-to-r from-[#1F6F4A] via-[#4FAE80] to-[#1F6F4A] transition-all duration-[7000ms] ease-out ${
                       isBarActive ? 'w-full' : 'w-0'
                     }`}
                   />

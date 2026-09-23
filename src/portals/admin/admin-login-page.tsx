@@ -12,7 +12,8 @@ import {
   AlertTriangle,
   ArrowRight,
   Shield,
-  Key
+  Key,
+  Loader2
 } from 'lucide-react'
 import { useAdminEngine, DEMO_ADMIN_STAFF } from '@/engine/admin-engine'
 import { useEventLogger } from '@/engine/event-logger'
@@ -38,24 +39,15 @@ export default function AdminLoginPage() {
   // Active officer based on key
   const activeOfficer = DEMO_ADMIN_STAFF.find((s) => s.fido2KeyName.includes(selectedKeyId)) || DEMO_ADMIN_STAFF[0]
 
-  // Step 2 auto-redirect countdown
-  const [countdown, setCountdown] = useState(3)
-
+  // Step 2 auto-redirect timer (7 seconds)
   useEffect(() => {
-    let timer: ReturnType<typeof setInterval>
+    let timer: ReturnType<typeof setTimeout>
     if (view === 'step2_attribution') {
-      timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer)
-            navigate('/admin/dashboard')
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
+      timer = setTimeout(() => {
+        navigate('/admin/dashboard')
+      }, 7000)
     }
-    return () => clearInterval(timer)
+    return () => clearTimeout(timer)
   }, [view, navigate])
 
   // FIDO2 Key Touch Handler
@@ -86,7 +78,6 @@ export default function AdminLoginPage() {
     const success = await loginAdminWithFido2(activeOfficer.staffId, simulatedSignature)
 
     if (success) {
-      setCountdown(3)
       setView('step2_attribution')
     }
   }
@@ -348,12 +339,13 @@ export default function AdminLoginPage() {
                 onClick={() => navigate('/admin/dashboard')}
                 className="w-full py-3 px-4 bg-[var(--green)] hover:bg-[var(--green-deep)] text-white text-xs font-bold rounded-[var(--radius)] transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Enter Administrative Console ({countdown}s)</span>
+                <span>Enter Administrative Console</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-              <p className="text-center text-[10.5px] text-[var(--ink-soft)]">
-                Automatic redirect in {countdown} seconds...
-              </p>
+              <div className="flex items-center justify-center gap-2 text-[11px] text-[var(--ink-soft)] pt-1">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--green)]" />
+                <span>Redirecting to administrative console...</span>
+              </div>
             </div>
           </div>
         )}
