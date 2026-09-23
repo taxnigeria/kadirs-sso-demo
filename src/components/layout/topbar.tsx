@@ -1,9 +1,10 @@
 import { Link } from 'react-router'
-import { Sun, Moon, Code2, RotateCcw, User } from 'lucide-react'
+import { Sun, Moon, Code2, RotateCcw, User, Search } from 'lucide-react'
 import { useThemeStore } from '@/engine/theme-store'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
 import { useInspectorStore } from '@/engine/inspector-store'
+import { usePresentationStore } from '@/engine/presentation-store'
 import { type PortalConfig } from './portal-branding'
 
 interface TopbarProps {
@@ -12,7 +13,6 @@ interface TopbarProps {
 
 export function Topbar({ portal }: TopbarProps) {
   const { theme, toggleTheme } = useThemeStore()
-  const resetDemo = useAuthEngine((s) => s.resetDemo)
   const currentUser = useAuthEngine((s) => s.currentUser)
   const identity = useAuthEngine((s) => s.identity)
   const activePersona = useAuthEngine((s) => s.activePersona)
@@ -91,6 +91,20 @@ export function Topbar({ portal }: TopbarProps) {
           </div>
         )}
 
+        {/* Quick Persona Switcher & Command Palette Button */}
+        <button
+          type="button"
+          onClick={() => usePresentationStore.getState().openPalette()}
+          title="Quick Switch Persona or Portal (Cmd+K / Ctrl+K)"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-[var(--ink)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)] rounded-[var(--radius)] border border-[var(--line)] transition-colors cursor-pointer shadow-2xs group"
+        >
+          <Search className="w-3.5 h-3.5 text-[var(--green)] group-hover:scale-110 transition-transform" />
+          <span className="hidden md:inline font-medium">Quick Switch</span>
+          <kbd className="hidden sm:inline-flex items-center text-[10px] font-mono px-1 py-0.5 bg-[var(--paper)] border border-[var(--line)] rounded text-[var(--ink-soft)]">
+            ⌘K
+          </kbd>
+        </button>
+
         {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
@@ -108,12 +122,13 @@ export function Topbar({ portal }: TopbarProps) {
         {/* Reset Demo button */}
         <button
           onClick={() => {
-            if (confirm('Reset demo state back to pristine seed data?')) {
-              resetDemo()
+            if (confirm('Reset demo state back to pristine seed data? All modifications will be cleared.')) {
+              usePresentationStore.getState().resetAllDemoData()
               window.location.href = '/'
             }
           }}
-          title="Reset Demo Data"
+          title="Reset All Demo Data to Seed"
+          aria-label="Reset Demo Data"
           className="p-1.5 text-[var(--ink-soft)] hover:text-[var(--danger)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)] rounded-[var(--radius)] border border-[var(--line)] transition-colors cursor-pointer"
         >
           <RotateCcw className="w-4 h-4" />

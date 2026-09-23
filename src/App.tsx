@@ -26,6 +26,10 @@ import AdminReportsPage from "@/portals/admin/reports-page"
 import { ArchitectureInspectorDrawer } from "@/components/inspector/architecture-inspector-drawer"
 import { FloatingInspectorTrigger } from "@/components/inspector/floating-inspector-trigger"
 
+// Phase 12: Presentation Shell & Feedback
+import { CommandPalette } from "@/components/presentation/command-palette"
+import { Toaster } from "@/components/ui/sonner"
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -88,6 +92,10 @@ export default function App() {
       {/* Global Technical Architecture Transparency Suite (Phase 11) */}
       <ArchitectureInspectorDrawer />
       <FloatingInspectorTrigger />
+
+      {/* Presentation Shell: Command Palette & Global Notifications (Phase 12) */}
+      <CommandPalette />
+      <Toaster position="top-right" richColors />
     </BrowserRouter>
   )
 }

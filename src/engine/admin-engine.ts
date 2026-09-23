@@ -402,6 +402,7 @@ interface AdminEngineState {
   generateNdpaCarExport: () => NdpaCarExportData
   exportNdpaCarCsv: () => string
   generateDsrReport: () => Record<string, unknown>[]
+  resetAdminDemo: () => void
 }
 
 function loadState<T>(key: string, fallback: T): T {
@@ -984,6 +985,20 @@ export const useAdminEngine = create<AdminEngineState>((set, get) => {
           disposition: 'Audited portable JSON export downloaded'
         }
       ]
+    },
+
+    resetAdminDemo: () => {
+      localStorage.removeItem(STORAGE_KEY_ADMIN)
+      set({
+        currentAdmin: null,
+        makerCheckerItems: INITIAL_MAKER_CHECKER_ITEMS,
+        citizens: INITIAL_CITIZENS,
+        corporates: INITIAL_CORPORATE_ENTITIES,
+        agencies: INITIAL_AGENCY_ENTITIES,
+        tspClients: INITIAL_TSP_CLIENTS,
+        isBreakGlassActive: false,
+        breakGlassSessionReason: undefined
+      })
     }
   }
 })
