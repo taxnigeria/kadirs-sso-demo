@@ -124,3 +124,137 @@ export interface SystemEvent {
   details: Record<string, unknown>
   tspId?: string
 }
+
+// =========================================================================
+// PHASE 10: ADMINISTRATIVE TYPES & ENTERPRISE GOVERNANCE
+// =========================================================================
+
+export type AdminRole =
+  | 'super_admin'
+  | 'checker_officer'
+  | 'dispute_officer'
+  | 'compliance_auditor'
+
+export interface AdminUser {
+  id: string
+  name: string
+  email: string
+  role: AdminRole
+  department: string
+  staffId: string
+  fido2KeyName: string
+  lastLogin: string
+  assuranceLevel: 'AAL3'
+  isBreakGlass?: boolean
+}
+
+export type MakerCheckerCategory =
+  | 'agency_reg'
+  | 'officer_add'
+  | 'rep_transfer'
+  | 'disputed_account'
+  | 'identity_conflict'
+  | 'fraud_flag'
+
+export type MakerCheckerStatus =
+  | 'pending'
+  | 'approved'
+  | 'rejected'
+  | 'more_info_requested'
+
+export interface MakerCheckerItem {
+  id: string
+  caseNumber: string
+  category: MakerCheckerCategory
+  title: string
+  entityName: string
+  applicantName: string
+  applicantNINMasked: string // The Golden Rule: Strictly masked (123•••••901)
+  submittedAt: string
+  details: Record<string, unknown>
+  status: MakerCheckerStatus
+  decisionReason?: string
+  decisionNotes?: string
+  decidedBy?: string
+  decidedAt?: string
+}
+
+export interface CitizenAccountSummary {
+  citizenId: string
+  legalName: string
+  maskedNIN: string          // The Golden Rule: Strictly masked
+  email: string
+  phone: string
+  taxOffice: string
+  lga: string
+  profileCompleteness: number
+  isSuspended: boolean
+  suspensionReason?: string
+  suspendedAt?: string
+  forcePasswordReset: boolean
+  force2faReset: boolean
+  lastLogin: string
+}
+
+export interface CorporateEntityRecord {
+  id: string
+  rcNumber: string
+  companyName: string
+  tin: string
+  industry: string
+  status: 'active' | 'suspended' | 'dormant'
+  registeredAddress: string
+  authorizedRepName: string
+  authorizedRepNINMasked: string
+  authorizedRepCitizenId: string
+  boundSince: string
+}
+
+export interface AgencyEntityRecord {
+  id: string
+  agencyName: string
+  acronym: string
+  gazetteRef: string
+  issuingMinistry: string
+  authorizedOfficerName: string
+  authorizedOfficerEmail: string
+  status: 'active' | 'pending_gazette' | 'suspended'
+  requestedScopes: string[]
+  approvedAt?: string
+}
+
+export interface TspClientRecord {
+  id: string
+  name: string
+  audience: string
+  status: 'active' | 'degraded' | 'offline'
+  registeredAt: string
+  redirectUris: string[]
+  activeScopes: string[]
+  clientSecretMasked: string
+  secretLastRotatedAt: string
+  previousSecretExpiresAt?: string
+}
+
+export interface SystemTelemetryMetrics {
+  authSuccessRate: number         // e.g. 99.4%
+  otpDeliveryRate: number         // e.g. 98.8%
+  nimcDojahLatencyMs: number      // e.g. 1420ms
+  kafkaConsumerLagSeconds: number // e.g. 0.02s
+  ndpaComplianceScore: number     // e.g. 100%
+  thirtyDayUptimePercentage: number // e.g. 99.98%
+  totalEventsLogged24h: number
+}
+
+export interface NdpaCarExportData {
+  reportId: string
+  periodYear: number
+  generatedAt: string
+  controllerName: string
+  dpoContact: string
+  totalDataSubjects: number
+  consentCaptureRate: number
+  erasureRequestsCount: number
+  crossBorderTransfersCount: number
+  securityAuditStatus: 'VERIFIED_AAL3' | 'COMPLIANT'
+}

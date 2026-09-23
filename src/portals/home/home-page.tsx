@@ -18,7 +18,7 @@ export default function HomePage() {
           Centralised Identity &amp; Access Platform
         </h1>
 
-        <p className="text-xs sm:text-xs text-[var(--ink-soft)] leading-relaxed max-w-[55ch] mx-auto">
+        <p className="text-xs sm:text-xs text-[var(--ink-soft)] leading-relaxed max-w-[46ch] mx-auto">
           One unified citizen account for all government services and tax filings.
         </p>
 

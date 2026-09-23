@@ -65,6 +65,9 @@ export default function App() {
         </Route>
         <Route path="admin" element={<PortalShell portal={PORTALS.admin} />}>
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="approvals" element={<AdminDashboard />} />
+          <Route path="disputes" element={<AdminDashboard />} />
+          <Route path="audit" element={<AdminDashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>
