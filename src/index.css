@@ -103,6 +103,7 @@
   --color-line: var(--line);
   --color-line-soft: var(--line-soft);
   --color-danger: var(--danger);
+  --color-kadirs-navy: #152A2E;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);

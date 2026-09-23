@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { Sun, Moon, Search, RotateCcw, User } from 'lucide-react'
 import { useThemeStore } from '@/engine/theme-store'
 import { useAuthEngine } from '@/engine/auth-engine'
+import { useAdminEngine } from '@/engine/admin-engine'
 import { type PortalConfig } from './portal-branding'
 
 interface TopbarProps {
@@ -14,6 +15,8 @@ export function Topbar({ portal }: TopbarProps) {
   const currentUser = useAuthEngine((s) => s.currentUser)
   const identity = useAuthEngine((s) => s.identity)
   const activePersona = useAuthEngine((s) => s.activePersona)
+  const currentAdmin = useAdminEngine((s) => s.currentAdmin)
+  const logoutAdmin = useAdminEngine((s) => s.logoutAdmin)
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur-md px-6 py-3.5 flex items-center justify-between transition-colors">
@@ -62,6 +65,29 @@ export function Topbar({ portal }: TopbarProps) {
               ({activePersona})
             </span>
           </Link>
+        )}
+
+        {/* Admin Session Pill if logged into admin console */}
+        {currentAdmin && portal.id === 'admin' && (
+          <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-[var(--radius)] bg-[var(--paper-raised)] border border-[var(--line)] text-xs shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]" />
+            <span className="text-[var(--ink)] font-medium">
+              {currentAdmin.name}
+            </span>
+            <span className="text-[10px] text-[var(--green)] font-semibold uppercase tracking-wider">
+              ({currentAdmin.role.replace('_', ' ')})
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                logoutAdmin()
+                window.location.href = '/admin'
+              }}
+              className="ml-1 text-red-600 hover:text-red-700 text-[11px] font-semibold cursor-pointer hover:underline"
+            >
+              Sign Out
+            </button>
+          </div>
         )}
 
         {/* Theme Toggle Button */}

@@ -99,8 +99,8 @@ export const PORTALS: Record<string, PortalConfig> = {
     shortName: "Admin",
     description: "Internal administration & governance",
     icon: Lock,
-    color: "bg-kadirs-navy",
-    textColor: "text-kadirs-navy",
+    color: "bg-[#152A2E] dark:bg-emerald-800",
+    textColor: "text-[#152A2E] dark:text-emerald-400",
     navItems: [
       { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
       { label: "Approval Queue", path: "/admin/approvals", icon: CheckSquare },

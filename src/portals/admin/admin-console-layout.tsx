@@ -6,12 +6,6 @@ import {
   Flame,
   ShieldAlert,
   Cpu,
-  Activity,
-  CheckSquare,
-  Users,
-  Building2,
-  Layers,
-  FileSpreadsheet,
   Clock
 } from 'lucide-react'
 import { useAdminEngine } from '@/engine/admin-engine'
@@ -27,9 +21,8 @@ export function AdminConsoleLayout({ children }: AdminConsoleLayoutProps) {
   const logoutAdmin = useAdminEngine((s) => s.logoutAdmin)
   const isBreakGlassActive = useAdminEngine((s) => s.isBreakGlassActive)
   const deactivateBreakGlass = useAdminEngine((s) => s.deactivateBreakGlass)
-  const makerCheckerItems = useAdminEngine((s) => s.makerCheckerItems)
 
-  const pendingApprovalsCount = makerCheckerItems.filter((i) => i.status === 'pending').length
+  const isDashboard = location.pathname === '/admin/dashboard' || location.pathname === '/admin'
 
   // 15-Minute Idle Session Timer (900 seconds)
   const [secondsRemaining, setSecondsRemaining] = useState(892)
@@ -87,20 +80,6 @@ export function AdminConsoleLayout({ children }: AdminConsoleLayoutProps) {
   const keyIdMatch = currentAdmin.fido2KeyName.match(/#(KD-FIDO-\d+)/)
   const shortKeyId = keyIdMatch ? keyIdMatch[1] : 'KD-FIDO-9182'
 
-  const navLinks = [
-    { label: 'Overview & Telemetry', path: '/admin/dashboard', icon: Activity },
-    {
-      label: 'Approval Queue',
-      path: '/admin/approvals',
-      icon: CheckSquare,
-      badge: pendingApprovalsCount > 0 ? pendingApprovalsCount : undefined
-    },
-    { label: 'Citizen Accounts', path: '/admin/citizens', icon: Users },
-    { label: 'Entities (Corp / Agency)', path: '/admin/entities', icon: Building2 },
-    { label: 'TSP OAuth Registry', path: '/admin/tsps', icon: Layers },
-    { label: 'Audit Log & NDPA CAR', path: '/admin/reports', icon: FileSpreadsheet }
-  ]
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-5 animate-in fade-in duration-300">
       {/* ========================================================================= */}
@@ -133,116 +112,89 @@ export function AdminConsoleLayout({ children }: AdminConsoleLayoutProps) {
       )}
 
       {/* ========================================================================= */}
-      {/* THE SESSION FRAME: OFFICER ATTRIBUTION + LIVE SESSION CONSTRAINTS          */}
+      {/* USER CARD: ONLY SHOWN ON DASHBOARD AS REQUESTED                          */}
       {/* ========================================================================= */}
-      <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-4 sm:p-5 rounded-[var(--radius)] shadow-2xs space-y-3">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-full bg-[var(--green)]/10 text-[var(--green)] flex items-center justify-center font-bold text-sm shrink-0 border border-[var(--green)]/20 shadow-2xs">
-              {currentAdmin.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-            </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs text-[var(--ink-soft)] font-medium">Operating as:</span>
-                <h1 className="font-sans font-bold text-base text-[var(--ink)] leading-snug">
-                  {currentAdmin.name}
-                </h1>
-                <span className="px-2 py-0.5 rounded text-[10.5px] font-bold uppercase tracking-wider bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20">
-                  {currentAdmin.role.replace('_', ' ')}
-                </span>
-                <span className="px-2 py-0.5 rounded text-[10.5px] font-mono bg-blue-50 text-blue-700 border border-blue-200">
-                  {shortKeyId}
-                </span>
+      {isDashboard && (
+        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-4 sm:p-5 rounded-[var(--radius)] shadow-2xs space-y-3 animate-in fade-in duration-200">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-full bg-[var(--green)]/10 text-[var(--green)] flex items-center justify-center font-bold text-sm shrink-0 border border-[var(--green)]/20 shadow-2xs">
+                {currentAdmin.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
               </div>
-              <p className="text-xs text-[var(--ink-soft)] mt-0.5 flex flex-wrap items-center gap-1.5">
-                <span>Account: <code className="font-mono text-[var(--ink)] font-semibold">{currentAdmin.email}</code></span>
-                <span>&middot;</span>
-                <span>Staff: <code className="font-mono text-[var(--ink)]">{currentAdmin.staffId}</code></span>
-                <span>&middot;</span>
-                <span>{currentAdmin.department}</span>
-                <span>&middot;</span>
-                <span className="text-[var(--green)] flex items-center gap-1">
-                  <Cpu className="w-3 h-3" />
-                  <span>{currentAdmin.fido2KeyName.split(' ')[0]}</span>
-                </span>
-              </p>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs text-[var(--ink-soft)] font-medium">Operating as:</span>
+                  <h1 className="font-sans font-bold text-base text-[var(--ink)] leading-snug">
+                    {currentAdmin.name}
+                  </h1>
+                  <span className="px-2 py-0.5 rounded text-[10.5px] font-bold uppercase tracking-wider bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20">
+                    {currentAdmin.role.replace('_', ' ')}
+                  </span>
+                  <span className="px-2 py-0.5 rounded text-[10.5px] font-mono bg-blue-50 text-blue-700 border border-blue-200">
+                    {shortKeyId}
+                  </span>
+                </div>
+                <p className="text-xs text-[var(--ink-soft)] mt-1 flex flex-wrap items-center gap-1.5">
+                  <span>Account: <code className="font-mono text-[var(--ink)] font-semibold">{currentAdmin.email}</code></span>
+                  <span>&middot;</span>
+                  <span>Staff: <code className="font-mono text-[var(--ink)]">{currentAdmin.staffId}</code></span>
+                  <span>&middot;</span>
+                  <span>{currentAdmin.department}</span>
+                  <span>&middot;</span>
+                  <span className="text-[var(--green)] flex items-center gap-1">
+                    <Cpu className="w-3 h-3" />
+                    <span>{currentAdmin.fido2KeyName.split(' ')[0]}</span>
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 self-end md:self-center">
+              {/* Live Idle Countdown */}
+              <div className="px-3 py-1.5 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] flex items-center gap-2 text-xs">
+                <Clock className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+                <span className="text-[var(--ink-soft)] font-medium">Locks in:</span>
+                <span className="font-mono font-bold text-[var(--ink)]">{formatCountdown(secondsRemaining)}</span>
+              </div>
+
+              {/* Single Session Constraint Badge */}
+              <span className="hidden xl:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius)] text-[11px] bg-slate-100 text-slate-700 border border-slate-200 font-medium">
+                Single Active Session
+              </span>
+
+              {/* Sign Out Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  logoutAdmin()
+                  navigate('/admin')
+                }}
+                className="px-3 py-1.5 border border-[var(--line)] bg-[var(--paper)] hover:bg-[var(--line-soft)] text-xs font-semibold rounded-[var(--radius)] text-red-700 hover:text-red-800 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out Admin</span>
+              </button>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 self-end md:self-center">
-            {/* Live Idle Countdown */}
-            <div className="px-3 py-1.5 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] flex items-center gap-2 text-xs">
-              <Clock className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
-              <span className="text-[var(--ink-soft)] font-medium">Locks in:</span>
-              <span className="font-mono font-bold text-[var(--ink)]">{formatCountdown(secondsRemaining)}</span>
+          {/* Hard Invariants Statutory Compliance Bar */}
+          <div className="pt-2 border-t border-[var(--line-soft)] flex flex-wrap items-center justify-between gap-2 text-[11.5px]">
+            <div className="flex items-center gap-2 text-[var(--ink)]">
+              <ShieldAlert className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span className="font-semibold text-xs">Kaduna State Identity Invariants:</span>
+              <span className="text-[var(--ink-soft)] hidden lg:inline text-[11px]">
+                Unmasked NINs strictly blinded &middot; Audit logs immutable &middot; Self-auditing prohibited &middot; Logged before effect.
+              </span>
             </div>
-
-            {/* Single Session Constraint Badge */}
-            <span className="hidden xl:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius)] text-[11px] bg-slate-100 text-slate-700 border border-slate-200 font-medium">
-              Single Active Session
-            </span>
-
-            {/* Sign Out Button */}
-            <button
-              type="button"
-              onClick={() => {
-                logoutAdmin()
-                navigate('/admin')
-              }}
-              className="px-3 py-1.5 border border-[var(--line)] bg-[var(--paper)] hover:bg-[var(--line-soft)] text-xs font-semibold rounded-[var(--radius)] text-red-700 hover:text-red-800 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Sign Out Admin</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Hard Invariants Statutory Compliance Bar */}
-        <div className="pt-2 border-t border-[var(--line-soft)] flex flex-wrap items-center justify-between gap-2 text-[11.5px]">
-          <div className="flex items-center gap-2 text-[var(--ink)]">
-            <ShieldAlert className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span className="font-semibold text-xs">Kaduna State Identity Invariants:</span>
-            <span className="text-[var(--ink-soft)] hidden lg:inline text-[11px]">
-              Unmasked NINs strictly blinded &middot; Audit logs immutable &middot; Self-auditing prohibited &middot; Logged before effect.
+            <span className="font-mono text-[10px] text-[var(--green)] bg-[var(--green)]/10 border border-[var(--green)]/20 px-2 py-0.5 rounded font-semibold">
+              NDPA 2023 Sec. 24 Compliant &middot; AAL3
             </span>
           </div>
-          <span className="font-mono text-[10px] text-[var(--green)] bg-[var(--green)]/10 border border-[var(--green)]/20 px-2 py-0.5 rounded font-semibold">
-            NDPA 2023 Sec. 24 Compliant &middot; AAL3
-          </span>
         </div>
-      </div>
+      )}
 
       {/* ========================================================================= */}
-      {/* SIX SPOKES SUB-NAVIGATION RIBBON                                           */}
-      {/* ========================================================================= */}
-      <div className="flex items-center gap-1.5 border-b border-[var(--line)] overflow-x-auto pb-1 text-xs">
-        {navLinks.map((link) => {
-          const isActive = location.pathname === link.path
-          const Icon = link.icon
-          return (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`px-3.5 py-2 font-medium rounded-t-[var(--radius)] border-b-2 flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap ${
-                isActive
-                  ? 'border-[var(--green)] text-[var(--green)] font-semibold bg-[var(--paper-raised)]'
-                  : 'border-transparent text-[var(--ink-soft)] hover:text-[var(--ink)]'
-              }`}
-            >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{link.label}</span>
-              {link.badge !== undefined && (
-                <span className="px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-800 text-[10px] font-bold">
-                  {link.badge}
-                </span>
-              )}
-            </Link>
-          )
-        })}
-      </div>
-
-      {/* ========================================================================= */}
-      {/* SPOKE PAGE CONTENT SLOT                                                   */}
+      {/* SPOKE PAGE CONTENT SLOT (TAB ROW HIDDEN AS REQUESTED)                     */}
       {/* ========================================================================= */}
       <div className="animate-in fade-in duration-200">
         {children}
