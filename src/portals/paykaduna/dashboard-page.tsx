@@ -80,9 +80,6 @@ export default function PayKadunaDashboard() {
             <h1 className="font-sans font-semibold text-[24px] sm:text-[28px] text-[var(--ink)] tracking-tight leading-tight">
               Good day, {citizenName}
             </h1>
-            <p className="text-sm text-[var(--ink-soft)] mt-1.5 max-w-[65ch] leading-relaxed">
-              Welcome to PayKaduna. All municipal levies, land charges, and state taxes are reconciled under your verified citizen identity.
-            </p>
 
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4 text-xs text-[var(--ink-soft)]">
               <span><strong className="text-[var(--ink)]">Tax Office:</strong> {taxOffice}</span>

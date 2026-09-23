@@ -356,8 +356,8 @@ export default function ProfilePage() {
         {/* 6 Sub-Navigation Tabs */}
         <div className="flex items-center gap-1 mt-6 pt-4 border-t border-[var(--line-soft)] overflow-x-auto">
           {[
-            { id: 'identity', label: 'Identity & Biometrics', icon: ShieldCheck },
-            { id: 'contact', label: 'Contact Details (24h Hold)', icon: Phone },
+            { id: 'identity', label: 'Identity', icon: ShieldCheck },
+            { id: 'contact', label: 'Contact Details', icon: Phone },
             { id: 'address', label: 'Address & Tax Office', icon: MapPin },
             { id: 'sharing', label: 'Data Sharing & NDPA', icon: Layers },
             { id: 'security', label: 'Security & Sessions', icon: KeyRound },

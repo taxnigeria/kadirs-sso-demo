@@ -14,12 +14,12 @@ export default function HomePage() {
           KADIRS Auth System 2.0
         </span>
 
-        <h1 className="font-sans font-semibold text-[22px] sm:text-[26px] text-[var(--ink)] tracking-tight mt-3 mb-2">
+        <h1 className="font-sans font-semibold text-[20px] sm:text-[24px] text-[var(--ink)] tracking-tight mt-3 mb-2">
           Centralised Identity &amp; Access Platform
         </h1>
 
-        <p className="text-xs sm:text-sm text-[var(--ink-soft)] leading-relaxed max-w-[46ch] mx-auto">
-          One unified citizen account for PayKaduna, motor vehicle licensing (KADVREG), and Personal Income Tax (PIT) filings.
+        <p className="text-xs sm:text-xs text-[var(--ink-soft)] leading-relaxed max-w-[55ch] mx-auto">
+          One unified citizen account for all government services and tax filings.
         </p>
 
         <div className="mt-6 pt-5 border-t border-[var(--line-soft)] space-y-2.5">

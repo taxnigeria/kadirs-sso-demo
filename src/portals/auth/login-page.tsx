@@ -234,7 +234,7 @@ export default function LoginPage() {
           Sign in to Kaduna State Services
         </h1>
         <p className="text-[13.5px] text-[var(--ink-soft)] leading-relaxed max-w-[48ch] mx-auto">
-          One unified citizen account for PayKaduna, motor vehicle licensing, and state tax filings.
+          One unified citizen account for all state services and tax filings.
         </p>
       </div>
 
@@ -294,9 +294,6 @@ export default function LoginPage() {
                   required
                 />
               </div>
-              <span className="text-[11px] text-[var(--ink-soft)] mt-1 block">
-                Official KADIRS login credential requires your registered email address.
-              </span>
             </div>
 
             {/* Password Input */}
@@ -361,11 +358,11 @@ export default function LoginPage() {
             {/* Registration link */}
             <div className="text-center pt-3 border-t border-[var(--line-soft)]">
               <span className="text-xs text-[var(--ink-soft)]">
-                Don&apos;t have a verified Kaduna citizen account yet?{' '}
+                Don&apos;t have a Kaduna citizen account yet? &nbsp;&nbsp;&nbsp;
               </span>
               <Link
                 to="/auth/register"
-                className="text-xs text-[var(--green)] font-semibold hover:underline"
+                className="text-xs text-[var(--green)]ml-3 font-semibold hover:underline"
               >
                 Register with NIN &rarr;
               </Link>

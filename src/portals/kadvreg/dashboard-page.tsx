@@ -282,16 +282,6 @@ export default function KadVRegDashboard() {
                 <code className="bg-emerald-100 text-emerald-900 px-1 py-0.5 rounded font-mono">{citizenId}</code>
               </span>
             </div>
-
-            <div className="flex items-center gap-3 shrink-0">
-              <span className="text-[11px] text-emerald-700">Zero repeated password prompts</span>
-              <Link
-                to="/paykaduna"
-                className="text-emerald-900 font-bold hover:underline flex items-center gap-1"
-              >
-                <span>← Back to PayKaduna Hub</span>
-              </Link>
-            </div>
           </div>
         </div>
       )}

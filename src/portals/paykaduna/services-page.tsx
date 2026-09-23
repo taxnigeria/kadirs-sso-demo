@@ -381,7 +381,6 @@ export default function ServicesPage() {
         <div className="flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-[var(--line)]">
           <span className="text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mr-2 shrink-0 flex items-center gap-1">
             <Filter className="w-3 h-3" />
-            Categories:
           </span>
           {categories.map((c) => (
             <button
