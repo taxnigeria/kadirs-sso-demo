@@ -230,7 +230,7 @@ export default function ProfilePage() {
       {/* PENDING NOTIFICATION BANNERS (24h Security Hold or 30-Day Erasure)        */}
       {/* ========================================================================= */}
       {pendingContactChange && (
-        <div className="p-4 bg-amber-50 border border-amber-300 rounded-[var(--radius)] text-xs text-amber-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-start gap-2.5">
             <Clock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
             <div>
@@ -246,29 +246,29 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={cancelContactChange}
-              className="px-2.5 py-1.5 rounded border border-amber-300 bg-white hover:bg-amber-100 text-amber-900 font-semibold cursor-pointer transition-colors"
+              className="px-3 py-1.5 rounded-full border border-amber-300 bg-white hover:bg-amber-100 text-amber-900 font-semibold cursor-pointer transition-colors"
             >
               Cancel Hold
             </button>
             <button
               type="button"
               onClick={applyContactChangeImmediately}
-              className="px-2.5 py-1.5 rounded bg-amber-700 hover:bg-amber-800 text-white font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+              className="px-3 py-1.5 rounded-full bg-amber-700 hover:bg-amber-800 text-white font-semibold flex items-center gap-1 cursor-pointer transition-colors"
               title="Presentation shortcut"
             >
               <Sparkles className="w-3 h-3" />
-              <span>[⚡ Demo Fast-Track]</span>
+              <span>[Demo Fast-Track]</span>
             </button>
           </div>
         </div>
       )}
 
       {pendingDeletion && (
-        <div className="p-4 bg-red-50 border border-red-300 rounded-[var(--radius)] text-xs text-red-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-red-700 shrink-0 mt-0.5" />
+            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
             <div>
-              <strong className="font-semibold block text-red-900">
+              <strong className="font-semibold block text-rose-900">
                 Account Deletion in Progress (30-Day Grace Period)
               </strong>
               <span>
@@ -280,7 +280,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={cancelAccountDeletion}
-            className="px-3 py-1.5 rounded bg-red-700 hover:bg-red-800 text-white font-semibold cursor-pointer transition-colors shrink-0"
+            className="px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-semibold cursor-pointer transition-colors shrink-0"
           >
             Cancel Deletion &amp; Keep Account
           </button>
@@ -290,11 +290,11 @@ export default function ProfilePage() {
       {/* ========================================================================= */}
       {/* CITIZEN PROFILE HERO CARD                                                 */}
       {/* ========================================================================= */}
-      <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-5 sm:p-6 shadow-xs">
+      <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
           {/* Avatar & Identification */}
           <div className="flex items-center gap-4">
-            <div className="relative w-16 h-16 rounded-full border-2 border-[var(--green)] overflow-hidden bg-[var(--line-soft)] shrink-0 flex items-center justify-center">
+            <div className="relative w-16 h-16 rounded-full border-2 border-[#1AA260] overflow-hidden bg-[var(--line-soft)] shrink-0 flex items-center justify-center">
               {identity?.photoUrl ? (
                 <img
                   src={identity.photoUrl}
@@ -302,9 +302,9 @@ export default function ProfilePage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <ShieldCheck className="w-8 h-8 text-[var(--green)]" />
+                <ShieldCheck className="w-8 h-8 text-[#1AA260]" />
               )}
-              <div className="absolute bottom-0 inset-x-0 bg-[var(--green)] text-white text-[8px] font-bold text-center py-0.5 uppercase tracking-tighter">
+              <div className="absolute bottom-0 inset-x-0 bg-[#1AA260] text-white text-[8px] font-bold text-center py-0.5 uppercase tracking-tighter">
                 NIMC
               </div>
             </div>
@@ -314,12 +314,12 @@ export default function ProfilePage() {
                 <h1 className="font-sans font-bold text-xl text-[var(--ink)] tracking-tight">
                   {citizenName}
                 </h1>
-                <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20 px-2 py-0.5 rounded-[var(--radius)]">
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-emerald-50 text-[#1AA260] border border-emerald-200 px-2.5 py-0.5 rounded-full">
                   <CheckCircle2 className="w-3 h-3" />
                   NIMC Verified (Assurance Level 2)
                 </span>
               </div>
-              <p className="text-xs text-[var(--ink-soft)] flex flex-wrap items-center gap-x-4 gap-y-0.5">
+              <p className="text-xs text-[var(--gray-500)] flex flex-wrap items-center gap-x-4 gap-y-0.5">
                 <span>
                   Citizen ID: <strong className="font-mono text-[var(--ink)]">{citizenId}</strong>
                 </span>
@@ -332,20 +332,20 @@ export default function ProfilePage() {
           </div>
 
           {/* Profile Completeness Meter */}
-          <div className="w-full md:w-56 bg-[var(--paper)] p-3 rounded-[var(--radius)] border border-[var(--line)] text-xs space-y-1.5">
+          <div className="w-full md:w-56 bg-[var(--paper)] p-3.5 rounded-2xl border border-[var(--gray-200)] text-xs space-y-1.5">
             <div className="flex items-center justify-between font-semibold">
-              <span className="text-[var(--ink-soft)] text-[11px] uppercase tracking-wider">
+              <span className="text-[var(--gray-500)] text-[11px] uppercase tracking-wider">
                 Profile Completeness
               </span>
-              <span className="font-mono text-[var(--green)]">{completeness}%</span>
+              <span className="font-mono text-[#1AA260] font-bold">{completeness}%</span>
             </div>
-            <div className="w-full h-2 bg-[var(--line-soft)] rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-[var(--gray-200)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-[var(--green)] transition-all duration-500 rounded-full"
+                className="h-full bg-[#1AA260] transition-all duration-500 rounded-full"
                 style={{ width: `${completeness}%` }}
               />
             </div>
-            <span className="text-[10px] text-[var(--ink-soft)] block">
+            <span className="text-[10px] text-[var(--gray-500)] block">
               {completeness === 100
                 ? '✓ All central & TSP profiles complete'
                 : 'Supplemental fields needed for specific TSPs'}
@@ -354,7 +354,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 6 Sub-Navigation Tabs */}
-        <div className="flex items-center gap-1 mt-6 pt-4 border-t border-[var(--line-soft)] overflow-x-auto">
+        <div className="flex items-center gap-1.5 mt-6 pt-4 border-t border-[var(--gray-200)] overflow-x-auto">
           {[
             { id: 'identity', label: 'Identity', icon: ShieldCheck },
             { id: 'contact', label: 'Contact Details', icon: Phone },
@@ -372,14 +372,14 @@ export default function ProfilePage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as ProfileTab)}
-                className={`px-3 py-2 rounded-[var(--radius)] text-xs font-medium flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                className={`px-3.5 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
                   isActive
                     ? isDanger
-                      ? 'bg-red-700 text-white font-semibold'
-                      : 'bg-[var(--green)] text-white font-semibold'
+                      ? 'bg-rose-600 text-white'
+                      : 'bg-[#1AA260] text-white'
                     : isDanger
-                    ? 'text-red-700 hover:bg-red-50'
-                    : 'text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--paper)]'
+                    ? 'text-rose-600 hover:bg-rose-50'
+                    : 'text-[var(--gray-600)] hover:text-[var(--ink)] hover:bg-[var(--paper)]'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -394,8 +394,8 @@ export default function ProfilePage() {
       {/* TAB 1: IDENTITY & BIOMETRICS (LOCKED LAYER 1)                             */}
       {/* ========================================================================= */}
       {activeTab === 'identity' && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--line-soft)] pb-4">
+        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--gray-200)] pb-4">
             <div>
               <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
                 <Lock className="w-4 h-4 text-[var(--green)]" />
@@ -496,13 +496,13 @@ export default function ProfilePage() {
       {/* TAB 2: CONTACT DETAILS (24-HOUR SECURITY WINDOW)                          */}
       {/* ========================================================================= */}
       {activeTab === 'contact' && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 space-y-6">
-          <div className="border-b border-[var(--line-soft)] pb-4">
+        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+          <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
-              <Phone className="w-4 h-4 text-[var(--green)]" />
+              <Phone className="w-4 h-4 text-[#1AA260]" />
               <span>Contact Attributes &amp; 24-Hour Security Hold Window</span>
             </h2>
-            <p className="text-xs text-[var(--ink-soft)] mt-0.5">
+            <p className="text-xs text-[var(--gray-500)] mt-0.5">
               Manage your registered email and phone number under NDPA fraud prevention protocols.
             </p>
           </div>
@@ -667,19 +667,19 @@ export default function ProfilePage() {
       {/* TAB 3: ADDRESS & TAX OFFICE (AUTOMATIC REASSIGNMENT)                      */}
       {/* ========================================================================= */}
       {activeTab === 'address' && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 space-y-6">
-          <div className="border-b border-[var(--line-soft)] pb-4">
+        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+          <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[var(--green)]" />
+              <MapPin className="w-4 h-4 text-[#1AA260]" />
               <span>Residency &amp; Automatic Tax Jurisdiction Reassignment</span>
             </h2>
-            <p className="text-xs text-[var(--ink-soft)] mt-0.5">
+            <p className="text-xs text-[var(--gray-500)] mt-0.5">
               Kaduna State Revenue Law mandates taxation according to residency. Modifying your LGA automatically updates your assigned KADIRS Tax Office.
             </p>
           </div>
 
           {addressSavedSuccess && (
-            <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-[var(--radius)] text-xs flex items-center gap-2">
+            <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl text-xs flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>
                 <strong>Tax Office Reassigned:</strong> Your residential jurisdiction and assigned office have been updated in the state central database.
@@ -697,7 +697,7 @@ export default function ProfilePage() {
                 type="text"
                 value={addressInput}
                 onChange={(e) => setAddressInput(e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] focus:outline-hidden focus:border-[var(--green)]"
+                className="w-full px-3.5 py-2.5 text-xs border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] focus:outline-hidden focus:border-[#1AA260]"
                 required
               />
             </div>
@@ -710,7 +710,7 @@ export default function ProfilePage() {
               <select
                 value={selectedLga}
                 onChange={(e) => setSelectedLga(e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] focus:outline-hidden focus:border-[var(--green)] font-medium"
+                className="w-full px-3.5 py-2.5 text-xs border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] focus:outline-hidden focus:border-[#1AA260] font-medium"
               >
                 {KADUNA_LGAS.map((lga) => (
                   <option key={lga} value={lga}>
@@ -721,22 +721,22 @@ export default function ProfilePage() {
             </div>
 
             {/* Dynamic Tax Office Indicator */}
-            <div className="p-4 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] text-xs space-y-1">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-soft)] block">
+            <div className="p-4 bg-[var(--paper)] border border-[var(--gray-200)] rounded-2xl text-xs space-y-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--gray-500)] block">
                 Designated KADIRS Tax Jurisdiction (Auto-Calculated)
               </span>
-              <div className="text-sm font-semibold text-[var(--green)] flex items-center gap-2">
+              <div className="text-sm font-semibold text-[#1AA260] flex items-center gap-2">
                 <Building2 className="w-4 h-4" />
                 <span>{dynamicAssignedTaxOffice}</span>
               </div>
-              <span className="text-[10px] text-[var(--ink-soft)] block pt-1">
+              <span className="text-[10px] text-[var(--gray-500)] block pt-1">
                 All personal income tax assessments and direct revenue filings will be handled by this office.
               </span>
             </div>
 
             <button
               type="submit"
-              className="px-5 py-2.5 bg-[var(--green)] hover:bg-[var(--green-deep)] text-white text-xs font-semibold rounded-[var(--radius)] transition-colors cursor-pointer shadow-2xs"
+              className="px-6 py-2.5 bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-semibold rounded-full transition-colors cursor-pointer"
             >
               Save Address &amp; Reassign Tax Jurisdiction
             </button>
@@ -748,19 +748,19 @@ export default function ProfilePage() {
       {/* TAB 4: DATA SHARING & NDPA CONSENT MANAGEMENT                             */}
       {/* ========================================================================= */}
       {activeTab === 'sharing' && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 space-y-6">
-          <div className="border-b border-[var(--line-soft)] pb-4">
+        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+          <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
-              <Layers className="w-4 h-4 text-[var(--green)]" />
+              <Layers className="w-4 h-4 text-[#1AA260]" />
               <span>NDPA 2023 Statutory Consent &amp; Data Sharing Center</span>
             </h2>
-            <p className="text-xs text-[var(--ink-soft)] mt-0.5">
+            <p className="text-xs text-[var(--gray-500)] mt-0.5">
               Review and revoke authorization grants across connected state services in full compliance with the Nigeria Data Protection Act 2023.
             </p>
           </div>
 
           {revokedTspId && (
-            <div className="p-3.5 bg-amber-50 border border-amber-200 text-amber-950 rounded-[var(--radius)] text-xs flex items-center gap-2">
+            <div className="p-3.5 bg-amber-50 border border-amber-200 text-amber-950 rounded-xl text-xs flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-amber-700 shrink-0" />
               <span>
                 <strong>Access Revoked:</strong> Consent for <code className="font-mono">{revokedTspId}</code> was withdrawn. An HMAC-SHA256 webhook was dispatched to purge local caches.
@@ -800,33 +800,33 @@ export default function ProfilePage() {
               return (
                 <div
                   key={tsp.id}
-                  className={`p-4 rounded-[var(--radius)] border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all ${
+                  className={`p-5 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all ${
                     isConnected
-                      ? 'border-[var(--line)] bg-[var(--paper)]'
-                      : 'border-dashed border-[var(--line)] bg-slate-50 opacity-60'
+                      ? 'border-[var(--gray-200)] bg-[var(--paper)]'
+                      : 'border-dashed border-[var(--gray-200)] bg-slate-50 opacity-60'
                   }`}
                 >
                   <div className="space-y-1.5 max-w-xl">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-sm text-[var(--ink)]">{tsp.name}</span>
-                      <span className="text-[10px] font-mono uppercase bg-[var(--line-soft)] px-2 py-0.5 rounded text-[var(--ink-soft)]">
+                      <span className="text-[10px] font-mono uppercase bg-[var(--gray-100)] px-2 py-0.5 rounded text-[var(--gray-600)]">
                         {tsp.id}
                       </span>
                       {isConnected ? (
-                        <span className="text-[10px] font-semibold text-[var(--green)] bg-[var(--green)]/10 px-2 py-0.5 rounded border border-[var(--green)]/20">
+                        <span className="text-[10px] font-semibold text-[#1AA260] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                           ✓ Authorized
                         </span>
                       ) : (
-                        <span className="text-[10px] font-semibold text-slate-500 bg-slate-200 px-2 py-0.5 rounded">
+                        <span className="text-[10px] font-semibold text-slate-500 bg-slate-200 px-2.5 py-0.5 rounded-full">
                           Revoked
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-[var(--ink-soft)]">{tsp.desc}</p>
+                    <p className="text-xs text-[var(--gray-600)]">{tsp.desc}</p>
                     <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
-                      <span className="text-[var(--ink-soft)] font-medium">Consented Scopes:</span>
+                      <span className="text-[var(--gray-500)] font-medium">Consented Scopes:</span>
                       {tsp.scopes.map((s) => (
-                        <code key={s} className="bg-white border border-[var(--line)] px-1.5 py-0.5 rounded text-[10px] font-mono text-[var(--ink)]">
+                        <code key={s} className="bg-white border border-[var(--gray-200)] px-2 py-0.5 rounded text-[10px] font-mono text-[var(--ink)]">
                           {s}
                         </code>
                       ))}
@@ -840,7 +840,7 @@ export default function ProfilePage() {
                       <button
                         type="button"
                         onClick={() => handleRevokeConsent(tsp.id)}
-                        className="px-3 py-1.5 border border-red-300 text-red-700 hover:bg-red-50 text-xs font-semibold rounded-[var(--radius)] transition-colors cursor-pointer shrink-0"
+                        className="px-4 py-1.5 border border-red-300 text-rose-700 hover:bg-red-50 text-xs font-semibold rounded-full transition-colors cursor-pointer shrink-0"
                       >
                         Revoke Consent
                       </button>
@@ -859,19 +859,19 @@ export default function ProfilePage() {
       {/* TAB 5: SECURITY & SESSIONS (2FA & ACTIVE DEVICES)                         */}
       {/* ========================================================================= */}
       {activeTab === 'security' && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 space-y-6">
-          <div className="border-b border-[var(--line-soft)] pb-4">
+        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+          <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
-              <KeyRound className="w-4 h-4 text-[var(--green)]" />
+              <KeyRound className="w-4 h-4 text-[#1AA260]" />
               <span>Authentication Credentials &amp; Active Device Sessions</span>
             </h2>
-            <p className="text-xs text-[var(--ink-soft)] mt-0.5">
+            <p className="text-xs text-[var(--gray-500)] mt-0.5">
               Rotate passwords, configure multi-factor authentication, and monitor connected IP sessions.
             </p>
           </div>
 
           {passwordSuccess && (
-            <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-[var(--radius)] text-xs flex items-center gap-2">
+            <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl text-xs flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>Password successfully updated. Cryptographic hash recorded with Argon2id.</span>
             </div>
@@ -1068,7 +1068,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => setIsDeleteModalOpen(true)}
-              className="px-4 py-2.5 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-[var(--radius)] transition-colors cursor-pointer shrink-0 shadow-xs"
+              className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-full transition-colors cursor-pointer shrink-0"
             >
               Delete My Account &rarr;
             </button>
@@ -1081,7 +1081,7 @@ export default function ProfilePage() {
       {/* ========================================================================= */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-md bg-white rounded-lg border border-red-300 p-6 space-y-4 shadow-xl">
+          <div className="w-full max-w-md bg-white rounded-[28px] border border-red-300 p-6 space-y-4">
             <div className="flex items-center gap-3 text-red-700">
               <AlertTriangle className="w-6 h-6 shrink-0" />
               <h3 className="text-base font-bold text-slate-900">

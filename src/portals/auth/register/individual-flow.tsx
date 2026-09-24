@@ -7,7 +7,10 @@ import {
   CheckCircle2,
   Send,
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  MapPin,
+  Smartphone,
+  KeyRound
 } from 'lucide-react'
 import { KADUNA_LGAS, LGA_TAX_OFFICES } from '@/data/lga-tax-offices'
 import { verifyNINWithNIMC, maskNIMCPhone, type NIMCVerificationResponse } from '@/engine/kyc-simulator'
@@ -303,37 +306,52 @@ export function IndividualFlow({
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6"
+          className="bg-white border border-[var(--gray-200)] p-7 sm:p-9 rounded-[28px] space-y-6"
           onSubmit={handleVerifyNIN}
         >
           <div>
-            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
-              National identity verification
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[var(--ink)] tracking-tight mb-1">
+              National Identity Verification
             </h2>
-            <p className="text-[13.5px] text-[var(--ink-soft)]">
-              Your legal name, date of birth and gender are anchored to your national identity record (NIMC).
+            <p className="text-xs sm:text-sm text-[var(--gray-700)]">
+              Your official legal name, date of birth, and gender are verified directly with NIMC.
             </p>
+          </div>
+
+          {/* Evaluator Demo Quick Fill Bar */}
+          <div className="p-3 rounded-2xl bg-[var(--paper)] border border-[var(--gray-200)] text-xs flex items-center justify-between">
+            <span className="text-[11px] font-semibold text-[var(--gray-500)] uppercase tracking-wider">Demo Quick Fill:</span>
+            <button
+              type="button"
+              onClick={() => {
+                setDuplicateNINBlocked(null)
+                setNinError(null)
+                setNinInput('23456789012')
+              }}
+              className="px-3 py-1 rounded-full bg-[var(--white)] hover:bg-emerald-50 border border-[var(--gray-200)] text-xs font-semibold text-[#1AA260] cursor-pointer transition-colors"
+            >
+              Fill Sample NIN (23456789012)
+            </button>
           </div>
 
           {/* Hard Block on Duplicate NIN */}
           {duplicateNINBlocked && (
-            <div className="border border-[var(--danger)]/40 bg-[var(--danger)]/10 p-5 rounded-[var(--radius)] space-y-3">
+            <div className="border border-rose-300 bg-rose-50 p-5 rounded-2xl space-y-3">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-[var(--danger)] shrink-0 mt-0.5" />
+                <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-semibold text-[var(--danger)]">
-                    Identity Record Already Registered (Duplicate Prohibited)
+                  <h4 className="text-sm font-semibold text-rose-800">
+                    National ID Already Registered
                   </h4>
                   <p className="text-xs text-[var(--ink)] mt-1 leading-relaxed">
-                    National Identity Number (<span className="font-mono font-bold">{duplicateNINBlocked.slice(0, 3)}••••{duplicateNINBlocked.slice(-3)}</span>) is already linked to an existing authenticated citizen identity in the Kaduna State revenue registry.
-                    Under NDPA 2023 regulations and KADIRS identity governance, duplicate identity registrations are strictly blocked.
+                    National Identity Number (<span className="font-mono font-bold">{duplicateNINBlocked.slice(0, 3)}••••{duplicateNINBlocked.slice(-3)}</span>) is already linked to an existing account. Duplicate registrations are not permitted.
                   </p>
                 </div>
               </div>
               <div className="pt-1 flex items-center gap-3">
                 <Link
                   to={`/auth/login?identifier=${duplicateNINBlocked}`}
-                  className="bg-[var(--danger)] hover:bg-[var(--danger)]/90 text-white px-4 py-2 rounded-[var(--radius)] text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs"
+                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-4 py-2 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"
                 >
                   <span>Sign in to existing account</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -344,7 +362,7 @@ export function IndividualFlow({
                     setDuplicateNINBlocked(null)
                     setNinInput('')
                   }}
-                  className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] underline cursor-pointer"
+                  className="text-xs text-[var(--gray-500)] hover:text-[var(--ink)] underline cursor-pointer"
                 >
                   Enter different NIN
                 </button>
@@ -353,18 +371,18 @@ export function IndividualFlow({
           )}
 
           {ninError && !duplicateNINBlocked && (
-            <div className="p-3 border border-[var(--danger)]/30 bg-[var(--danger)]/10 text-[var(--danger)] rounded-[var(--radius)] text-xs flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+            <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{ninError}</span>
             </div>
           )}
 
           <div>
-            <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium flex items-center justify-between">
+            <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
               <span>
-                11-digit NIN or 16-character virtual NIN (vNIN) <span className="text-[var(--danger)]">*</span>
+                11-digit NIN or 16-character virtual NIN (vNIN) *
               </span>
-              <span className="text-[11px] text-[var(--ink-soft)]">Masks after 3 digits</span>
+              <span className="text-[11px] text-[var(--gray-500)]">Masks after 3 digits</span>
             </label>
             <div className="relative">
               <input
@@ -373,19 +391,18 @@ export function IndividualFlow({
                 onChange={(e) => {
                   setDuplicateNINBlocked(null)
                   setNinError(null)
-                  // Capture raw input digits
                   const raw = e.target.value.replace(/\s+/g, '')
                   setNinInput(raw)
                 }}
                 placeholder="Enter 11-digit NIN"
                 maxLength={16}
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] font-mono text-[14px] focus:outline-2 focus:outline-[var(--green)] pr-10"
+                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all pr-11"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowNIN(!showNIN)}
-                className="absolute right-3 top-2.5 text-[var(--ink-soft)] hover:text-[var(--ink)] cursor-pointer"
+                className="absolute right-3.5 top-3.5 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
                 title={showNIN ? 'Mask digits' : 'Show digits'}
                 tabIndex={-1}
               >
@@ -394,9 +411,9 @@ export function IndividualFlow({
             </div>
           </div>
 
-          <div className="border border-[var(--line-soft)] bg-[var(--paper)] p-4 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed">
-            <span className="font-medium text-[var(--ink)] block mb-1">Privacy Guarantee (NDPA 2023):</span>
-            Your raw 11-digit NIN is column-level encrypted and strictly never shared with connected Tax Service Providers (TSPs). State services receive a pseudonymized citizen token.
+          <div className="border border-[var(--gray-200)] bg-[var(--paper)] p-4 rounded-2xl text-xs text-[var(--gray-700)] leading-relaxed">
+            <span className="font-bold text-[var(--ink)] block mb-1">Strict Privacy &amp; Protection:</span>
+            Your National ID (NIN) is kept strictly confidential. Kaduna State services only receive your verified citizen profile, never your raw identification number.
           </div>
 
           {/* NIMC Fallback Option */}
@@ -404,18 +421,18 @@ export function IndividualFlow({
             <button
               type="button"
               onClick={handleProvisionalNIMC}
-              className="text-[var(--ink-soft)] hover:text-[var(--green)] underline transition-colors cursor-pointer"
+              className="text-[var(--gray-500)] hover:text-[#1AA260] underline transition-colors cursor-pointer"
             >
               NIMC service slow? Request provisional registration &rarr;
             </button>
           </div>
 
-          <div className="flex justify-between items-center pt-2 border-t border-[var(--line-soft)]">
+          <div className="flex justify-between items-center pt-2 border-t border-[var(--gray-200)]">
             {onBackToSelection && (
               <button
                 type="button"
                 onClick={onBackToSelection}
-                className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
+                className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
               >
                 &larr; Back
               </button>
@@ -423,9 +440,9 @@ export function IndividualFlow({
             <button
               type="submit"
               disabled={isVerifyingNIN || Boolean(duplicateNINBlocked)}
-              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-6 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors ml-auto cursor-pointer disabled:opacity-50"
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full font-semibold text-xs sm:text-sm transition-all ml-auto cursor-pointer disabled:opacity-50"
             >
-              {isVerifyingNIN ? 'Verifying with NIMC...' : 'Verify identity \u00a0\u2192'}
+              {isVerifyingNIN ? 'Verifying with NIMC...' : 'Verify Identity \u00a0\u2192'}
             </button>
           </div>
         </form>
@@ -433,72 +450,73 @@ export function IndividualFlow({
 
       {/* ================================================================ */}
       {/* ================================================================ */}
+      {/* ================================================================ */}
       {/* STEP 1: Phone Security Challenge & Contact Information              */}
       {/* ================================================================ */}
       {step === 1 && nimcData && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6">
+        <div className="bg-white border border-[var(--gray-200)] p-7 sm:p-9 rounded-[28px] space-y-6">
           <div>
-            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
-              Identity verification &amp; contact setup
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-[var(--ink)] tracking-tight mb-1">
+              Identity Verification &amp; Contact Setup
             </h2>
-            <p className="text-[13.5px] text-[var(--ink-soft)]">
-              Confirm ownership of your national identity record via your registered mobile number.
+            <p className="text-xs sm:text-sm text-[var(--gray-700)]">
+              Confirm your verified national identity record using your registered mobile phone.
             </p>
           </div>
 
           {/* Verified Identity Record (NIMC) */}
-          <div className="space-y-3">
-            <div className="text-[var(--green)] font-medium text-xs flex items-center gap-1.5">
+          <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--gray-200)] space-y-3">
+            <div className="text-[#1AA260] font-semibold text-xs flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4" />
-              <span>✓ Verified identity record (NIMC)</span>
+              <span>Verified Identity Record (NIMC)</span>
               {isProvisionalNIMC && (
-                <span className="ml-2 px-2 py-0.5 rounded bg-[var(--gold)]/20 text-[var(--gold)] text-[10px] font-semibold uppercase">
-                  Provisional (Background Sync Active)
+                <span className="ml-2 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold uppercase">
+                  Provisional
                 </span>
               )}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[var(--ink)]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[var(--ink)] pt-1">
               <div>
-                <span className="text-[var(--ink-soft)] block text-[11px] font-medium uppercase tracking-wider">
-                  Legal name
+                <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
+                  Legal Name
                 </span>
-                <span className="font-medium text-sm mt-0.5 block">{nimcData.legalName}</span>
+                <span className="font-bold text-sm mt-0.5 block">{nimcData.legalName}</span>
               </div>
               <div>
-                <span className="text-[var(--ink-soft)] block text-[11px] font-medium uppercase tracking-wider">
+                <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
                   Gender
                 </span>
                 <span className="capitalize font-medium text-sm mt-0.5 block">{nimcData.gender}</span>
               </div>
               <div>
-                <span className="text-[var(--ink-soft)] block text-[11px] font-medium uppercase tracking-wider">
-                  Date of birth
+                <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
+                  Date of Birth
                 </span>
-                <span className="font-mono text-sm text-[var(--ink-soft)] mt-0.5 block">••••-••-•• (Masked)</span>
+                <span className="font-mono text-sm text-[var(--gray-500)] mt-0.5 block">••••-••-•• (Masked)</span>
               </div>
             </div>
           </div>
 
           {/* Phone Verification Challenge */}
-          <div className="border-t border-[var(--line-soft)] pt-6 space-y-4">
+          <div className="border-t border-[var(--gray-200)] pt-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h3 className="text-[16px] font-semibold text-[var(--ink)] tracking-tight">
-                  Phone verification challenge
+                <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
+                  Mobile Phone Verification
                 </h3>
-                <p className="text-[13px] text-[var(--ink-soft)] mt-0.5">
-                  Verify possession of your registered mobile line to authenticate your identity.
+                <p className="text-xs text-[var(--gray-700)] mt-0.5">
+                  Confirm possession of your registered mobile line to secure your account.
                 </p>
               </div>
-              <span className="text-[11px] font-medium px-2.5 py-1 rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink-soft)] shrink-0 self-start sm:self-auto border border-[var(--line)]">
-                SMS verification
+              <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-emerald-50 text-[#1AA260] border border-emerald-200 shrink-0 self-start sm:self-auto">
+                SMS Verification
               </span>
             </div>
 
             {/* If NOT sent yet: Prominent Send Button with Masked Phone */}
             {!otpSent && !otpVerified && (
               <div className="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <p className="text-[13px] text-[var(--ink-soft)]">
+                <p className="text-xs sm:text-sm text-[var(--gray-700)]">
                   A 6-digit verification code will be sent to your registered phone:{' '}
                   <strong className="font-mono font-semibold text-[var(--ink)] tracking-wider">
                     {maskNIMCPhone(nimcRegisteredPhone || nimcData.registeredPhone)}
@@ -507,10 +525,10 @@ export function IndividualFlow({
                 <button
                   type="button"
                   onClick={handleSendOTP}
-                  className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-5 py-2.5 rounded-[var(--radius)] font-sans text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer shrink-0"
+                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-6 py-2.5 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shrink-0"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Send verification code</span>
+                  <span>Send Verification Code</span>
                 </button>
               </div>
             )}
@@ -518,8 +536,8 @@ export function IndividualFlow({
             {/* When Sent & Awaiting Code Entry */}
             {otpSent && !otpVerified && (
               <div className="space-y-3.5 animate-in fade-in">
-                <p className="text-[13px] text-[var(--ink-soft)]">
-                  Enter the 6-digit verification code sent to your registered phone{' '}
+                <p className="text-xs sm:text-sm text-[var(--gray-700)]">
+                  Enter the 6-digit verification code sent to your phone{' '}
                   <strong className="font-mono font-semibold text-[var(--ink)]">
                     {maskNIMCPhone(nimcRegisteredPhone || nimcData.registeredPhone)}
                   </strong>:
@@ -532,13 +550,13 @@ export function IndividualFlow({
                     onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="000000"
                     maxLength={6}
-                    className="w-48 px-4 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-2 focus:outline-[var(--green)]"
+                    className="w-48 px-4 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   />
                   <button
                     type="button"
                     onClick={handleVerifyOTP}
                     disabled={otpInput.length < 6}
-                    className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-5 py-2.5 rounded-[var(--radius)] text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+                    className="bg-[#1AA260] hover:bg-[#158A52] text-white px-6 py-2.5 rounded-full text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     Verify Code
                   </button>
@@ -546,37 +564,37 @@ export function IndividualFlow({
                     type="button"
                     onClick={handleSendOTP}
                     disabled={resendCooldown > 0}
-                    className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] disabled:opacity-50 underline px-2 py-1 cursor-pointer"
+                    className="text-xs text-[var(--gray-500)] hover:text-[var(--ink)] disabled:opacity-50 underline px-2 py-1 cursor-pointer"
                   >
-                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend new code'}
+                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend code'}
                   </button>
                 </div>
 
                 {otpError && (
-                  <div className="p-3 border border-[var(--danger)]/30 bg-[var(--danger)]/10 text-[var(--danger)] rounded-[var(--radius)] text-xs flex items-center gap-2">
-                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                  <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
                     <span>{otpError}</span>
                   </div>
                 )}
 
-                <div className="flex items-center gap-4 text-[11px] text-[var(--ink-soft)]">
+                <div className="flex items-center gap-4 text-[11px] text-[var(--gray-500)]">
                   <span>Validity: 5 minutes</span>
                   <span>&bull;</span>
-                  <span>{otpAttemptsLeft} attempts remaining</span>
+                  <span>{otpAttemptsLeft} attempt(s) remaining</span>
                 </div>
               </div>
             )}
 
             {/* Verification Confirmation */}
             {otpVerified && (
-              <div className="border border-[var(--green)]/30 bg-[var(--green)]/5 p-4 rounded-[var(--radius)] text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
-                <CheckCircle2 className="w-5 h-5 text-[var(--green)] shrink-0 mt-0.5" />
+              <div className="border border-emerald-200 bg-emerald-50/60 p-4 rounded-2xl text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
+                <CheckCircle2 className="w-5 h-5 text-[#1AA260] shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-semibold text-[var(--green)] text-[13.5px]">
-                    ✓ Phone verification confirmed
+                  <div className="font-bold text-[#1AA260] text-sm">
+                    Phone Verification Confirmed
                   </div>
-                  <p className="text-[var(--ink-soft)] mt-0.5 leading-relaxed">
-                    Identity ownership confirmed. Please review and confirm your primary contact details below.
+                  <p className="text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                    Identity ownership confirmed. Please confirm your primary contact details below.
                   </p>
                 </div>
               </div>
@@ -585,67 +603,65 @@ export function IndividualFlow({
 
           {/* Contact Information Fields (ONLY SHOWN WHEN OTP IS VERIFIED) */}
           {otpVerified && (
-            <div className="border-t border-[var(--line-soft)] pt-6 space-y-4 animate-in fade-in duration-200">
+            <div className="border-t border-[var(--gray-200)] pt-6 space-y-4 animate-in fade-in duration-200">
               <div>
-                <h3 className="text-[16px] font-semibold text-[var(--ink)] tracking-tight">
-                  Contact channels
+                <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
+                  Primary Contact Channels
                 </h3>
-                <p className="text-[13px] text-[var(--ink-soft)] mt-0.5">
-                  Set your verified primary contact channels for state revenue receipts and official tax assessments.
+                <p className="text-xs text-[var(--gray-700)] mt-0.5">
+                  Confirm your contact information for state revenue receipts and tax assessments.
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {/* Editable Email with Red Asterisk */}
                 <div>
-                  <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
                     <span>
-                      Primary email address <span className="text-[var(--danger)]">*</span>
+                      Primary Email Address *
                     </span>
-                    <span className="text-[11px] text-[var(--ink-soft)]">Editable</span>
+                    <span className="text-[11px] text-[var(--gray-500)]">Editable</span>
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => handleEmailChange(e.target.value)}
                     placeholder="e.g. yourname@example.com"
-                    className={`w-full px-3.5 py-2.5 border rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 ${
+                    className={`w-full px-4 py-3 border rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none ${
                       emailDuplicateError
-                        ? 'border-[var(--danger)] focus:outline-[var(--danger)]'
-                        : 'border-[var(--line)] focus:outline-[var(--green)]'
+                        ? 'border-rose-300 focus:ring-2 focus:ring-rose-200'
+                        : 'border-[var(--gray-200)] focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10'
                     }`}
                     required
                   />
                   {emailDuplicateError && (
-                    <p className="text-xs text-[var(--danger)] font-medium mt-1.5 flex items-start gap-1">
-                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                    <p className="text-xs text-rose-600 font-medium mt-1.5 flex items-start gap-1">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-rose-600" />
                       <span>{emailDuplicateError}</span>
                     </p>
                   )}
                   {!emailDuplicateError && email !== initialEmail && (
-                    <p className="text-[11.5px] text-[var(--gold)] mt-1.5 leading-tight">
-                      Notice: Email modified from initial record &mdash; 24-hr verification token will be dispatched upon registration.
+                    <p className="text-[11.5px] text-amber-700 mt-1.5 leading-tight">
+                      Notice: Email changed from initial record &mdash; confirmation message will be sent.
                     </p>
                   )}
                 </div>
 
-                {/* Editable Phone with Red Asterisk */}
                 <div>
-                  <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
                     <span>
-                      Mobile phone number <span className="text-[var(--danger)]">*</span>
+                      Mobile Phone Number *
                     </span>
-                    <span className="text-[11px] text-[var(--ink-soft)]">Editable</span>
+                    <span className="text-[11px] text-[var(--gray-500)]">Editable</span>
                   </label>
                   <input
                     type="tel"
                     value={phone}
                     onChange={(e) => handlePhoneChange(e.target.value)}
                     placeholder="e.g. +234 814 555 1212"
-                    className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)]"
+                    className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                     required
                   />
-                  <span className="text-[11px] text-[var(--ink-soft)] mt-1.5 block">
-                    Pre-populated from your verified NIN record; modify if you prefer an alternate active mobile line.
+                  <span className="text-[11px] text-[var(--gray-500)] mt-1.5 block">
+                    Pre-populated from your verified NIN record.
                   </span>
                 </div>
               </div>
@@ -655,15 +671,15 @@ export function IndividualFlow({
           {/* Action Row */}
           <div className="pt-2">
             {!otpVerified && (
-              <p className="text-xs text-[var(--ink-soft)] text-right mb-3">
-                Verify phone number above to unlock contact setup
+              <p className="text-xs text-[var(--gray-500)] text-right mb-3">
+                Verify phone number above to proceed
               </p>
             )}
-            <div className="flex justify-between items-center border-t border-[var(--line-soft)] pt-5">
+            <div className="flex justify-between items-center border-t border-[var(--gray-200)] pt-5">
               <button
                 type="button"
                 onClick={() => changeStep(0)}
-                className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
+                className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
               >
                 &larr; Back
               </button>
@@ -671,10 +687,10 @@ export function IndividualFlow({
                 type="button"
                 disabled={!otpVerified || Boolean(emailDuplicateError) || !email.trim() || !phone.trim()}
                 onClick={() => changeStep(2)}
-                className={`px-6 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors ${
+                className={`px-7 py-3 rounded-full font-semibold text-xs sm:text-sm transition-all ${
                   otpVerified && !emailDuplicateError && email.trim() && phone.trim()
-                    ? 'bg-[var(--green)] hover:bg-[var(--green-deep)] text-white shadow-xs cursor-pointer'
-                    : 'bg-[var(--line)] text-[var(--ink-soft)] opacity-50 cursor-not-allowed'
+                    ? 'bg-[#1AA260] hover:bg-[#158A52] text-white cursor-pointer'
+                    : 'bg-[var(--gray-200)] text-[var(--gray-500)] opacity-50 cursor-not-allowed'
                 }`}
               >
                 Continue &nbsp;&rarr;
@@ -685,71 +701,79 @@ export function IndividualFlow({
       )}
 
       {/* ================================================================ */}
-      {/* STEP 2: Residential Address & Tax Jurisdiction                     */}
+      {/* STEP 2: Location & Tax Jurisdiction                                */}
       {/* ================================================================ */}
       {step === 2 && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6">
+        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
-            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
-              Residential address &amp; tax jurisdiction
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
+              Location &amp; Tax Jurisdiction
             </h2>
-            <p className="text-[13.5px] text-[var(--ink-soft)]">
-              Your Local Government Area determines your assigned KADIRS tax revenue office.
+            <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
+              Your Local Government Area determines your assigned KADIRS revenue office for vehicle licensing, property taxes, and personal assessments.
             </p>
           </div>
 
-          <div>
-            <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-              Local Government Area (LGA) <span className="text-[var(--danger)]">*</span>
-            </label>
-            <select
-              value={selectedLga}
-              onChange={(e) => setSelectedLga(e.target.value)}
-              className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)]"
-            >
-              {KADUNA_LGAS.map((lga) => (
-                <option key={lga} value={lga}>{lga}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Assigned Tax Office Definition Block */}
-          <div className="border-t border-[var(--line-soft)] pt-4 pb-1 text-xs space-y-1">
-            <span className="text-[11px] uppercase font-medium text-[var(--ink-soft)] tracking-wider block">
-              Assigned KADIRS tax office
-            </span>
-            <div className="text-[15px] font-semibold text-[var(--ink)]">
-              {taxOffice}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                Local Government Area (LGA) <span className="text-rose-500">*</span>
+              </label>
+              <select
+                value={selectedLga}
+                onChange={(e) => setSelectedLga(e.target.value)}
+                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
+              >
+                {KADUNA_LGAS.map((lga) => (
+                  <option key={lga} value={lga}>{lga}</option>
+                ))}
+              </select>
             </div>
-            <p className="text-[var(--ink-soft)] text-[12.5px]">
-              Vehicle licensing, personal tax assessments, and land rates for this LGA route through this office.
-            </p>
+
+            {/* Assigned Tax Office Highlight Card */}
+            <div className="border border-emerald-200 bg-emerald-50/50 p-4 rounded-2xl flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5 text-[#1AA260]">
+                <MapPin className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[11px] uppercase font-semibold text-[#1AA260] tracking-wider block">
+                  Designated KADIRS Tax Revenue Office
+                </span>
+                <div className="text-sm font-bold text-[var(--ink)] mt-0.5">
+                  {taxOffice}
+                </div>
+                <p className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                  Personal tax filings, vehicle licensing, and land assessments in {selectedLga} are managed through this office.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                Residential Street Address <span className="text-rose-500">*</span>
+              </label>
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="e.g. 14 Swimming Pool Road, Kabala Doki"
+                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-              Residential street address <span className="text-[var(--danger)]">*</span>
-            </label>
-            <input
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="e.g. 14 Swimming Pool Road, Kabala Doki"
-              className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)]"
-            />
-          </div>
-
-          <div className="flex justify-between items-center pt-2 border-t border-[var(--line-soft)]">
+          <div className="flex justify-between items-center pt-2 border-t border-[var(--gray-200)]">
             <button
               type="button"
               onClick={() => changeStep(1)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
+              className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
             <button
               type="button"
+              disabled={!address.trim()}
               onClick={() => changeStep(3)}
-              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-6 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors cursor-pointer"
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
             >
               Continue &nbsp;&rarr;
             </button>
@@ -758,94 +782,136 @@ export function IndividualFlow({
       )}
 
       {/* ================================================================ */}
-      {/* STEP 3: Password & Two-Factor Authentication                       */}
+      {/* STEP 3: Security & 2-Step Verification                             */}
       {/* ================================================================ */}
       {step === 3 && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6">
+        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
-            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
-              Password &amp; two-factor authentication
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
+              Account Password &amp; 2-Step Verification
             </h2>
-            <p className="text-[13.5px] text-[var(--ink-soft)]">
-              Passwords are encrypted using Argon2id. 2FA is required for high-security tax transactions.
+            <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
+              Create a strong password and choose how you would like to receive 2-step verification codes for sensitive state transactions.
             </p>
           </div>
 
-          <div>
-            <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-              Account password <span className="text-[var(--danger)]">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Create secure password"
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)] pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-[var(--ink-soft)] hover:text-[var(--ink)] cursor-pointer"
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+          <div className="space-y-5">
+            <div>
+              <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                Account Password <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Create a secure password"
+                  className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+
+              {/* Validation Checklist */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+                <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                  isPasswordLongEnough
+                    ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
+                    : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                }`}>
+                  <span className="text-xs">{isPasswordLongEnough ? '✓' : '○'}</span>
+                  <span>8+ characters</span>
+                </div>
+                <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                  hasUpper
+                    ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
+                    : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                }`}>
+                  <span className="text-xs">{hasUpper ? '✓' : '○'}</span>
+                  <span>Uppercase</span>
+                </div>
+                <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                  hasLower
+                    ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
+                    : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                }`}>
+                  <span className="text-xs">{hasLower ? '✓' : '○'}</span>
+                  <span>Lowercase</span>
+                </div>
+                <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                  hasNumber
+                    ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
+                    : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                }`}>
+                  <span className="text-xs">{hasNumber ? '✓' : '○'}</span>
+                  <span>Number</span>
+                </div>
+              </div>
             </div>
 
-            {/* Validation Checklist */}
-            <div className="grid grid-cols-2 gap-2 mt-2.5 text-[11.5px]">
-              <span className={isPasswordLongEnough ? 'text-[var(--green)] font-medium' : 'text-[var(--ink-soft)]'}>
-                {isPasswordLongEnough ? '✓' : '○'} At least 8 characters
-              </span>
-              <span className={hasUpper ? 'text-[var(--green)] font-medium' : 'text-[var(--ink-soft)]'}>
-                {hasUpper ? '✓' : '○'} Uppercase letter
-              </span>
-              <span className={hasLower ? 'text-[var(--green)] font-medium' : 'text-[var(--ink-soft)]'}>
-                {hasLower ? '✓' : '○'} Lowercase letter
-              </span>
-              <span className={hasNumber ? 'text-[var(--green)] font-medium' : 'text-[var(--ink-soft)]'}>
-                {hasNumber ? '✓' : '○'} Number
-              </span>
+            <div>
+              <label className="block text-xs font-semibold text-[var(--ink)] mb-2">
+                Secondary Verification Method (2FA) <span className="text-rose-500">*</span>
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setTwoFactorMethod('sms')}
+                  className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
+                    twoFactorMethod === 'sms'
+                      ? 'border-[#1AA260] bg-emerald-50/40 ring-2 ring-[#1AA260]/20'
+                      : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)]'
+                  }`}
+                >
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                    twoFactorMethod === 'sms' ? 'bg-[#1AA260] text-white' : 'bg-[var(--gray-200)] text-[var(--gray-500)]'
+                  }`}>
+                    <Smartphone className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-[var(--ink)]">SMS Verification Code</div>
+                    <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                      Instant one-time codes sent to your verified mobile number ({phone || nimcRegisteredPhone || 'NIMC Phone'}).
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTwoFactorMethod('totp')}
+                  className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
+                    twoFactorMethod === 'totp'
+                      ? 'border-[#1AA260] bg-emerald-50/40 ring-2 ring-[#1AA260]/20'
+                      : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)]'
+                  }`}
+                >
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                    twoFactorMethod === 'totp' ? 'bg-[#1AA260] text-white' : 'bg-[var(--gray-200)] text-[var(--gray-500)]'
+                  }`}>
+                    <KeyRound className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-[var(--ink)]">Authenticator App</div>
+                    <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                      Works offline with Google Authenticator, Microsoft Authenticator, or Apple Keychain.
+                    </div>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div>
-            <label className="block text-[12.5px] text-[var(--ink-soft)] mb-2 font-medium">
-              Secondary authentication (2FA method) <span className="text-[var(--danger)]">*</span>
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div
-                onClick={() => setTwoFactorMethod('sms')}
-                className={`p-3.5 border rounded-[var(--radius)] cursor-pointer transition-colors ${
-                  twoFactorMethod === 'sms'
-                    ? 'border-[var(--green)] bg-[var(--paper)] font-medium ring-1 ring-[var(--green)]'
-                    : 'border-[var(--line)] hover:bg-[var(--line-soft)]'
-                }`}
-              >
-                <div className="text-[14px] font-semibold text-[var(--ink)]">SMS verification</div>
-                <div className="text-[var(--ink-soft)] mt-0.5">Verification code sent to verified phone ({phone})</div>
-              </div>
-
-              <div
-                onClick={() => setTwoFactorMethod('totp')}
-                className={`p-3.5 border rounded-[var(--radius)] cursor-pointer transition-colors ${
-                  twoFactorMethod === 'totp'
-                    ? 'border-[var(--green)] bg-[var(--paper)] font-medium ring-1 ring-[var(--green)]'
-                    : 'border-[var(--line)] hover:bg-[var(--line-soft)]'
-                }`}
-              >
-                <div className="text-[14px] font-semibold text-[var(--ink)]">Authenticator App</div>
-                <div className="text-[var(--ink-soft)] mt-0.5">Google Authenticator / Microsoft Auth</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center pt-2 border-t border-[var(--line-soft)]">
+          <div className="flex justify-between items-center pt-2 border-t border-[var(--gray-200)]">
             <button
               type="button"
               onClick={() => changeStep(2)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
+              className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
@@ -853,76 +919,80 @@ export function IndividualFlow({
               type="button"
               disabled={!isPasswordValid}
               onClick={() => changeStep(4)}
-              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-6 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors cursor-pointer disabled:opacity-50"
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
             >
-              Continue to Consent &nbsp;&rarr;
+              Continue to Privacy Agreement &nbsp;&rarr;
             </button>
           </div>
         </div>
       )}
 
       {/* ================================================================ */}
-      {/* STEP 4: NDPA 2023 Statutory Consent (Event 1)                      */}
+      {/* STEP 4: Privacy & Consent Agreement                               */}
       {/* ================================================================ */}
       {step === 4 && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-7 sm:p-8 rounded-[var(--radius)] space-y-6">
+        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
-            <h2 className="text-[20px] sm:text-[22px] font-semibold text-[var(--ink)] tracking-tight mb-1">
-              NDPA 2023 statutory consent (Event 1)
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#1AA260] text-[11px] font-semibold mb-3">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Statutory Data Protection</span>
+            </div>
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
+              Privacy &amp; Consent Agreement
             </h2>
-            <p className="text-[13.5px] text-[var(--ink-soft)]">
-              Nigeria Data Protection Act compliance. Each consent confirmation is immutably logged with timestamp, IP, and policy version.
+            <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
+              In compliance with the Nigeria Data Protection Act, please review and confirm the terms governing how your verified identity and tax data are handled.
             </p>
           </div>
 
-          <div className="space-y-4 border-t border-b border-[var(--line-soft)] py-5 text-xs text-[var(--ink)]">
-            <label className="flex items-start gap-3 cursor-pointer">
+          <div className="space-y-3.5 border-t border-b border-[var(--gray-200)] py-5">
+            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-[var(--gray-100)]/70 transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
               <input
                 type="checkbox"
                 checked={consentStorage}
                 onChange={(e) => setConsentStorage(e.target.checked)}
-                className="mt-0.5 accent-[var(--green)]"
+                className="mt-1 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
               />
-              <div>
-                <strong className="block text-sm font-medium">
-                  1. Data Storage &amp; Residency <span className="text-[var(--danger)]">*</span>
-                </strong>
-                <span className="text-[var(--ink-soft)]">
-                  I consent to KADIRS storing my identity record strictly on Nigerian Tier-III infrastructure (NITDA 2025 compliant).
+              <div className="text-xs sm:text-sm">
+                <span className="font-semibold text-[var(--ink)] block">
+                  1. Secure Data Storage
+                </span>
+                <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
+                  I authorize KADIRS to securely store my verified profile and tax records within certified Nigerian data infrastructure.
                 </span>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-[var(--gray-100)]/70 transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
               <input
                 type="checkbox"
                 checked={consentSharing}
                 onChange={(e) => setConsentSharing(e.target.checked)}
-                className="mt-0.5 accent-[var(--green)]"
+                className="mt-1 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
               />
-              <div>
-                <strong className="block text-sm font-medium">
-                  2. Scoped Token Sharing (No Raw NIN) <span className="text-[var(--danger)]">*</span>
-                </strong>
-                <span className="text-[var(--ink-soft)]">
-                  I consent to sharing verified name, contact and tax office with connected TSPs via scoped tokens without raw NIN disclosure.
+              <div className="text-xs sm:text-sm">
+                <span className="font-semibold text-[var(--ink)] block">
+                  2. Protected Agency Sharing
+                </span>
+                <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
+                  I authorize KADIRS to share verified credentials (name, contact, and tax office) with connected state portals to provide seamless public services, without ever disclosing my raw National Identity Number (NIN).
                 </span>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-[var(--gray-100)]/70 transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
               <input
                 type="checkbox"
                 checked={consentPolicy}
                 onChange={(e) => setConsentPolicy(e.target.checked)}
-                className="mt-0.5 accent-[var(--green)]"
+                className="mt-1 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
               />
-              <div>
-                <strong className="block text-sm font-medium">
-                  3. Privacy Policy &amp; Right to Erasure <span className="text-[var(--danger)]">*</span>
-                </strong>
-                <span className="text-[var(--ink-soft)]">
-                  I acknowledge my right to revoke consent per TSP or request account deletion with a 30-day cooling-off period.
+              <div className="text-xs sm:text-sm">
+                <span className="font-semibold text-[var(--ink)] block">
+                  3. Privacy Rights &amp; Access Control
+                </span>
+                <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
+                  I understand I have full control over my records: I can view all connected services, revoke agency access permissions, or update my details at any time from my central dashboard.
                 </span>
               </div>
             </label>
@@ -932,7 +1002,7 @@ export function IndividualFlow({
             <button
               type="button"
               onClick={() => changeStep(3)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
+              className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
@@ -940,9 +1010,10 @@ export function IndividualFlow({
               type="button"
               disabled={!consentStorage || !consentSharing || !consentPolicy}
               onClick={handleComplete}
-              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-6 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-8 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
             >
-              Complete registration &nbsp;&rarr;
+              <span>Complete Registration</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router'
 import {
-  ShieldCheck,
+  Scale,
   Lock,
   Smartphone,
   MessageSquare,
@@ -14,7 +14,11 @@ import {
   KeyRound,
   Eye,
   EyeOff,
-  RefreshCw
+  RefreshCw,
+  Sparkles,
+  Car,
+  Wallet,
+  FileText
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { DEMO_PERSONAS } from '@/data/personas'
@@ -35,7 +39,7 @@ export default function LoginPage() {
   // Step state: 1 = Credentials, 2 = 2FA Challenge, 3 = Post-Login Transition
   const [step, setStep] = useState<1 | 2 | 3>(1)
 
-  // Credentials form state (Blank by default)
+  // Credentials form state
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -47,14 +51,13 @@ export default function LoginPage() {
   const [lockoutSeconds, setLockoutSeconds] = useState(0)
   const [credError, setCredError] = useState<string | null>(null)
 
-  // 2FA state: TOTP (primary documented AAL2) or SMS OTP with fallback chain
+  // 2FA state: TOTP or SMS OTP with fallback channels
   const [twoFactorMethod, setTwoFactorMethod] = useState<'totp' | 'sms'>('totp')
   const [smsFallbackRoute, setSmsFallbackRoute] = useState<'sms' | 'whatsapp' | 'voice_call' | 'email'>('sms')
   const [enteredOtp, setEnteredOtp] = useState('')
   const [otpError, setOtpError] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(30)
-  const [authenticatedPersonaId, setAuthenticatedPersonaId] = useState<string | null>(null)
   const [authenticatedName, setAuthenticatedName] = useState<string>('')
 
   // Handle countdown for lockout
@@ -90,9 +93,16 @@ export default function LoginPage() {
     setCredError(null)
   }
 
+  // Quick fill helper for evaluator demo
+  const handleQuickFill = (email: string) => {
+    setIdentifier(email)
+    setPassword('Kaduna2024!')
+    setCredError(null)
+    handleResetLockout()
+  }
+
   // Dispatch OTP on entering step 2 or switching channel
   const dispatchOTP = (channel: OTPChannel = 'termii_sms_dnd') => {
-    // Determine destination for current identifier and channel
     const found = DEMO_PERSONAS.find(
       (p) =>
         p.profile.email.toLowerCase() === identifier.trim().toLowerCase() ||
@@ -115,7 +125,7 @@ export default function LoginPage() {
 
     setCredError(null)
 
-    // Demo password rule: "Kaduna2024!" is standard, but accept anything unless intentional fail
+    // Demo password rule: "Kaduna2024!" is standard, but accept anything >= 4 chars unless intentionally blank
     if (password !== 'Kaduna2024!' && password.length < 4) {
       const nextFailed = failedAttempts + 1
       setFailedAttempts(nextFailed)
@@ -123,11 +133,11 @@ export default function LoginPage() {
         setIsLockedOut(true)
         setLockoutSeconds(30)
         setCredError(
-          'Account temporarily locked: 3 consecutive authentication failures. Rate-limiting protection active.'
+          'Account temporarily paused after 3 unsuccessful attempts. Please wait 30 seconds.'
         )
       } else {
         setCredError(
-          `Invalid credentials. ${3 - nextFailed} attempt(s) remaining before security lockout.`
+          `Incorrect password. ${3 - nextFailed} attempt(s) remaining.`
         )
       }
       return
@@ -149,11 +159,7 @@ export default function LoginPage() {
     setOtpError(null)
 
     if (enteredOtp.length < 6) {
-      setOtpError(
-        twoFactorMethod === 'totp'
-          ? 'Please enter the 6-digit code from your authenticator app.'
-          : 'Please enter the complete 6-digit verification code.'
-      )
+      setOtpError('Please enter the complete 6-digit security code.')
       return
     }
 
@@ -163,7 +169,6 @@ export default function LoginPage() {
       let errMsg = ''
 
       if (twoFactorMethod === 'totp') {
-        // Authenticator app TOTP simulation: accept 6-digit input or standard universal test codes
         if (enteredOtp.length === 6) {
           isValid = true
         } else {
@@ -184,7 +189,6 @@ export default function LoginPage() {
 
       // Successful 2FA verification -> call Auth Engine login
       const loginResult = login(identifier, password)
-      setAuthenticatedPersonaId(loginResult.personaId || null)
       setAuthenticatedName(loginResult.citizen.citizenId)
 
       const foundPersona = DEMO_PERSONAS.find((p) => p.id === loginResult.personaId)
@@ -197,10 +201,8 @@ export default function LoginPage() {
       const hasUnlinkedRecords = isFatima && reconciledRecordIds.length === 0
 
       if (hasUnlinkedRecords) {
-        // Move to Step 3: Recognition Interstitial
         setStep(3)
       } else {
-        // Direct redirect
         const target = redirectUrl ? decodeURIComponent(redirectUrl) : '/paykaduna'
         navigate(target)
       }
@@ -224,44 +226,78 @@ export default function LoginPage() {
   })()
 
   return (
-    <div className="py-10 sm:py-14 px-4 sm:px-6 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
+    <div className="py-10 sm:py-16 px-4 sm:px-6 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
       {/* Official State Header */}
-      <div className="text-center mb-8 max-w-[560px]">
-        <div className="w-12 h-12 rounded-full border border-[var(--green)] flex items-center justify-center text-[var(--green)] font-sans font-semibold text-base mb-3 mx-auto bg-[var(--paper-raised)] shadow-2xs">
-          KD
+      <div className="text-center mb-8 max-w-[540px]">
+        <div className="w-14 h-14 rounded-full bg-[#1AA260]/10 border border-[#1AA260]/30 flex items-center justify-center text-[#1AA260] mb-4 mx-auto">
+          <Scale className="w-7 h-7" />
         </div>
-        <h1 className="font-sans font-semibold text-[24px] sm:text-[28px] leading-tight text-[var(--ink)] tracking-tight mb-2">
-          Sign in to Kaduna State Services
+        <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-[var(--ink)] tracking-tight mb-2">
+          Sign In to Kaduna State Portal
         </h1>
-        <p className="text-[13.5px] text-[var(--ink-soft)] leading-relaxed max-w-[48ch] mx-auto">
-          One unified citizen account for all state services and tax filings.
+        <p className="text-sm text-[var(--gray-700)] leading-relaxed max-w-[48ch] mx-auto">
+          One unified citizen account for PayKaduna revenue, road vehicle licensing, and tax assessment.
         </p>
       </div>
 
       {/* Main Authentication Card */}
-      <div className="w-full max-w-[480px] bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-6 sm:p-8 shadow-xs transition-all">
+      <div className="w-full max-w-[480px] bg-white border border-[var(--gray-200)] rounded-[28px] p-7 sm:p-9 transition-all">
+        
+        {/* Evaluator Demo Quick Fill Bar */}
+        {step === 1 && (
+          <div className="mb-6 p-3 rounded-2xl bg-[var(--paper)] border border-[var(--gray-200)] text-xs">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-500)] mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-[#1AA260]" />
+              <span>Demo Accounts (1-Click Fill)</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                onClick={() => handleQuickFill('fatimah.a@gmail.com')}
+                className="px-2.5 py-1 rounded-full bg-[var(--white)] hover:bg-emerald-50 border border-[var(--gray-200)] hover:border-emerald-300 text-[11.5px] font-medium text-[var(--ink)] transition-colors cursor-pointer"
+              >
+                Fatima (Citizen)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickFill('amina.yusuf@kdsme.org')}
+                className="px-2.5 py-1 rounded-full bg-[var(--white)] hover:bg-emerald-50 border border-[var(--gray-200)] hover:border-emerald-300 text-[11.5px] font-medium text-[var(--ink)] transition-colors cursor-pointer"
+              >
+                Amina (Corporate)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickFill('emeka.obi@gmail.com')}
+                className="px-2.5 py-1 rounded-full bg-[var(--white)] hover:bg-emerald-50 border border-[var(--gray-200)] hover:border-emerald-300 text-[11.5px] font-medium text-[var(--ink)] transition-colors cursor-pointer"
+              >
+                Emeka (Logistics)
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* STEP 1: Credentials */}
         {step === 1 && (
           <form onSubmit={handleCredentialsSubmit} className="space-y-5">
-            <div className="border-b border-[var(--line-soft)] pb-4 mb-1">
-              <h2 className="font-sans font-semibold text-[18px] sm:text-[20px] text-[var(--ink)] tracking-tight">
-                Citizen &amp; Business Login
+            <div className="border-b border-[var(--gray-200)] pb-4 mb-1">
+              <h2 className="font-display font-bold text-lg text-[var(--ink)] tracking-tight">
+                Citizen &amp; Business Account
               </h2>
-              <p className="text-xs text-[var(--ink-soft)] mt-0.5">
-                Enter your registered official email address and password to sign in.
+              <p className="text-xs text-[var(--gray-700)] mt-0.5">
+                Enter your registered email address or National ID (NIN) to continue.
               </p>
             </div>
 
-            {/* Error or Rate-Limiting Alert */}
+            {/* Error Alert */}
             {credError && (
-              <div className="p-3.5 border border-[var(--danger)]/30 bg-[var(--danger)]/10 text-[var(--danger)] rounded-[var(--radius)] text-xs flex items-start justify-between gap-3">
+              <div className="p-3.5 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-start justify-between gap-3">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
                   <div>
                     <p className="font-medium">{credError}</p>
                     {isLockedOut && (
                       <p className="mt-1 font-mono text-[11.5px]">
-                        Cooldown active: {lockoutSeconds}s remaining
+                        Please wait: {lockoutSeconds}s
                       </p>
                     )}
                   </div>
@@ -278,34 +314,32 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Registered Email Input */}
+            {/* Registered Email or NIN Input */}
             <div>
-              <label className="block text-[12.5px] font-medium text-[var(--ink-soft)] mb-1.5">
-                Registered Email Address <span className="text-[var(--danger)]">*</span>
+              <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                Email Address or National ID (NIN) *
               </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  disabled={isLockedOut}
-                  placeholder="e.g. fatimah.a@gmail.com or tax@company.ng"
-                  className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-2 focus:outline-[var(--green)] disabled:opacity-50"
-                  required
-                />
-              </div>
+              <input
+                type="text"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                disabled={isLockedOut}
+                placeholder="e.g. fatimah.a@gmail.com or 12345678901"
+                className="w-full px-4 py-3 rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all disabled:opacity-50"
+                required
+              />
             </div>
 
             {/* Password Input */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-[12.5px] font-medium text-[var(--ink-soft)]">
-                  Password <span className="text-[var(--danger)]">*</span>
+                <label className="block text-xs font-semibold text-[var(--ink)]">
+                  Password *
                 </label>
                 <button
                   type="button"
-                  onClick={() => alert('Password reset links are simulated via secure SMS in this demo.')}
-                  className="text-xs text-[var(--ink-soft)] hover:text-[var(--green)] transition-colors"
+                  onClick={() => alert('For this demo, standard passwords are "Kaduna2024!"')}
+                  className="text-xs text-[var(--gray-500)] hover:text-[#1AA260] transition-colors"
                 >
                   Forgot password?
                 </button>
@@ -317,13 +351,13 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLockedOut}
                   placeholder="••••••••••••"
-                  className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-2 focus:outline-[var(--green)] disabled:opacity-50 pr-10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all disabled:opacity-50 pr-11"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-[var(--ink-soft)] hover:text-[var(--ink)]"
+                  className="absolute right-3.5 top-3.5 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -338,10 +372,10 @@ export default function LoginPage() {
                 id="remember"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="rounded-[var(--radius)] accent-[var(--green)]"
+                className="w-4 h-4 rounded accent-[#1AA260] cursor-pointer"
               />
-              <label htmlFor="remember" className="text-xs text-[var(--ink-soft)] cursor-pointer">
-                Trust this device for 30 days (NDPA Section 24 compliance)
+              <label htmlFor="remember" className="text-xs text-[var(--gray-700)] cursor-pointer">
+                Trust this device for 30 days
               </label>
             </div>
 
@@ -349,22 +383,22 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLockedOut}
-              className="w-full bg-[var(--green)] hover:bg-[var(--green-deep)] disabled:opacity-50 text-white py-2.5 rounded-[var(--radius)] text-sm font-medium transition-colors flex items-center justify-center gap-2 mt-2 shadow-2xs"
+              className="w-full bg-[#1AA260] hover:bg-[#158A52] disabled:opacity-50 text-white py-3 rounded-full text-sm font-semibold tracking-wide transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer"
             >
-              <span>Continue to 2-Factor Authentication</span>
+              <span>Continue to Verification</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
             {/* Registration link */}
-            <div className="text-center pt-3 border-t border-[var(--line-soft)]">
-              <span className="text-xs text-[var(--ink-soft)]">
-                Don&apos;t have a Kaduna citizen account yet? &nbsp;&nbsp;&nbsp;
+            <div className="text-center pt-3 border-t border-[var(--gray-200)]">
+              <span className="text-xs text-[var(--gray-500)]">
+                Don&apos;t have a Kaduna citizen account yet?
               </span>
               <Link
                 to="/auth/register"
-                className="text-xs text-[var(--green)]ml-3 font-semibold hover:underline"
+                className="text-xs text-[#1AA260] font-semibold hover:underline ml-1.5"
               >
-                Register with NIN &rarr;
+                Register with National ID (NIN) &rarr;
               </Link>
             </div>
           </form>
@@ -373,146 +407,116 @@ export default function LoginPage() {
         {/* STEP 2: 2FA Verification */}
         {step === 2 && (
           <div className="space-y-5">
-            <div className="border-b border-[var(--line-soft)] pb-4 mb-1">
-              <div className="flex items-center gap-2 text-[var(--green)] text-xs font-semibold uppercase tracking-wider mb-1">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Two-Factor Authentication (AAL2)</span>
-              </div>
-              <h2 className="font-sans font-semibold text-[18px] sm:text-[20px] text-[var(--ink)] tracking-tight">
-                Verify Your Identity
+            <div className="border-b border-[var(--gray-200)] pb-4 mb-1">
+              <h2 className="font-display font-bold text-lg text-[var(--ink)] tracking-tight">
+                Confirm Your Identity
               </h2>
-              <p className="text-xs text-[var(--ink-soft)] mt-0.5">
-                Two-factor authentication is mandatory for accessing high-security state revenue and municipal services.
+              <p className="text-xs text-[var(--gray-700)] mt-0.5">
+                Select your preferred verification method to protect your citizen records.
               </p>
             </div>
 
-            {/* Documented 2FA Method Selector: TOTP (Primary) vs SMS OTP */}
-            <div>
-              <label className="block text-[11.5px] font-medium text-[var(--ink-soft)] mb-2">
-                Authentication Method
-              </label>
-              <div className="grid grid-cols-2 gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTwoFactorMethod('totp')
-                    setEnteredOtp('')
-                    setOtpError(null)
-                  }}
-                  className={`p-3 rounded-[var(--radius)] border text-left transition-all cursor-pointer ${
-                    twoFactorMethod === 'totp'
-                      ? 'border-[var(--green)] bg-[var(--line-soft)]/50 ring-1 ring-[var(--green)] shadow-2xs'
-                      : 'border-[var(--line)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)]/40 text-[var(--ink-soft)]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <KeyRound className="w-4 h-4 text-[var(--green)]" />
-                    <span className="font-semibold text-xs text-[var(--ink)]">Authenticator App</span>
-                  </div>
-                  <div className="text-[10.5px] text-[var(--green)] font-semibold uppercase tracking-wider">
-                    Primary &middot; TOTP (AAL2)
-                  </div>
-                </button>
+            {/* Method Selector */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setTwoFactorMethod('totp')
+                  setEnteredOtp('')
+                  setOtpError(null)
+                }}
+                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  twoFactorMethod === 'totp'
+                    ? 'border-[#1AA260] bg-emerald-50/60 ring-1 ring-[#1AA260]'
+                    : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--gray-700)]'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <KeyRound className="w-4 h-4 text-[#1AA260]" />
+                  <span className="font-bold text-xs text-[var(--ink)]">Authenticator App</span>
+                </div>
+                <div className="text-[11px] text-[#1AA260] font-medium">
+                  Instant &middot; Offline
+                </div>
+              </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTwoFactorMethod('sms')
-                    setEnteredOtp('')
-                    setOtpError(null)
-                    dispatchOTP(smsFallbackRoute === 'sms' ? 'termii_sms_dnd' : smsFallbackRoute)
-                  }}
-                  className={`p-3 rounded-[var(--radius)] border text-left transition-all cursor-pointer ${
-                    twoFactorMethod === 'sms'
-                      ? 'border-[var(--green)] bg-[var(--line-soft)]/50 ring-1 ring-[var(--green)] shadow-2xs'
-                      : 'border-[var(--line)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)]/40 text-[var(--ink-soft)]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <Smartphone className="w-4 h-4 text-[var(--green)]" />
-                    <span className="font-semibold text-xs text-[var(--ink)]">SMS Verification</span>
-                  </div>
-                  <div className="text-[10.5px] text-[var(--ink-soft)] font-medium">
-                    Carrier Route &middot; Fallbacks
-                  </div>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setTwoFactorMethod('sms')
+                  setEnteredOtp('')
+                  setOtpError(null)
+                  dispatchOTP(smsFallbackRoute === 'sms' ? 'termii_sms_dnd' : smsFallbackRoute)
+                }}
+                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  twoFactorMethod === 'sms'
+                    ? 'border-[#1AA260] bg-emerald-50/60 ring-1 ring-[#1AA260]'
+                    : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--gray-700)]'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <Smartphone className="w-4 h-4 text-[#1AA260]" />
+                  <span className="font-bold text-xs text-[var(--ink)]">Mobile Code</span>
+                </div>
+                <div className="text-[11px] text-[var(--gray-500)] font-medium">
+                  SMS &middot; WhatsApp
+                </div>
+              </button>
             </div>
 
             {/* TOTP Active State */}
             {twoFactorMethod === 'totp' && (
-              <div className="bg-[var(--paper)] border border-[var(--line)] p-3.5 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed flex items-start gap-2.5">
-                <KeyRound className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+              <div className="bg-[var(--paper)] border border-[var(--gray-200)] p-3.5 rounded-2xl text-xs text-[var(--gray-700)] leading-relaxed flex items-start gap-2.5">
+                <KeyRound className="w-4 h-4 text-[#1AA260] shrink-0 mt-0.5" />
                 <div>
-                  Enter the 6-digit rotating security code from your <strong>Authenticator App</strong> (e.g. Google Authenticator, Microsoft Authenticator, or 1Password). TOTP codes operate offline without mobile carrier delays.
+                  Enter the 6-digit code from your <strong>Authenticator App</strong> (e.g. Google Authenticator, Microsoft Authenticator, or 1Password).
                 </div>
               </div>
             )}
 
-            {/* SMS Active State with Automated Fallback Chain */}
+            {/* SMS Active State */}
             {twoFactorMethod === 'sms' && (
               <div className="space-y-3">
-                {/* Active Carrier Dispatch Message */}
-                <div className="bg-[var(--paper)] border border-[var(--line)] p-3.5 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed flex items-start gap-2.5 transition-all">
-                  {smsFallbackRoute === 'sms' && (
+                <div className="bg-[var(--paper)] border border-[var(--gray-200)] p-3.5 rounded-2xl text-xs text-[var(--gray-700)] leading-relaxed flex items-start gap-2.5">
+                  {smsFallbackRoute === 'email' ? (
                     <>
-                      <Smartphone className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                      <Mail className="w-4 h-4 text-[#1AA260] shrink-0 mt-0.5" />
                       <div>
-                        Verification code dispatched via SMS to{' '}
-                        <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Enter the 6-digit code below to authorize your session.
+                        Security code sent to your registered email:{' '}
+                        <strong className="text-[var(--ink)] font-mono">{maskedEmail}</strong>
                       </div>
                     </>
-                  )}
-                  {smsFallbackRoute === 'whatsapp' && (
+                  ) : (
                     <>
-                      <MessageSquare className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
+                      <Smartphone className="w-4 h-4 text-[#1AA260] shrink-0 mt-0.5" />
                       <div>
-                        Automated fallback: Verification code sent via WhatsApp message to{' '}
-                        <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Check your WhatsApp chats and enter the 6-digit code below.
-                      </div>
-                    </>
-                  )}
-                  {smsFallbackRoute === 'voice_call' && (
-                    <>
-                      <PhoneCall className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
-                      <div>
-                        Automated fallback: Voice call dialing{' '}
-                        <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>. Answer the call to hear your 6-digit audio verification code.
-                      </div>
-                    </>
-                  )}
-                  {smsFallbackRoute === 'email' && (
-                    <>
-                      <Mail className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
-                      <div>
-                        Automated fallback: Transactional email dispatched to{' '}
-                        <strong className="text-[var(--ink)] font-mono">{maskedEmail}</strong>. Check your inbox or spam folder and enter the 6-digit code below.
+                        Security code sent to your registered phone:{' '}
+                        <strong className="text-[var(--ink)] font-mono">{maskedPhone}</strong>
                       </div>
                     </>
                   )}
                 </div>
 
-                {/* Documented Automatic Delivery Fallback Chain */}
-                <div className="p-3 bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] text-xs space-y-2">
-                  <div className="text-[11.5px] text-[var(--ink-soft)] flex items-center justify-between">
-                    <span>Didn&apos;t receive SMS? Try automated fallback route:</span>
-                    <span className="text-[10.5px] font-mono text-[var(--gold)]">Carrier Fallbacks</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
+                {/* Delivery Options */}
+                <div className="p-3 bg-[var(--paper)] border border-[var(--gray-200)] rounded-2xl text-xs space-y-2">
+                  <span className="text-[11px] text-[var(--gray-500)] block">
+                    Choose receiving channel:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
                     <button
                       type="button"
                       onClick={() => {
                         setSmsFallbackRoute('sms')
                         dispatchOTP('termii_sms_dnd')
                       }}
-                      className={`px-2.5 py-1.5 rounded-[var(--radius)] border text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
                         smsFallbackRoute === 'sms'
-                          ? 'border-[var(--green)] bg-[var(--green)]/10 text-[var(--green)] font-semibold'
-                          : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                          ? 'bg-[#1AA260] text-white'
+                          : 'bg-[var(--white)] border border-[var(--gray-200)] text-[var(--gray-700)] hover:text-[var(--ink)]'
                       }`}
                     >
                       <Smartphone className="w-3 h-3" />
-                      <span>Primary SMS</span>
+                      <span>SMS</span>
                     </button>
 
                     <button
@@ -521,10 +525,10 @@ export default function LoginPage() {
                         setSmsFallbackRoute('whatsapp')
                         dispatchOTP('whatsapp')
                       }}
-                      className={`px-2.5 py-1.5 rounded-[var(--radius)] border text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
                         smsFallbackRoute === 'whatsapp'
-                          ? 'border-[var(--green)] bg-[var(--green)]/10 text-[var(--green)] font-semibold'
-                          : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                          ? 'bg-[#1AA260] text-white'
+                          : 'bg-[var(--white)] border border-[var(--gray-200)] text-[var(--gray-700)] hover:text-[var(--ink)]'
                       }`}
                     >
                       <MessageSquare className="w-3 h-3" />
@@ -537,10 +541,10 @@ export default function LoginPage() {
                         setSmsFallbackRoute('voice_call')
                         dispatchOTP('voice_call')
                       }}
-                      className={`px-2.5 py-1.5 rounded-[var(--radius)] border text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
                         smsFallbackRoute === 'voice_call'
-                          ? 'border-[var(--green)] bg-[var(--green)]/10 text-[var(--green)] font-semibold'
-                          : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                          ? 'bg-[#1AA260] text-white'
+                          : 'bg-[var(--white)] border border-[var(--gray-200)] text-[var(--gray-700)] hover:text-[var(--ink)]'
                       }`}
                     >
                       <PhoneCall className="w-3 h-3" />
@@ -553,10 +557,10 @@ export default function LoginPage() {
                         setSmsFallbackRoute('email')
                         dispatchOTP('email')
                       }}
-                      className={`px-2.5 py-1.5 rounded-[var(--radius)] border text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
                         smsFallbackRoute === 'email'
-                          ? 'border-[var(--green)] bg-[var(--green)]/10 text-[var(--green)] font-semibold'
-                          : 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                          ? 'bg-[#1AA260] text-white'
+                          : 'bg-[var(--white)] border border-[var(--gray-200)] text-[var(--gray-700)] hover:text-[var(--ink)]'
                       }`}
                     >
                       <Mail className="w-3 h-3" />
@@ -567,19 +571,18 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* OTP Input Form */}
+            {/* OTP Form */}
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               {otpError && (
-                <div className="p-3 border border-[var(--danger)]/30 bg-[var(--danger)]/10 text-[var(--danger)] rounded-[var(--radius)] text-xs flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
                   <span>{otpError}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-[12.5px] font-medium text-[var(--ink-soft)] mb-1.5">
-                  {twoFactorMethod === 'totp' ? 'Enter 6-digit Authenticator Code' : 'Enter 6-digit Verification Code'}{' '}
-                  <span className="text-[var(--danger)]">*</span>
+                <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                  Enter 6-Digit Code *
                 </label>
                 <input
                   type="text"
@@ -588,23 +591,23 @@ export default function LoginPage() {
                   onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
                   placeholder="------"
                   autoFocus
-                  className="w-full px-3 py-2.5 text-center font-mono text-xl tracking-[0.4em] border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] focus:outline-2 focus:outline-[var(--green)]"
+                  className="w-full px-4 py-3 text-center font-mono text-2xl tracking-[0.5em] font-bold rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-[var(--ink)] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all"
                   required
                 />
               </div>
 
-              <div className="flex items-center justify-between text-xs text-[var(--ink-soft)]">
+              <div className="flex items-center justify-between text-xs text-[var(--gray-500)]">
                 {twoFactorMethod === 'totp' ? (
-                  <span className="text-[11px] text-[var(--ink-soft)]">Codes rotate automatically every 30 seconds</span>
+                  <span>Codes update every 30 seconds</span>
                 ) : (
-                  <span>Code expires in 5:00</span>
+                  <span>Code valid for 5 minutes</span>
                 )}
                 {twoFactorMethod === 'sms' && (
                   <button
                     type="button"
                     disabled={resendCooldown > 0}
                     onClick={() => dispatchOTP(smsFallbackRoute === 'sms' ? 'termii_sms_dnd' : smsFallbackRoute)}
-                    className="text-[var(--green)] font-medium hover:underline disabled:opacity-50 disabled:no-underline flex items-center gap-1 cursor-pointer"
+                    className="text-[#1AA260] font-medium hover:underline disabled:opacity-50 disabled:no-underline flex items-center gap-1 cursor-pointer"
                   >
                     <RefreshCw className="w-3 h-3" />
                     {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
@@ -615,7 +618,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isVerifying}
-                className="w-full bg-[var(--green)] hover:bg-[var(--green-deep)] text-white py-2.5 rounded-[var(--radius)] text-sm font-medium transition-colors flex items-center justify-center gap-2 mt-2 shadow-2xs"
+                className="w-full bg-[#1AA260] hover:bg-[#158A52] text-white py-3 rounded-full text-sm font-semibold tracking-wide transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer"
               >
                 {isVerifying ? (
                   <span>Verifying code...</span>
@@ -634,83 +637,106 @@ export default function LoginPage() {
                   setEnteredOtp('')
                   setOtpError(null)
                 }}
-                className="w-full text-center text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors py-1 flex items-center justify-center gap-1.5"
+                className="w-full text-center text-xs text-[var(--gray-500)] hover:text-[var(--ink)] transition-colors py-1 flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back to credentials</span>
+                <span>Back to sign in</span>
               </button>
             </form>
           </div>
         )}
 
-        {/* STEP 3: Hero Post-Login Recognition Interstitial (Fatima's Journey) */}
+        {/* STEP 3: Past Records Discovery Interstitial (Fatima's Journey) */}
         {step === 3 && (
           <div className="space-y-5 animate-in fade-in duration-300">
             <div className="text-center pb-2">
-              <div className="w-12 h-12 rounded-full bg-[var(--green)]/10 text-[var(--green)] flex items-center justify-center mx-auto mb-3 border border-[var(--green)]/20">
-                <CheckCircle2 className="w-6 h-6" />
+              <div className="w-14 h-14 rounded-full bg-emerald-50 text-[#1AA260] flex items-center justify-center mx-auto mb-3 border border-emerald-200">
+                <CheckCircle2 className="w-7 h-7" />
               </div>
-              <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--green)] block mb-1">
-                Identity Verified &middot; Citizen Session Ready{authenticatedPersonaId ? ` (${authenticatedPersonaId})` : ''}
+              <span className="text-xs font-bold uppercase tracking-wider text-[#1AA260] block mb-1">
+                Identity Verified &middot; Welcome
               </span>
-              <h2 className="font-sans font-semibold text-[20px] sm:text-[22px] text-[var(--ink)] tracking-tight">
-                Welcome back, {authenticatedName.split(' ')[0]}
+              <h2 className="font-display font-extrabold text-2xl text-[var(--ink)] tracking-tight">
+                Welcome back, {authenticatedName.split(' ')[0]}!
               </h2>
-              <p className="text-xs text-[var(--ink-soft)] max-w-[40ch] mx-auto mt-1">
-                Your primary identity has been validated. Our account reconciliation engine found 3 unlinked historical records.
+              <p className="text-xs text-[var(--gray-700)] max-w-[40ch] mx-auto mt-1 leading-relaxed">
+                We discovered 3 past records linked to your National ID across state revenue databases.
               </p>
             </div>
 
             {/* Found legacy records notice */}
-            <div className="border border-[var(--line)] bg-[var(--paper)] p-4 rounded-[var(--radius)] space-y-2.5 text-xs">
-              <div className="font-semibold text-[var(--ink)] flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-[var(--green)]" />
-                <span>Detected Pre-Migration Accounts:</span>
+            <div className="border border-[var(--gray-200)] bg-[var(--paper)] p-4 rounded-2xl space-y-3 text-xs">
+              <div className="font-bold text-[var(--ink)] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#1AA260]" />
+                <span>Discovered Historical Accounts:</span>
               </div>
-              <ul className="space-y-1.5 text-[var(--ink-soft)] pl-6 list-disc">
-                <li>
-                  <strong className="text-[var(--ink)]">PayKaduna:</strong> fatimah.a@gmail.com (₦15,000 paid history)
-                </li>
-                <li>
-                  <strong className="text-[var(--ink)]">KADVREG:</strong> fatima.abdullahi@yahoo.com (Plate: KD-123-ABC)
-                </li>
-                <li>
-                  <strong className="text-[var(--ink)]">PIT Portal:</strong> fatima.abdullahi@yahoo.com (TIN-PIT-008472)
-                </li>
-              </ul>
-              <p className="text-[11px] text-[var(--ink-soft)] italic pt-1 border-t border-[var(--line-soft)]">
-                Per KADIRS Account Unification Mandate, you can review and bind these records under your NIN with Recognition Cards.
+              <div className="space-y-2">
+                <div className="p-2.5 rounded-xl bg-[var(--white)] border border-[var(--gray-200)] flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <Wallet className="w-4 h-4 text-[#1AA260]" />
+                    <div>
+                      <strong className="text-[var(--ink)] block">PayKaduna Revenue</strong>
+                      <span className="text-[11px] text-[var(--gray-500)]">fatimah.a@gmail.com &middot; ₦15,000 paid</span>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-semibold text-emerald-600">Ready to link</span>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-[var(--white)] border border-[var(--gray-200)] flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <Car className="w-4 h-4 text-[#1AA260]" />
+                    <div>
+                      <strong className="text-[var(--ink)] block">KADVREG Vehicle Licensing</strong>
+                      <span className="text-[11px] text-[var(--gray-500)]">Plate: KD-123-ABC &middot; Honda Accord</span>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-semibold text-emerald-600">Ready to link</span>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-[var(--white)] border border-[var(--gray-200)] flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <FileText className="w-4 h-4 text-[#1AA260]" />
+                    <div>
+                      <strong className="text-[var(--ink)] block">Personal Income Tax (PIT)</strong>
+                      <span className="text-[11px] text-[var(--gray-500)]">TIN-PIT-008472 &middot; Prior filings</span>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-semibold text-emerald-600">Ready to link</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-[var(--gray-500)] pt-1">
+                You can review and merge these into your single account now, or do it later from your profile.
               </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-2 pt-2">
+            <div className="space-y-2.5 pt-2">
               <button
                 type="button"
                 onClick={() => navigate('/auth/reconciliation')}
-                className="w-full bg-[var(--green)] hover:bg-[var(--green-deep)] text-white py-2.5 rounded-[var(--radius)] text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-2xs"
+                className="w-full bg-[#1AA260] hover:bg-[#158A52] text-white py-3 rounded-full text-sm font-semibold tracking-wide transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Review &amp; Reconcile Accounts</span>
+                <span>Review &amp; Link Past Accounts</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <button
                 type="button"
                 onClick={() => navigate('/paykaduna')}
-                className="w-full border border-[var(--line)] bg-[var(--paper-raised)] hover:bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)] py-2 rounded-[var(--radius)] text-xs font-medium transition-colors"
+                className="w-full border border-[var(--gray-200)] bg-[var(--white)] hover:bg-[var(--gray-100)] text-[var(--gray-700)] py-2.5 rounded-full text-xs font-semibold transition-colors cursor-pointer"
               >
-                Skip for now &rarr; Go to PayKaduna Dashboard
+                Skip for now &rarr; Go to Dashboard
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Security & Regulatory Footnote */}
-      <div className="mt-8 text-center text-xs text-[var(--ink-soft)] max-w-[460px] flex items-center justify-center gap-2">
-        <Lock className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
+      {/* Security & Official Trust Seal */}
+      <div className="mt-8 text-center text-xs text-[var(--gray-500)] max-w-[460px] flex items-center justify-center gap-2">
+        <Lock className="w-3.5 h-3.5 text-[#1AA260] shrink-0" />
         <span>
-          Protected by Kaduna State Identity Framework 2.0 &middot; NDPA Compliant
+          Kaduna State Internal Revenue Service &middot; Unified Citizen Gateway
         </span>
       </div>
     </div>

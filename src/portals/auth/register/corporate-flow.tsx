@@ -8,7 +8,8 @@ import {
   Send,
   ArrowRight,
   ShieldCheck,
-  Info
+  Info,
+  MapPin
 } from 'lucide-react'
 import { lookupCAC, type CACLookupResponse } from '@/engine/kyc-simulator'
 import { useAuthEngine, checkRCRegistered, checkEmailRegistered } from '@/engine/auth-engine'
@@ -270,39 +271,65 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-[var(--paper-raised)] border border-[var(--line)] p-8 sm:p-9 rounded-[var(--radius)] space-y-6"
+          className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
           onSubmit={handleLookup}
         >
           <div>
-            <h2 className="font-semibold text-[22px] tracking-tight text-[var(--ink)] mb-1">
-              Corporate Affairs Commission (CAC) verification
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
+              Corporate Affairs Commission (CAC) Verification
             </h2>
-            <p className="text-[13.5px] text-[var(--ink-soft)]">
-              Enter your registered corporate number to look up active commercial registry records.
+            <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
+              Enter your registered corporate number (RC or BN) to verify your enterprise against active commercial registry records.
             </p>
+          </div>
+
+          {/* Quick-Fill Evaluator Chips */}
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <span className="text-xs text-[var(--gray-500)]">Quick demo fill:</span>
+            <button
+              type="button"
+              onClick={() => {
+                setDuplicateRCBlocked(null)
+                setRcError(null)
+                setRcNumber('RC-1849204')
+              }}
+              className="text-xs px-3 py-1 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#1AA260] border border-emerald-200 transition-colors font-mono font-medium cursor-pointer"
+            >
+              RC-1849204 (Arewa Textiles)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDuplicateRCBlocked(null)
+                setRcError(null)
+                setRcNumber('RC-9021844')
+              }}
+              className="text-xs px-3 py-1 rounded-full bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--ink)] border border-[var(--gray-200)] transition-colors font-mono font-medium cursor-pointer"
+            >
+              RC-9021844 (New Business)
+            </button>
           </div>
 
           {/* Hard Block on Duplicate RC Number */}
           {duplicateRCBlocked && (
-            <div className="border border-[var(--danger)]/40 bg-[var(--danger)]/10 p-5 rounded-[var(--radius)] space-y-3 animate-in fade-in">
+            <div className="border border-rose-300 bg-rose-50/80 p-5 rounded-2xl space-y-3 animate-in fade-in">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-[var(--danger)] shrink-0 mt-0.5" />
+                <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-sm text-[var(--danger)]">
-                    Corporate Entity Already Registered (Duplicate Prohibited)
+                  <h4 className="font-semibold text-sm text-rose-900">
+                    Corporate Entity Already Registered
                   </h4>
-                  <p className="text-xs text-[var(--ink)] mt-1 leading-relaxed">
-                    Corporate registration <span className="font-mono font-bold">{duplicateRCBlocked.rc}</span> ({duplicateRCBlocked.companyName || 'Registered Enterprise'}) is already an active corporate entity on KADIRS Auth 2.0.
-                    Under Kaduna State tax administration regulations, dual registration of corporate entities is prohibited.
+                  <p className="text-xs text-[var(--gray-700)] mt-1 leading-relaxed">
+                    Corporate registration <span className="font-mono font-bold text-rose-800">{duplicateRCBlocked.rc}</span> ({duplicateRCBlocked.companyName || 'Registered Enterprise'}) is already an active corporate profile on Kaduna State services. Under state revenue rules, duplicate corporate profiles are not permitted.
                   </p>
                 </div>
               </div>
               <div className="pt-1 flex items-center gap-3">
                 <Link
                   to={`/auth/login?identifier=${duplicateRCBlocked.rc}&type=corporate`}
-                  className="bg-[var(--danger)] hover:bg-[var(--danger)]/90 text-white px-4 py-2 rounded-[var(--radius)] text-xs font-medium inline-flex items-center gap-1.5 transition-colors shadow-xs"
+                  className="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"
                 >
-                  <span>Proceed to corporate sign in</span>
+                  <span>Proceed to Corporate Sign In</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
                 <button
@@ -311,7 +338,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                     setDuplicateRCBlocked(null)
                     setRcNumber('')
                   }}
-                  className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] underline cursor-pointer"
+                  className="text-xs text-[var(--gray-500)] hover:text-[var(--ink)] underline cursor-pointer"
                 >
                   Enter different RC number
                 </button>
@@ -320,15 +347,15 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
           )}
 
           {rcError && !duplicateRCBlocked && (
-            <div className="p-3.5 border border-[var(--danger)]/30 bg-[var(--danger)]/10 text-[var(--danger)] rounded-[var(--radius)] text-xs flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+            <div className="p-4 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{rcError}</span>
             </div>
           )}
 
           <div>
-            <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-              CAC RC Number (e.g. RC-1849204 or BN-123456) <span className="text-[var(--danger)]">*</span>
+            <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+              CAC Registration Number <span className="text-rose-500">*</span>
             </label>
             <input
               value={rcNumber}
@@ -337,31 +364,44 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                 setRcError(null)
                 setRcNumber(e.target.value)
               }}
-              placeholder="e.g. RC-1849204"
-              className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] font-mono text-[14.5px] uppercase focus:outline-2 focus:outline-[var(--green)]"
+              placeholder="e.g. RC-1849204 or BN-123456"
+              className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-base uppercase focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 tracking-wider"
               required
             />
           </div>
 
-          <div className="border border-[var(--line-soft)] bg-[var(--paper)] p-4 rounded-[var(--radius)] text-xs text-[var(--ink-soft)] leading-relaxed">
-            <span className="font-medium text-[var(--ink)] block mb-1">CAC Interoperability (Registry Gateway):</span>
-            Your corporate registration number triggers real-time verification against the Federal Corporate Affairs Commission database. Only active legal entities in good standing are authorized.
+          <div className="border border-emerald-200 bg-emerald-50/50 p-4 rounded-2xl text-xs text-[var(--gray-700)] leading-relaxed flex items-start gap-3">
+            <ShieldCheck className="w-4 h-4 text-[#1AA260] shrink-0 mt-0.5" />
+            <div>
+              <span className="font-semibold text-[var(--ink)] block mb-0.5">CAC Interoperability</span>
+              Your business registration number is verified directly against the federal registry to confirm active corporate standing with KADIRS.
+            </div>
           </div>
 
-          <div className="flex justify-between items-center pt-5 border-t border-[var(--line-soft)]">
+          <div className="flex justify-between items-center pt-5 border-t border-[var(--gray-200)]">
             <button
               type="button"
               onClick={onBackToSelection}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
+              className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
             <button
               type="submit"
               disabled={isSearching || Boolean(duplicateRCBlocked)}
-              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-6 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors ml-auto cursor-pointer disabled:opacity-50 shadow-xs"
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50 flex items-center gap-2"
             >
-              {isSearching ? 'Querying CAC Registry...' : 'Lookup business \u00a0\u2192'}
+              {isSearching ? (
+                <>
+                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Querying CAC Registry...</span>
+                </>
+              ) : (
+                <>
+                  <span>Lookup Enterprise</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -372,59 +412,59 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       {/* ================================================================ */}
       {step === 1 && cacData && (
         <form
-          className="bg-[var(--paper-raised)] border border-[var(--line)] p-8 sm:p-9 rounded-[var(--radius)] space-y-6"
+          className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
           onSubmit={handleStep1Submit}
         >
           <div>
-            <h2 className="font-semibold text-[22px] tracking-tight text-[var(--ink)] mb-1">
-              Corporate profile &amp; tax jurisdiction
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
+              Corporate Profile &amp; Jurisdiction
             </h2>
-            <p className="text-[13.5px] text-[var(--ink-soft)]">
-              Verify your official CAC registry data and establish corporate operational parameters.
+            <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
+              Confirm your official CAC registration details and establish corporate operational parameters for Kaduna State.
             </p>
           </div>
 
-          {/* Verified CAC Data - Clean read-only presentation without nested card borders */}
-          <div className="space-y-3">
+          {/* Verified CAC Data Card */}
+          <div className="border border-emerald-200 bg-emerald-50/40 rounded-2xl p-5 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[var(--green)]">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1AA260]">
                 <CheckCircle2 className="w-4 h-4" />
-                ✓ CAC registration active
+                <span>Verified CAC Registry Record</span>
               </span>
-              <span className="text-[11px] text-[var(--ink-soft)] font-mono">
-                Official Registry Record
+              <span className="text-[11px] font-mono text-[var(--gray-500)] uppercase tracking-wider">
+                Active Entity
               </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-3.5 border-y border-[var(--line-soft)]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-emerald-200/60">
               <div>
-                <span className="block text-[11px] uppercase tracking-wider font-medium text-[var(--ink-soft)] mb-1">
-                  Company Name
+                <span className="block text-[11px] uppercase tracking-wider font-semibold text-[var(--gray-500)] mb-1">
+                  Registered Name
                 </span>
-                <span className="text-[13.5px] font-semibold text-[var(--ink)] block leading-snug">
+                <span className="text-sm font-bold text-[var(--ink)] block leading-snug">
                   {cacData.companyName}
                 </span>
               </div>
               <div>
-                <span className="block text-[11px] uppercase tracking-wider font-medium text-[var(--ink-soft)] mb-1">
-                  RC / TIN
+                <span className="block text-[11px] uppercase tracking-wider font-semibold text-[var(--gray-500)] mb-1">
+                  RC / State TIN
                 </span>
-                <span className="text-[13.5px] font-mono font-medium text-[var(--ink)] block">
+                <span className="text-sm font-mono font-medium text-[var(--ink)] block">
                   {cacData.rcNumber} &middot; {cacData.tin}
                 </span>
               </div>
               <div>
-                <span className="block text-[11px] uppercase tracking-wider font-medium text-[var(--ink-soft)] mb-1">
-                  Status / Type
+                <span className="block text-[11px] uppercase tracking-wider font-semibold text-[var(--gray-500)] mb-1">
+                  Industry &amp; Status
                 </span>
-                <span className="text-[13.5px] capitalize font-medium text-[var(--ink)] block">
-                  <span className="text-[var(--green)] font-semibold">{cacData.status}</span> &middot; {cacData.industry}
+                <span className="text-sm capitalize font-medium text-[var(--ink)] block">
+                  <span className="text-[#1AA260] font-semibold">{cacData.status}</span> &middot; {cacData.industry}
                 </span>
               </div>
               <div>
-                <span className="block text-[11px] uppercase tracking-wider font-medium text-[var(--ink-soft)] mb-1">
+                <span className="block text-[11px] uppercase tracking-wider font-semibold text-[var(--gray-500)] mb-1">
                   Registered Directors
                 </span>
-                <span className="text-[12.5px] text-[var(--ink)] block leading-snug">
+                <span className="text-xs text-[var(--gray-700)] block leading-snug">
                   {cacData.directors.join(', ')}
                 </span>
               </div>
@@ -432,15 +472,15 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
           </div>
 
           {/* Operational Fields: Staff Count, Jurisdiction & Assigned Tax Office */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-                Operational staff count <span className="text-[var(--danger)]">*</span>
+              <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                Staff Size Category <span className="text-rose-500">*</span>
               </label>
               <select
                 value={staffCount}
                 onChange={(e) => setStaffCount(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)]"
+                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
               >
                 <option value="1 - 10 employees">1 - 10 employees (Micro enterprise)</option>
                 <option value="11 - 50 employees">11 - 50 employees (Small enterprise)</option>
@@ -450,65 +490,71 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
             </div>
 
             <div>
-              <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-                Business LGA <span className="text-[var(--danger)]">*</span>
+              <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                Principal Business LGA <span className="text-rose-500">*</span>
               </label>
               <select
                 value={selectedLga}
                 onChange={(e) => setSelectedLga(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-2 focus:outline-[var(--green)]"
+                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
               >
                 {KADUNA_LGAS.map((lga) => (
                   <option key={lga} value={lga}>{lga}</option>
                 ))}
               </select>
             </div>
+          </div>
 
-            <div>
-              <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-                Assigned corporate tax office
-              </label>
-              <input
-                value={assignedCorporateTaxOffice}
-                readOnly
-                disabled
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--line-soft)]/50 text-[var(--ink-soft)] text-[13.5px] cursor-not-allowed select-none font-medium"
-              />
+          {/* Assigned Corporate Tax Office Highlight Card */}
+          <div className="border border-emerald-200 bg-emerald-50/50 p-4 rounded-2xl flex items-start gap-3">
+            <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5 text-[#1AA260]">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[11px] uppercase font-semibold text-[#1AA260] tracking-wider block">
+                Designated KADIRS Corporate Tax Office
+              </span>
+              <div className="text-sm font-bold text-[var(--ink)] mt-0.5">
+                {assignedCorporateTaxOffice}
+              </div>
+              <p className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                Corporate PAYE filings, withholding tax remittances, and business premises licensing in {selectedLga} route through this office.
+              </p>
             </div>
           </div>
 
           {/* Contact Fields: Corporate Email & Phone */}
-          <div className="space-y-4 pt-5 border-t border-[var(--line-soft)]">
-            <h3 className="font-semibold text-[15.5px] tracking-tight text-[var(--ink)]">
+          <div className="space-y-4 pt-2 border-t border-[var(--gray-200)]">
+            <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
               Official Corporate Contact Channels
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Corporate Email */}
               <div>
-                <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-                  Corporate official email <span className="text-[var(--danger)]">*</span>
+                <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                  Corporate Official Email <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="email"
                   value={corporateEmail}
                   onChange={(e) => handleEmailChange(e.target.value)}
                   placeholder="e.g. tax@company.ng"
-                  className={`w-full px-3.5 py-2.5 border rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 ${
+                  className={`w-full px-4 py-3 border rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none ${
                     emailDuplicateError
-                      ? 'border-[var(--danger)] focus:outline-[var(--danger)]'
-                      : 'border-[var(--line)] focus:outline-[var(--green)]'
+                      ? 'border-rose-300 focus:ring-2 focus:ring-rose-200'
+                      : 'border-[var(--gray-200)] focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10'
                   }`}
                   required
                 />
                 {emailDuplicateError && (
-                  <p className="text-xs text-[var(--danger)] font-medium mt-1.5 flex items-start gap-1">
-                    <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <p className="text-xs text-rose-600 font-medium mt-1.5 flex items-start gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-rose-600" />
                     <span>{emailDuplicateError}</span>
                   </p>
                 )}
                 {emailWarning && (
-                  <div className="p-3 mt-2 border border-[var(--gold)]/40 bg-[var(--gold)]/10 rounded-[var(--radius)] text-xs text-[var(--ink)] flex items-start gap-2">
-                    <Info className="w-4 h-4 text-[var(--gold)] shrink-0 mt-0.5" />
+                  <div className="p-3 mt-2 border border-amber-200 bg-amber-50 rounded-xl text-xs text-amber-800 flex items-start gap-2">
+                    <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <span className="leading-relaxed">{emailWarning}</span>
                   </div>
                 )}
@@ -516,38 +562,39 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
 
               {/* Corporate Phone */}
               <div>
-                <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-                  Corporate official phone <span className="text-[var(--danger)]">*</span>
+                <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                  Corporate Official Phone <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="tel"
                   value={corporatePhone}
                   onChange={(e) => setCorporatePhone(e.target.value)}
                   placeholder="e.g. +234 812 987 6543"
-                  className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 focus:outline-[var(--green)]"
+                  className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   required
                 />
-                <span className="text-[11px] text-[var(--ink-soft)] mt-1.5 block">
+                <span className="text-[11px] text-[var(--gray-500)] mt-1.5 block">
                   A verification code will be sent to this phone.
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-between items-center pt-5 border-t border-[var(--line-soft)]">
+          <div className="flex justify-between items-center pt-5 border-t border-[var(--gray-200)]">
             <button
               type="button"
               onClick={() => changeStep(0)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
+              className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
             <button
               type="submit"
               disabled={Boolean(emailDuplicateError)}
-              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-6 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50 flex items-center gap-2"
             >
-              Continue to Signatory &nbsp;&rarr;
+              <span>Continue to Signatory</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </form>
@@ -557,25 +604,40 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       {/* STEP 2: Representative Signatory, Separate Password & OTP        */}
       {/* ================================================================ */}
       {step === 2 && cacData && (
-        <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-8 sm:p-9 rounded-[var(--radius)] space-y-6">
+        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
-            <h2 className="font-semibold text-[22px] tracking-tight text-[var(--ink)] mb-1">
-              Authorised representative &amp; credentials
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
+              Authorized Representative &amp; Credentials
             </h2>
-            <p className="text-[13.5px] text-[var(--ink-soft)]">
+            <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
               Designate an authorized human representative and establish a separate corporate login password.
             </p>
           </div>
 
           {/* Representative Identity Lookup */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-[15.5px] tracking-tight text-[var(--ink)]">
-              Authorized Representative Signatory
-            </h3>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
+                Authorized Signatory Officer
+              </h3>
+              {/* Quick Fill Demo NIN Chip */}
+              <button
+                type="button"
+                onClick={() => {
+                  handleNINChange('12345678901')
+                  setRepName('Fatima Aliyu')
+                  setRepRole('Managing Director')
+                }}
+                className="text-xs px-2.5 py-1 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#1AA260] border border-emerald-200 transition-colors font-medium cursor-pointer"
+              >
+                Demo Fill: Fatima Aliyu (Director)
+              </button>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-                  Representative personal NIN (Hidden) <span className="text-[var(--danger)]">*</span>
+                <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                  Representative Personal NIN <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -584,13 +646,13 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                     onChange={(e) => handleNINChange(e.target.value)}
                     placeholder="Enter 11-digit personal NIN"
                     maxLength={11}
-                    className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] font-mono text-[14.5px] focus:outline-2 focus:outline-[var(--green)] pr-10"
+                    className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowNIN(!showNIN)}
-                    className="absolute right-3 top-2.5 text-[var(--ink-soft)] hover:text-[var(--ink)] cursor-pointer"
+                    className="absolute right-3.5 top-3 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
                     tabIndex={-1}
                   >
                     {showNIN ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -599,14 +661,14 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
               </div>
 
               <div>
-                <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-                  Representative full legal name <span className="text-[var(--danger)]">*</span>
+                <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                  Representative Full Legal Name <span className="text-rose-500">*</span>
                 </label>
                 <input
                   value={repName}
                   onChange={(e) => setRepName(e.target.value)}
                   placeholder="Enter authorized representative name"
-                  className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 focus:outline-[var(--green)]"
+                  className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   required
                 />
               </div>
@@ -614,52 +676,54 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
 
             {/* Internal check feedback */}
             {internalNINMatch?.found && (
-              <div className="border border-[var(--green)]/40 bg-[var(--green)]/10 p-3.5 rounded-[var(--radius)] text-xs text-[var(--ink)] flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[var(--green)] shrink-0" />
+              <div className="border border-emerald-200 bg-emerald-50/60 p-3.5 rounded-2xl text-xs text-[var(--ink)] flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#1AA260] shrink-0" />
                 <span>
-                  ✓ Existing Citizen Account Found: <strong className="text-[var(--green)]">{internalNINMatch.name}</strong> &middot; Pre-linked as Authorised Signatory.
+                  Existing Citizen Account Found: <strong className="text-[#1AA260]">{internalNINMatch.name}</strong> &middot; Pre-linked as Authorised Signatory.
                 </span>
               </div>
             )}
 
             <div>
-              <label className="block text-[12.5px] text-[var(--ink-soft)] mb-1.5 font-medium">
-                Official designation / corporate capacity <span className="text-[var(--danger)]">*</span>
+              <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
+                Official Capacity / Designation <span className="text-rose-500">*</span>
               </label>
               <input
                 value={repRole}
                 onChange={(e) => setRepRole(e.target.value)}
                 placeholder="e.g. Managing Director / Principal Partner"
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 focus:outline-[var(--green)]"
+                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                 required
               />
             </div>
 
             {/* Mandatory Authorised Representative Declaration Checkbox */}
-            <label className="flex items-start gap-3 p-3.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] cursor-pointer text-xs">
+            <label className="flex items-start gap-3.5 p-4 border border-[var(--gray-200)] rounded-2xl bg-[var(--paper)]/60 cursor-pointer text-xs">
               <input
                 type="checkbox"
                 checked={isAuthorizedChecked}
                 onChange={(e) => setIsAuthorizedChecked(e.target.checked)}
-                className="mt-0.5 accent-[var(--green)] cursor-pointer"
+                className="mt-0.5 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
               />
-              <span className="text-[var(--ink)] leading-relaxed">
-                <strong>
-                  I declare under penalty of perjury <span className="text-[var(--danger)]">*</span>
+              <span className="text-[var(--gray-700)] leading-relaxed">
+                <strong className="text-[var(--ink)]">
+                  I solemnly declare <span className="text-rose-500">*</span>
                 </strong>{' '}
-                that I am the authorized representative / director legally designated to manage tax and statutory revenue affairs for <strong>{cacData.companyName}</strong> with the Kaduna State Internal Revenue Service.
+                that I am the authorized representative / director legally empowered to manage tax and statutory revenue affairs for <strong>{cacData.companyName}</strong> with the Kaduna State Internal Revenue Service.
               </span>
             </label>
           </div>
 
           {/* Separate Corporate Password */}
-          <div className="space-y-3 pt-5 border-t border-[var(--line-soft)]">
-            <h3 className="font-semibold text-[15.5px] tracking-tight text-[var(--ink)]">
-              Corporate Login Password <span className="text-[var(--danger)]">*</span>
-            </h3>
-            <p className="text-xs text-[var(--ink-soft)]">
-              This credential is strictly for managing <strong>{cacData.companyName}</strong> and remains isolated from any personal citizen accounts.
-            </p>
+          <div className="space-y-4 pt-3 border-t border-[var(--gray-200)]">
+            <div>
+              <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
+                Corporate Login Password <span className="text-rose-500">*</span>
+              </h3>
+              <p className="text-xs text-[var(--gray-700)] mt-0.5">
+                This credential is strictly for managing <strong>{cacData.companyName}</strong> and remains isolated from any personal citizen accounts.
+              </p>
+            </div>
 
             <div className="relative">
               <input
@@ -667,69 +731,90 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                 value={corporatePassword}
                 onChange={(e) => setCorporatePassword(e.target.value)}
                 placeholder="Create corporate access password"
-                className="w-full px-3.5 py-2.5 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-2 focus:outline-[var(--green)] pr-10"
+                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-[var(--ink-soft)] hover:text-[var(--ink)] cursor-pointer"
+                className="absolute right-3.5 top-3 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <span className={isPasswordLongEnough ? 'text-[var(--green)] font-medium' : 'text-[var(--ink-soft)]'}>
-                {isPasswordLongEnough ? '✓' : '○'} At least 8 characters
-              </span>
-              <span className={hasUpper ? 'text-[var(--green)] font-medium' : 'text-[var(--ink-soft)]'}>
-                {hasUpper ? '✓' : '○'} Uppercase letter
-              </span>
-              <span className={hasLower ? 'text-[var(--green)] font-medium' : 'text-[var(--ink-soft)]'}>
-                {hasLower ? '✓' : '○'} Lowercase letter
-              </span>
-              <span className={hasNumber ? 'text-[var(--green)] font-medium' : 'text-[var(--ink-soft)]'}>
-                {hasNumber ? '✓' : '○'} Number
-              </span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                isPasswordLongEnough
+                  ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
+                  : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+              }`}>
+                <span className="text-xs">{isPasswordLongEnough ? '✓' : '○'}</span>
+                <span>8+ chars</span>
+              </div>
+              <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                hasUpper
+                  ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
+                  : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+              }`}>
+                <span className="text-xs">{hasUpper ? '✓' : '○'}</span>
+                <span>Uppercase</span>
+              </div>
+              <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                hasLower
+                  ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
+                  : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+              }`}>
+                <span className="text-xs">{hasLower ? '✓' : '○'}</span>
+                <span>Lowercase</span>
+              </div>
+              <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                hasNumber
+                  ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
+                  : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+              }`}>
+                <span className="text-xs">{hasNumber ? '✓' : '○'}</span>
+                <span>Number</span>
+              </div>
             </div>
           </div>
 
           {/* Corporate Phone Verification Challenge */}
-          <div className="space-y-4 pt-5 border-t border-[var(--line-soft)]">
+          <div className="space-y-4 pt-3 border-t border-[var(--gray-200)]">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h3 className="font-semibold text-[15.5px] tracking-tight text-[var(--ink)]">
+                <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
                   Corporate Phone Verification
                 </h3>
-                <p className="text-xs text-[var(--ink-soft)] mt-0.5">
-                  Confirm ownership of this corporate filing via verification code sent to <span className="font-mono font-medium text-[var(--ink)]">{corporatePhone}</span>.
+                <p className="text-xs text-[var(--gray-700)] mt-0.5">
+                  Confirm possession of the corporate phone number:{' '}
+                  <strong className="font-mono font-semibold text-[var(--ink)]">{corporatePhone}</strong>.
                 </p>
               </div>
-              <span className="text-[11px] font-medium px-2.5 py-1 rounded-[var(--radius)] bg-[var(--line-soft)] text-[var(--ink-soft)] shrink-0 self-start sm:self-auto border border-[var(--line)]">
-                SMS verification
+              <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-emerald-50 text-[#1AA260] border border-emerald-200 shrink-0 self-start sm:self-auto">
+                SMS Verification
               </span>
             </div>
 
             {!otpSent && !otpVerified && (
-              <div className="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--paper)] p-4 rounded-[var(--radius)] border border-[var(--line-soft)]">
-                <p className="text-xs text-[var(--ink-soft)]">
-                  Dispatch verification code to the registered corporate phone number.
+              <div className="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--paper)] p-4 rounded-2xl border border-[var(--gray-200)]">
+                <p className="text-xs sm:text-sm text-[var(--gray-700)]">
+                  A 6-digit verification code will be sent to the official corporate phone.
                 </p>
                 <button
                   type="button"
                   onClick={handleSendCorpOTP}
-                  className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-5 py-2.5 rounded-[var(--radius)] font-sans text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer shrink-0"
+                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-6 py-2.5 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shrink-0"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Send verification code</span>
+                  <span>Send Verification Code</span>
                 </button>
               </div>
             )}
 
             {otpSent && !otpVerified && (
-              <div className="space-y-3.5 animate-in fade-in bg-[var(--paper)] p-4 rounded-[var(--radius)] border border-[var(--line-soft)]">
-                <p className="text-xs text-[var(--ink-soft)]">
+              <div className="space-y-3.5 animate-in fade-in bg-[var(--paper)] p-4 rounded-2xl border border-[var(--gray-200)]">
+                <p className="text-xs sm:text-sm text-[var(--gray-700)]">
                   Enter the 6-digit verification code sent to <strong className="text-[var(--ink)]">{corporatePhone}</strong>:
                 </p>
 
@@ -740,13 +825,13 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                     onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="000000"
                     maxLength={6}
-                    className="w-44 px-4 py-2 border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper-raised)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-2 focus:outline-[var(--green)]"
+                    className="w-48 px-4 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--white)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   />
                   <button
                     type="button"
                     onClick={handleVerifyCorpOTP}
                     disabled={otpInput.length < 6}
-                    className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-5 py-2.5 rounded-[var(--radius)] text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+                    className="bg-[#1AA260] hover:bg-[#158A52] text-white px-6 py-2.5 rounded-full text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     Verify Code
                   </button>
@@ -754,15 +839,15 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                     type="button"
                     onClick={handleSendCorpOTP}
                     disabled={resendCooldown > 0}
-                    className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] disabled:opacity-50 underline px-2 py-1 cursor-pointer"
+                    className="text-xs text-[var(--gray-500)] hover:text-[var(--ink)] disabled:opacity-50 underline px-2 py-1 cursor-pointer"
                   >
-                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend new code'}
+                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend code'}
                   </button>
                 </div>
 
                 {otpError && (
-                  <div className="p-3 border border-[var(--danger)]/30 bg-[var(--danger)]/10 text-[var(--danger)] rounded-[var(--radius)] text-xs flex items-center gap-2">
-                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                  <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-xl text-xs flex items-center gap-2">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
                     <span>{otpError}</span>
                   </div>
                 )}
@@ -770,14 +855,14 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
             )}
 
             {otpVerified && (
-              <div className="border border-[var(--green)]/40 bg-[var(--green)]/10 p-4 rounded-[var(--radius)] text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
-                <CheckCircle2 className="w-5 h-5 text-[var(--green)] shrink-0 mt-0.5" />
+              <div className="border border-emerald-200 bg-emerald-50/60 p-4 rounded-2xl text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
+                <CheckCircle2 className="w-5 h-5 text-[#1AA260] shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-semibold text-[var(--green)] text-[13.5px]">
-                    ✓ Corporate authorization confirmed
+                  <div className="font-bold text-[#1AA260] text-sm">
+                    Corporate Verification Confirmed
                   </div>
-                  <p className="text-[var(--ink-soft)] mt-0.5 leading-relaxed">
-                    Official corporate telephone channel validated. Entity <code className="font-mono font-medium text-[var(--ink)]">{cacData.companyName}</code> is authorized for state platform activation.
+                  <p className="text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                    Official corporate phone validated. Profile for <strong className="text-[var(--ink)]">{cacData.companyName}</strong> is verified and ready for activation.
                   </p>
                 </div>
               </div>
@@ -785,11 +870,11 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
           </div>
 
           {/* Action Row */}
-          <div className="flex justify-between items-center pt-5 border-t border-[var(--line-soft)]">
+          <div className="flex justify-between items-center pt-5 border-t border-[var(--gray-200)]">
             <button
               type="button"
               onClick={() => changeStep(1)}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm px-3 py-2 rounded-[var(--radius)] transition-colors cursor-pointer"
+              className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
             >
               &larr; Back
             </button>
@@ -797,9 +882,10 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
               type="button"
               disabled={!otpVerified || !isAuthorizedChecked || !isPasswordValid || !repName.trim() || repNIN.length !== 11}
               onClick={handleFinish}
-              className="bg-[var(--green)] hover:bg-[var(--green-deep)] text-white px-7 py-2.5 rounded-[var(--radius)] font-sans text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-8 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
             >
-              Activate Corporate Account &nbsp;&rarr;
+              <span>Activate Corporate Account</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
