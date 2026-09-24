@@ -11,7 +11,9 @@ import {
   MapPin,
   Smartphone,
   KeyRound,
-  Hash
+  Hash,
+  Loader2,
+  Mail
 } from 'lucide-react'
 import { KADUNA_LGAS, LGA_TAX_OFFICES } from '@/data/lga-tax-offices'
 import { verifyNINWithNIMC, maskNIMCPhone, type NIMCVerificationResponse } from '@/engine/kyc-simulator'
@@ -74,6 +76,9 @@ export function IndividualFlow({
   const [otpVerified, setOtpVerified] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
   const [otpAttemptsLeft, setOtpAttemptsLeft] = useState(3)
+  const [isVerifyingOTP, setIsVerifyingOTP] = useState(false)
+  const [otpSuccessNotice, setOtpSuccessNotice] = useState<string | null>(null)
+  const [isExitingNotice, setIsExitingNotice] = useState(false)
 
   // ==========================================
   // Step 2: Location & Tax Jurisdiction
@@ -274,17 +279,24 @@ export function IndividualFlow({
     otpInputRefs.current[focusIdx]?.focus()
   }
 
-  // Step 1: Verify OTP
-  const handleVerifyOTP = () => {
+  // Step 1: Verify OTP with 3-second loader and animated transition
+  const handleVerifyOTP = async () => {
     setOtpError(null)
+    setOtpSuccessNotice(null)
     const codeToVerify = otpDigits.join('').trim() || otpInput.trim()
     if (!codeToVerify || codeToVerify.length < 6) {
       setOtpError('Please enter the complete 6-digit verification code.')
       return
     }
 
+    setIsVerifyingOTP(true)
+
+    // Simulate 3-second verification with NIMC Dojah gateway as requested
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+
     const res = verifySimulatedOTP(codeToVerify)
     if (!res.valid) {
+      setIsVerifyingOTP(false)
       const remaining = Math.max(0, otpAttemptsLeft - 1)
       setOtpAttemptsLeft(remaining)
       if (remaining === 0) {
@@ -298,8 +310,18 @@ export function IndividualFlow({
       return
     }
 
-    setOtpError(null)
-    setOtpVerified(true)
+    // Success: show success message for 1.5 seconds, then animate in revealed details
+    setIsVerifyingOTP(false)
+    setOtpSuccessNotice('Phone verification confirmed! Identity ownership verified with NIMC.')
+
+    setTimeout(() => {
+      setIsExitingNotice(true)
+      setTimeout(() => {
+        setOtpSuccessNotice(null)
+        setIsExitingNotice(false)
+        setOtpVerified(true)
+      }, 350)
+    }, 1500)
   }
 
   // Password validation checks
@@ -630,8 +652,8 @@ export function IndividualFlow({
             )}
 
             {/* When Sent & Awaiting Code Entry */}
-            {otpSent && !otpVerified && (
-              <div className="space-y-3.5 animate-in fade-in">
+            {otpSent && !otpVerified && !otpSuccessNotice && (
+              <div className="space-y-3.5 animate-in fade-in slide-in-from-top-2 duration-300">
                 <p className="text-xs sm:text-sm text-[var(--gray-700)]">
                   Enter the 6-digit verification code sent to your phone{' '}
                   <strong className="font-mono font-semibold text-[var(--ink)]">
@@ -651,9 +673,10 @@ export function IndividualFlow({
                         pattern="[0-9]*"
                         maxLength={1}
                         value={digit}
+                        disabled={isVerifyingOTP}
                         onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
                         onKeyDown={(e) => handleOtpDigitKeyDown(idx, e)}
-                        className="w-10 sm:w-11 h-11 text-center font-mono font-bold text-lg rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--ink)] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all"
+                        className="w-10 sm:w-11 h-11 text-center font-mono font-bold text-lg rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--ink)] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all disabled:opacity-50"
                       />
                     ))}
                   </div>
@@ -662,25 +685,39 @@ export function IndividualFlow({
                   <button
                     type="button"
                     onClick={handleVerifyOTP}
-                    disabled={otpDigits.join('').length < 6}
-                    className="h-11 px-6 rounded-xl bg-[#1AA260] hover:bg-[#158A52] text-white font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors disabled:opacity-50 cursor-pointer shrink-0"
+                    disabled={otpDigits.join('').length < 6 || isVerifyingOTP}
+                    className="h-11 px-6 rounded-xl bg-[#1AA260] hover:bg-[#158A52] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer shrink-0"
                   >
-                    Verify Code
+                    {isVerifyingOTP ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Verifying...</span>
+                      </>
+                    ) : (
+                      <span>Verify Code</span>
+                    )}
                   </button>
 
                   {/* Resend Code Button */}
                   <button
                     type="button"
                     onClick={handleSendOTP}
-                    disabled={resendCooldown > 0}
+                    disabled={resendCooldown > 0 || isVerifyingOTP}
                     className="h-11 px-3 text-xs text-[var(--gray-500)] hover:text-[var(--ink)] disabled:opacity-50 underline flex items-center cursor-pointer"
                   >
                     {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend code'}
                   </button>
                 </div>
 
+                {isVerifyingOTP && (
+                  <div className="flex items-center gap-2 text-xs text-[var(--gray-600)] dark:text-[var(--gray-400)] animate-in fade-in duration-200">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#1AA260]" />
+                    <span>Communicating with NIMC / Dojah verification gateway (approx. 3s)...</span>
+                  </div>
+                )}
+
                 {otpError && (
-                  <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2">
+                  <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
                     <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
                     <span>{otpError}</span>
                   </div>
@@ -694,9 +731,26 @@ export function IndividualFlow({
               </div>
             )}
 
-            {/* Verification Confirmation */}
+            {/* Success Message Animation during transition */}
+            {otpSuccessNotice && (
+              <div
+                className={`p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs flex items-center gap-3 transition-all duration-300 ${
+                  isExitingNotice
+                    ? 'opacity-0 -translate-y-2'
+                    : 'opacity-100 translate-y-0 animate-in fade-in zoom-in-95'
+                }`}
+              >
+                <CheckCircle2 className="w-5 h-5 text-[#1AA260] shrink-0" />
+                <div>
+                  <span className="font-bold text-sm block">Identity Verification Successful</span>
+                  <span className="text-[var(--gray-700)] dark:text-[var(--gray-300)]">{otpSuccessNotice}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Verification Confirmation Banner */}
             {otpVerified && (
-              <div className="border border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 p-4 rounded-2xl text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
+              <div className="border border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 p-4 rounded-2xl text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
                 <CheckCircle2 className="w-5 h-5 text-[#1AA260] shrink-0 mt-0.5" />
                 <div>
                   <div className="font-bold text-[#1AA260] text-sm">
@@ -710,103 +764,100 @@ export function IndividualFlow({
             )}
           </div>
 
-          {/* Verified Identity Record (NIMC) — ONLY SHOWN AFTER OTP IS VERIFIED */}
+          {/* Revealed Verified Record & Contact Channels (SHOWN ONLY AFTER OTP IS VERIFIED) */}
           {otpVerified && (
-            <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--gray-200)] space-y-3 animate-in fade-in duration-300">
-              <div className="text-[#1AA260] font-semibold text-xs flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Verified Identity Record (NIMC)</span>
-                {isProvisionalNIMC && (
-                  <span className="ml-2 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold uppercase">
-                    Provisional
-                  </span>
-                )}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[var(--ink)] pt-1">
-                <div>
-                  <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
-                    Legal Name
-                  </span>
-                  <span className="font-bold text-sm mt-0.5 block">{nimcData.legalName}</span>
-                </div>
-                <div>
-                  <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
-                    Gender
-                  </span>
-                  <span className="capitalize font-medium text-sm mt-0.5 block">{nimcData.gender}</span>
-                </div>
-                <div>
-                  <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
-                    Date of Birth
-                  </span>
-                  <span className="font-mono text-sm text-[var(--gray-500)] mt-0.5 block">••••-••-•• (Masked)</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Contact Information Fields (ONLY SHOWN WHEN OTP IS VERIFIED) */}
-          {otpVerified && (
-            <div className="border-t border-[var(--gray-200)] pt-6 space-y-4 animate-in fade-in duration-200">
-              <div>
-                <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
-                  Primary Contact Channels
-                </h3>
-                <p className="text-xs text-[var(--gray-700)] mt-0.5">
-                  Confirm your contact information for state revenue receipts and tax assessments.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
-                    <span>
-                      Primary Email Address *
+            <div className="space-y-6 animate-in fade-in-50 slide-in-from-top-4 duration-500 ease-out">
+              {/* Verified Identity Record (NIMC) */}
+              <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--gray-200)] space-y-3">
+                <div className="text-[#1AA260] font-semibold text-xs flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Verified Identity Record (NIMC)</span>
+                  {isProvisionalNIMC && (
+                    <span className="ml-2 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold uppercase">
+                      Provisional
                     </span>
-                    <span className="text-[11px] text-[var(--gray-500)]">Editable</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => handleEmailChange(e.target.value)}
-                    placeholder="e.g. yourname@example.com"
-                    className={`w-full px-4 py-3 border rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none ${
-                      emailDuplicateError
-                        ? 'border-rose-300 focus:ring-2 focus:ring-rose-200'
-                        : 'border-[var(--input-border)] focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10'
-                    }`}
-                    required
-                  />
-                  {emailDuplicateError && (
-                    <p className="text-xs text-rose-600 font-medium mt-1.5 flex items-start gap-1">
-                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-rose-600" />
-                      <span>{emailDuplicateError}</span>
-                    </p>
-                  )}
-                  {!emailDuplicateError && email !== initialEmail && (
-                    <p className="text-[11.5px] text-amber-700 mt-1.5 leading-tight">
-                      Notice: Email changed from initial record &mdash; confirmation message will be sent.
-                    </p>
                   )}
                 </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
-                    <span>
-                      Mobile Phone Number *
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[var(--ink)] pt-1">
+                  <div>
+                    <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
+                      Legal Name
                     </span>
-                    <span className="text-[11px] text-[var(--gray-500)]">Editable</span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="e.g. +234 814 555 1212"
-                    className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
-                    required
-                  />
-                  <span className="text-[11px] text-[var(--gray-500)] mt-1.5 block">
-                    Pre-populated from your verified NIN record.
-                  </span>
+                    <span className="font-bold text-sm mt-0.5 block">{nimcData.legalName}</span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
+                      Gender
+                    </span>
+                    <span className="capitalize font-medium text-sm mt-0.5 block">{nimcData.gender}</span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
+                      Date of Birth
+                    </span>
+                    <span className="font-mono text-sm text-[var(--gray-500)] mt-0.5 block">••••-••-•• (Masked)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Primary Contact Channels */}
+              <div className="border-t border-[var(--gray-200)] pt-6 space-y-4">
+                <div>
+                  <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
+                    Primary Contact Channels
+                  </h3>
+                  <p className="text-xs text-[var(--gray-700)] mt-0.5">
+                    Confirm your contact information for state revenue receipts and tax assessments.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
+                      <span>Primary Email Address *</span>
+                      <span className="text-[11px] text-[var(--gray-500)]">Editable</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => handleEmailChange(e.target.value)}
+                      placeholder="e.g. yourname@example.com"
+                      className={`w-full px-4 py-3 border rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none ${
+                        emailDuplicateError
+                          ? 'border-rose-300 focus:ring-2 focus:ring-rose-200'
+                          : 'border-[var(--input-border)] focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10'
+                      }`}
+                      required
+                    />
+                    {emailDuplicateError && (
+                      <p className="text-xs text-rose-600 font-medium mt-1.5 flex items-start gap-1">
+                        <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-rose-600" />
+                        <span>{emailDuplicateError}</span>
+                      </p>
+                    )}
+                    {!emailDuplicateError && email !== initialEmail && (
+                      <p className="text-[11.5px] text-amber-700 mt-1.5 leading-tight">
+                        Notice: Email changed from initial record &mdash; confirmation message will be sent.
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
+                      <span>Mobile Phone Number *</span>
+                      <span className="text-[11px] text-[var(--gray-500)]">Editable</span>
+                    </label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      placeholder="e.g. +234 814 555 1212"
+                      className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                      required
+                    />
+                    <span className="text-[11px] text-[var(--gray-500)] mt-1.5 block">
+                      Pre-populated from your verified NIN record.
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -940,10 +991,44 @@ export function IndividualFlow({
           </div>
 
           <div className="space-y-5">
+            {/* Citizen Login Identity (Email) Confirmation */}
+            <div className="p-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] border border-[var(--gray-200)] flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-500)] block">
+                    Account Login Email / Username
+                  </span>
+                  <span className="font-bold text-sm text-[var(--ink)] truncate block mt-0.5">
+                    {email || 'citizen@kaduna.ng'}
+                  </span>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800">
+                  Verified Sign-In ID
+                </span>
+                <button
+                  type="button"
+                  onClick={() => changeStep(1)}
+                  className="block text-[11px] text-[var(--gray-500)] hover:text-[#1AA260] hover:underline mt-1 cursor-pointer ml-auto"
+                >
+                  Edit email &rarr;
+                </button>
+              </div>
+            </div>
+
             <div>
-              <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
-                Account Password <span className="text-rose-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--ink)]">
+                  Account Password <span className="text-rose-500">*</span>
+                </label>
+                <span className="text-[11px] text-[var(--gray-500)]">
+                  Secures sign-in for <strong className="text-[var(--ink)] font-medium">{email || 'your account'}</strong>
+                </span>
+              </div>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
