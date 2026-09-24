@@ -68,6 +68,11 @@ export default function ReconciliationPage() {
   ).length
   const allLinked = candidates.length > 0 && linkedCount === candidates.length
 
+  // Check if every candidate has been acted on (linked or disputed)
+  const allResolved = candidates.length > 0 && candidates.every(
+    (c) => reconciledRecordIds.includes(c.record.id) || disputedIds.includes(c.record.id)
+  )
+
   // Link single record
   const handleLinkRecord = (candidate: ReconciliationCandidate) => {
     const res = executeReconciliation(candidate, activeProfile.citizenId, activeIdentity.nin)
@@ -155,11 +160,20 @@ export default function ReconciliationPage() {
             <h1 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               {allLinked
                 ? 'All accounts linked!'
+                : allResolved
+                ? 'Review complete'
                 : `${candidates.length} account${candidates.length !== 1 ? 's' : ''} found under your NIN`}
             </h1>
-            {!allLinked && (
+            {!allLinked && !allResolved && (
               <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-0.5">
                 Each one needs your confirmation before it joins your profile.
+              </p>
+            )}
+            {allResolved && !allLinked && (
+              <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-0.5">
+                {linkedCount > 0
+                  ? `${linkedCount} account${linkedCount !== 1 ? 's' : ''} linked. Disputed records have been sent for review.`
+                  : 'All records have been flagged for review. You can continue to your dashboard.'}
               </p>
             )}
           </div>
@@ -318,6 +332,33 @@ export default function ReconciliationPage() {
                 </div>
               )
             })}
+          </div>
+        )}
+
+        {/* ── All Resolved (mix of linked + disputed) — Continue Action ── */}
+        {allResolved && !allLinked && (
+          <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-5 sm:p-6 rounded-[20px] flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[var(--ink)]">
+                  {linkedCount > 0 ? `${linkedCount} linked, ${disputedIds.length} disputed` : `${disputedIds.length} record${disputedIds.length !== 1 ? 's' : ''} sent for review`}
+                </p>
+                <p className="text-xs text-[var(--gray-500)] mt-0.5">
+                  Disputed records will be reviewed by the KADIRS administrative team.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/paykaduna')}
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white h-10 px-6 rounded-full text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shrink-0"
+            >
+              <span>Continue to Dashboard</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         )}
 
