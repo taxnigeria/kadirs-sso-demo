@@ -271,7 +271,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
+          className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
           onSubmit={handleLookup}
         >
           <div>
@@ -293,7 +293,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                 setRcError(null)
                 setRcNumber('RC-1849204')
               }}
-              className="text-xs px-3 py-1 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#1AA260] border border-emerald-200 transition-colors font-mono font-medium cursor-pointer"
+              className="text-xs px-3 py-1 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 text-[#1AA260] border border-emerald-500/25 transition-colors font-mono font-medium cursor-pointer"
             >
               RC-1849204 (Arewa Textiles)
             </button>
@@ -304,7 +304,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                 setRcError(null)
                 setRcNumber('RC-9021844')
               }}
-              className="text-xs px-3 py-1 rounded-full bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--ink)] border border-[var(--gray-200)] transition-colors font-mono font-medium cursor-pointer"
+              className="text-xs px-3 py-1 rounded-full bg-[var(--input-bg)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] border border-[var(--input-border)] transition-colors font-mono font-medium cursor-pointer"
             >
               RC-9021844 (New Business)
             </button>
@@ -312,15 +312,15 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
 
           {/* Hard Block on Duplicate RC Number */}
           {duplicateRCBlocked && (
-            <div className="border border-rose-300 bg-rose-50/80 p-5 rounded-2xl space-y-3 animate-in fade-in">
+            <div className="border border-rose-300 dark:border-rose-900/60 bg-rose-50/80 dark:bg-rose-950/30 p-5 rounded-2xl space-y-3 animate-in fade-in">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-sm text-rose-900">
+                  <h4 className="font-semibold text-sm text-rose-900 dark:text-rose-200">
                     Corporate Entity Already Registered
                   </h4>
                   <p className="text-xs text-[var(--gray-700)] mt-1 leading-relaxed">
-                    Corporate registration <span className="font-mono font-bold text-rose-800">{duplicateRCBlocked.rc}</span> ({duplicateRCBlocked.companyName || 'Registered Enterprise'}) is already an active corporate profile on Kaduna State services. Under state revenue rules, duplicate corporate profiles are not permitted.
+                    Corporate registration <span className="font-mono font-bold text-rose-800 dark:text-rose-300">{duplicateRCBlocked.rc}</span> ({duplicateRCBlocked.companyName || 'Registered Enterprise'}) is already an active corporate profile on Kaduna State services. Under state revenue rules, duplicate corporate profiles are not permitted.
                   </p>
                 </div>
               </div>
@@ -347,7 +347,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
           )}
 
           {rcError && !duplicateRCBlocked && (
-            <div className="p-4 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2">
+            <div className="p-4 border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 rounded-2xl text-xs flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{rcError}</span>
             </div>
@@ -365,12 +365,12 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                 setRcNumber(e.target.value)
               }}
               placeholder="e.g. RC-1849204 or BN-123456"
-              className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-base uppercase focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 tracking-wider"
+              className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-base uppercase focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 tracking-wider"
               required
             />
           </div>
 
-          <div className="border border-emerald-200 bg-emerald-50/50 p-4 rounded-2xl text-xs text-[var(--gray-700)] leading-relaxed flex items-start gap-3">
+          <div className="border border-emerald-500/20 bg-emerald-500/10 p-4 rounded-2xl text-xs text-[var(--gray-700)] leading-relaxed flex items-start gap-3">
             <ShieldCheck className="w-4 h-4 text-[#1AA260] shrink-0 mt-0.5" />
             <div>
               <span className="font-semibold text-[var(--ink)] block mb-0.5">CAC Interoperability</span>
@@ -412,7 +412,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       {/* ================================================================ */}
       {step === 1 && cacData && (
         <form
-          className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
+          className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
           onSubmit={handleStep1Submit}
         >
           <div>
@@ -425,7 +425,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
           </div>
 
           {/* Verified CAC Data Card */}
-          <div className="border border-emerald-200 bg-emerald-50/40 rounded-2xl p-5 space-y-3">
+          <div className="border border-emerald-500/20 bg-emerald-500/10 rounded-2xl p-5 space-y-3">
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1AA260]">
                 <CheckCircle2 className="w-4 h-4" />
@@ -435,7 +435,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                 Active Entity
               </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-emerald-200/60">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-emerald-500/20">
               <div>
                 <span className="block text-[11px] uppercase tracking-wider font-semibold text-[var(--gray-500)] mb-1">
                   Registered Name
@@ -480,7 +480,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
               <select
                 value={staffCount}
                 onChange={(e) => setStaffCount(e.target.value)}
-                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
+                className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
               >
                 <option value="1 - 10 employees">1 - 10 employees (Micro enterprise)</option>
                 <option value="11 - 50 employees">11 - 50 employees (Small enterprise)</option>
@@ -496,7 +496,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
               <select
                 value={selectedLga}
                 onChange={(e) => setSelectedLga(e.target.value)}
-                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
+                className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
               >
                 {KADUNA_LGAS.map((lga) => (
                   <option key={lga} value={lga}>{lga}</option>
@@ -506,8 +506,8 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
           </div>
 
           {/* Assigned Corporate Tax Office Highlight Card */}
-          <div className="border border-emerald-200 bg-emerald-50/50 p-4 rounded-2xl flex items-start gap-3">
-            <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5 text-[#1AA260]">
+          <div className="border border-emerald-500/20 bg-emerald-500/10 p-4 rounded-2xl flex items-start gap-3">
+            <div className="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center shrink-0 mt-0.5 text-[#1AA260]">
               <MapPin className="w-4 h-4" />
             </div>
             <div className="min-w-0">
@@ -539,10 +539,10 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                   value={corporateEmail}
                   onChange={(e) => handleEmailChange(e.target.value)}
                   placeholder="e.g. tax@company.ng"
-                  className={`w-full px-4 py-3 border rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none ${
+                  className={`w-full px-4 py-3 border rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none ${
                     emailDuplicateError
-                      ? 'border-rose-300 focus:ring-2 focus:ring-rose-200'
-                      : 'border-[var(--gray-200)] focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10'
+                      ? 'border-rose-300 dark:border-rose-800 focus:ring-2 focus:ring-rose-200'
+                      : 'border-[var(--input-border)] focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10'
                   }`}
                   required
                 />
@@ -553,7 +553,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                   </p>
                 )}
                 {emailWarning && (
-                  <div className="p-3 mt-2 border border-amber-200 bg-amber-50 rounded-xl text-xs text-amber-800 flex items-start gap-2">
+                  <div className="p-3 mt-2 border border-amber-200 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/30 rounded-xl text-xs text-amber-800 dark:text-amber-200 flex items-start gap-2">
                     <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <span className="leading-relaxed">{emailWarning}</span>
                   </div>
@@ -570,7 +570,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                   value={corporatePhone}
                   onChange={(e) => setCorporatePhone(e.target.value)}
                   placeholder="e.g. +234 812 987 6543"
-                  className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                  className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   required
                 />
                 <span className="text-[11px] text-[var(--gray-500)] mt-1.5 block">
@@ -604,7 +604,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       {/* STEP 2: Representative Signatory, Separate Password & OTP        */}
       {/* ================================================================ */}
       {step === 2 && cacData && (
-        <div className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               Authorized Representative &amp; Credentials
@@ -628,7 +628,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                   setRepName('Fatima Aliyu')
                   setRepRole('Managing Director')
                 }}
-                className="text-xs px-2.5 py-1 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#1AA260] border border-emerald-200 transition-colors font-medium cursor-pointer"
+                className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 text-[#1AA260] border border-emerald-500/25 transition-colors font-medium cursor-pointer"
               >
                 Demo Fill: Fatima Aliyu (Director)
               </button>
@@ -646,7 +646,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                     onChange={(e) => handleNINChange(e.target.value)}
                     placeholder="Enter 11-digit personal NIN"
                     maxLength={11}
-                    className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
+                    className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
                     required
                   />
                   <button
@@ -668,7 +668,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                   value={repName}
                   onChange={(e) => setRepName(e.target.value)}
                   placeholder="Enter authorized representative name"
-                  className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                  className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   required
                 />
               </div>
@@ -676,7 +676,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
 
             {/* Internal check feedback */}
             {internalNINMatch?.found && (
-              <div className="border border-emerald-200 bg-emerald-50/60 p-3.5 rounded-2xl text-xs text-[var(--ink)] flex items-center gap-2">
+              <div className="border border-emerald-500/20 bg-emerald-500/10 p-3.5 rounded-2xl text-xs text-[var(--ink)] flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#1AA260] shrink-0" />
                 <span>
                   Existing Citizen Account Found: <strong className="text-[#1AA260]">{internalNINMatch.name}</strong> &middot; Pre-linked as Authorised Signatory.
@@ -692,13 +692,13 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                 value={repRole}
                 onChange={(e) => setRepRole(e.target.value)}
                 placeholder="e.g. Managing Director / Principal Partner"
-                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                 required
               />
             </div>
 
             {/* Mandatory Authorised Representative Declaration Checkbox */}
-            <label className="flex items-start gap-3.5 p-4 border border-[var(--gray-200)] rounded-2xl bg-[var(--paper)]/60 cursor-pointer text-xs">
+            <label className="flex items-start gap-3.5 p-4 border border-[var(--input-border)] rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] cursor-pointer text-xs">
               <input
                 type="checkbox"
                 checked={isAuthorizedChecked}
@@ -731,7 +731,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                 value={corporatePassword}
                 onChange={(e) => setCorporatePassword(e.target.value)}
                 placeholder="Create corporate access password"
-                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
+                className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
               />
               <button
                 type="button"
@@ -746,32 +746,32 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
                 isPasswordLongEnough
-                  ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
-                  : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                  : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
               }`}>
                 <span className="text-xs">{isPasswordLongEnough ? '✓' : '○'}</span>
                 <span>8+ chars</span>
               </div>
               <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
                 hasUpper
-                  ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
-                  : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                  : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
               }`}>
                 <span className="text-xs">{hasUpper ? '✓' : '○'}</span>
                 <span>Uppercase</span>
               </div>
               <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
                 hasLower
-                  ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
-                  : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                  : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
               }`}>
                 <span className="text-xs">{hasLower ? '✓' : '○'}</span>
                 <span>Lowercase</span>
               </div>
               <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
                 hasNumber
-                  ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
-                  : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                  : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
               }`}>
                 <span className="text-xs">{hasNumber ? '✓' : '○'}</span>
                 <span>Number</span>
@@ -791,13 +791,13 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                   <strong className="font-mono font-semibold text-[var(--ink)]">{corporatePhone}</strong>.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-emerald-50 text-[#1AA260] border border-emerald-200 shrink-0 self-start sm:self-auto">
+              <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-emerald-500/15 text-[#1AA260] border border-emerald-500/25 shrink-0 self-start sm:self-auto">
                 SMS Verification
               </span>
             </div>
 
             {!otpSent && !otpVerified && (
-              <div className="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--paper)] p-4 rounded-2xl border border-[var(--gray-200)]">
+              <div className="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-black/[0.02] dark:bg-white/[0.03] p-4 rounded-2xl border border-[var(--input-border)]">
                 <p className="text-xs sm:text-sm text-[var(--gray-700)]">
                   A 6-digit verification code will be sent to the official corporate phone.
                 </p>
@@ -813,7 +813,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
             )}
 
             {otpSent && !otpVerified && (
-              <div className="space-y-3.5 animate-in fade-in bg-[var(--paper)] p-4 rounded-2xl border border-[var(--gray-200)]">
+              <div className="space-y-3.5 animate-in fade-in bg-black/[0.02] dark:bg-white/[0.03] p-4 rounded-2xl border border-[var(--input-border)]">
                 <p className="text-xs sm:text-sm text-[var(--gray-700)]">
                   Enter the 6-digit verification code sent to <strong className="text-[var(--ink)]">{corporatePhone}</strong>:
                 </p>
@@ -825,7 +825,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                     onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="000000"
                     maxLength={6}
-                    className="w-48 px-4 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--white)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                    className="w-48 px-4 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   />
                   <button
                     type="button"
@@ -846,7 +846,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
                 </div>
 
                 {otpError && (
-                  <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-xl text-xs flex items-center gap-2">
+                  <div className="p-3 border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 rounded-xl text-xs flex items-center gap-2">
                     <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
                     <span>{otpError}</span>
                   </div>
@@ -855,7 +855,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
             )}
 
             {otpVerified && (
-              <div className="border border-emerald-200 bg-emerald-50/60 p-4 rounded-2xl text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
+              <div className="border border-emerald-500/20 bg-emerald-500/10 p-4 rounded-2xl text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
                 <CheckCircle2 className="w-5 h-5 text-[#1AA260] shrink-0 mt-0.5" />
                 <div>
                   <div className="font-bold text-[#1AA260] text-sm">

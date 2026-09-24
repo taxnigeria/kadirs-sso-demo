@@ -109,11 +109,11 @@ export function Topbar({ portal, hasSidebar, onToggleMobileNav }: TopbarProps) {
           type="button"
           onClick={() => usePresentationStore.getState().openPalette()}
           title="Quick Switch Persona or Portal (Cmd+K / Ctrl+K)"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-[var(--ink)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)] rounded-[var(--radius)] border border-[var(--line)] transition-colors cursor-pointer shadow-2xs group"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-[var(--ink)] bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.07] dark:hover:bg-white/[0.14] rounded-full transition-colors cursor-pointer group border-0"
         >
-          <Search className="w-3.5 h-3.5 text-[var(--green)] group-hover:scale-110 transition-transform" />
+          <Search className="w-3.5 h-3.5 text-[#1AA260] group-hover:scale-110 transition-transform" />
           <span className="hidden md:inline font-medium">Quick Switch</span>
-          <kbd className="hidden sm:inline-flex items-center text-[10px] font-mono px-1 py-0.5 bg-[var(--paper)] border border-[var(--line)] rounded text-[var(--ink-soft)]">
+          <kbd className="hidden sm:inline-flex items-center text-[10px] font-mono px-1 py-0.5 bg-black/[0.04] dark:bg-white/[0.08] rounded-full text-[var(--gray-500)]">
             ⌘K
           </kbd>
         </button>
@@ -123,12 +123,12 @@ export function Topbar({ portal, hasSidebar, onToggleMobileNav }: TopbarProps) {
           onClick={toggleTheme}
           aria-label="Toggle Light / Dark Mode"
           title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-          className="p-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)] rounded-[var(--radius)] border border-[var(--line)] transition-colors cursor-pointer"
+          className="p-2 text-[var(--gray-700)] dark:text-[var(--ink)] bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.07] dark:hover:bg-white/[0.14] rounded-full transition-colors cursor-pointer border-0"
         >
           {theme === 'dark' ? (
-            <Sun className="w-4 h-4 text-[var(--gold)]" />
+            <Sun className="w-4 h-4 text-amber-400" />
           ) : (
-            <Moon className="w-4 h-4 text-[var(--ink-soft)]" />
+            <Moon className="w-4 h-4 text-[var(--gray-700)]" />
           )}
         </button>
 
@@ -142,7 +142,7 @@ export function Topbar({ portal, hasSidebar, onToggleMobileNav }: TopbarProps) {
           }}
           title="Reset All Demo Data to Seed"
           aria-label="Reset Demo Data"
-          className="p-1.5 text-[var(--ink-soft)] hover:text-[var(--danger)] bg-[var(--paper-raised)] hover:bg-[var(--line-soft)] rounded-[var(--radius)] border border-[var(--line)] transition-colors cursor-pointer"
+          className="p-2 text-[var(--gray-500)] hover:text-[var(--danger)] bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.07] dark:hover:bg-white/[0.14] rounded-full transition-colors cursor-pointer border-0"
         >
           <RotateCcw className="w-4 h-4" />
         </button>

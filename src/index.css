@@ -6,19 +6,23 @@
   --ink: #142924;
   --ink-soft: #3B534B;
   --green: #1F6F4A;
-  --green-deep: #164F35;
+  --green-deep: #123D35;
   --green-light: #4FAE80;
   --gold: #B98A2E;
   --paper: #F0F7F4;
   --paper-raised: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --white: #FFFFFF;
   --line: #D5E4DB;
   --line-soft: #E3EEE7;
   --danger: #A3402C;
   --radius: 3px;
   --path-selected-bg: #DEEEE4;
 
+  --input-bg: #FFFFFF;
+  --input-border: #D5E4DB;
+
   /* Modern Editorial Design Tokens */
-  --green-deep: #123D35;
   --green-accent: #1AA260;
   --green-accent-dark: #158A52;
   --black: #111110;
@@ -33,10 +37,10 @@
   --background: var(--paper);
   --foreground: var(--ink);
 
-  --card: var(--paper-raised);
+  --card: var(--card-bg);
   --card-foreground: var(--ink);
 
-  --popover: var(--paper-raised);
+  --popover: var(--card-bg);
   --popover-foreground: var(--ink);
 
   --primary: var(--green);
@@ -55,41 +59,45 @@
   --destructive-foreground: #FFFFFF;
 
   --border: var(--line);
-  --input: var(--line);
+  --input: var(--input-border);
   --ring: var(--green);
 }
 
 :root[data-theme="dark"],
 .dark {
-  --ink: #EDEAE0;
-  --ink-soft: #B7C2C0;
-  --paper: #12181A;
-  --paper-raised: #1A2224;
-  --line: #2C3436;
-  --line-soft: #232B2D;
-  --green: #1F6F4A;
-  --green-deep: #164F35;
+  --ink: #F0F7F4;
+  --ink-soft: #A3BFB3;
+  --green: #22C55E;
+  --green-deep: #16A34A;
   --green-light: #4FAE80;
-  --gold: #D4A347;
-  --danger: #C8533D;
-  --path-selected-bg: #1A2624;
+  --gold: #F59E0B;
+  --paper: #0B1612;
+  --paper-raised: #13241E;
+  --card-bg: #13241E;
+  --white: #13241E;
+  --line: #22382F;
+  --line-soft: #182C24;
+  --danger: #EF4444;
+  --path-selected-bg: #1B352A;
 
-  --green-deep: #0D2821;
-  --green-accent: #1AA260;
-  --green-accent-dark: #22C55E;
-  --black: #0B0B0A;
-  --gray-700: #B8B6AC;
-  --gray-500: #8F8D83;
-  --gray-200: #2C2B25;
-  --gray-100: #1C1B16;
+  --input-bg: #1B3129;
+  --input-border: #2B483C;
+
+  --green-accent: #22C55E;
+  --green-accent-dark: #16A34A;
+  --black: #050B09;
+  --gray-700: #C2D6CC;
+  --gray-500: #85A396;
+  --gray-200: #22382F;
+  --gray-100: #182C24;
 
   --background: var(--paper);
   --foreground: var(--ink);
 
-  --card: var(--paper-raised);
+  --card: var(--card-bg);
   --card-foreground: var(--ink);
 
-  --popover: var(--paper-raised);
+  --popover: var(--card-bg);
   --popover-foreground: var(--ink);
 
   --primary: var(--green);
@@ -108,13 +116,16 @@
   --destructive-foreground: #FFFFFF;
 
   --border: var(--line);
-  --input: var(--line);
+  --input: var(--input-border);
   --ring: var(--green-light);
 }
 
 @theme {
   --color-paper: var(--paper);
   --color-paper-raised: var(--paper-raised);
+  --color-card-bg: var(--card-bg);
+  --color-input-bg: var(--input-bg);
+  --color-white: var(--white);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-green: var(--green);

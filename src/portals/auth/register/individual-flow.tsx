@@ -306,7 +306,7 @@ export function IndividualFlow({
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-white shadow-float p-7 sm:p-9 rounded-[28px] space-y-6"
+          className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float p-7 sm:p-9 rounded-[28px] space-y-6"
           onSubmit={handleVerifyNIN}
         >
           <div>
@@ -319,7 +319,7 @@ export function IndividualFlow({
           </div>
 
           {/* Evaluator Demo Quick Fill Bar */}
-          <div className="p-3 rounded-2xl bg-[var(--paper)] border border-[var(--gray-200)] text-xs flex items-center justify-between">
+          <div className="p-3 rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] border border-[var(--gray-200)] text-xs flex items-center justify-between">
             <span className="text-[11px] font-semibold text-[var(--gray-500)] uppercase tracking-wider">Demo Quick Fill:</span>
             <button
               type="button"
@@ -328,7 +328,7 @@ export function IndividualFlow({
                 setNinError(null)
                 setNinInput('23456789012')
               }}
-              className="px-3 py-1 rounded-full bg-[var(--white)] hover:bg-emerald-50 border border-[var(--gray-200)] text-xs font-semibold text-[#1AA260] cursor-pointer transition-colors"
+              className="px-3 py-1 rounded-full bg-[var(--card-bg)] hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-[var(--gray-200)] text-xs font-semibold text-[#1AA260] cursor-pointer transition-colors"
             >
               Fill Sample NIN (23456789012)
             </button>
@@ -336,11 +336,11 @@ export function IndividualFlow({
 
           {/* Hard Block on Duplicate NIN */}
           {duplicateNINBlocked && (
-            <div className="border border-rose-300 bg-rose-50 p-5 rounded-2xl space-y-3">
+            <div className="border border-rose-300 bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl space-y-3">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-semibold text-rose-800">
+                  <h4 className="text-sm font-semibold text-rose-800 dark:text-rose-200">
                     National ID Already Registered
                   </h4>
                   <p className="text-xs text-[var(--ink)] mt-1 leading-relaxed">
@@ -371,7 +371,7 @@ export function IndividualFlow({
           )}
 
           {ninError && !duplicateNINBlocked && (
-            <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2">
+            <div className="p-3 border border-rose-300 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 rounded-2xl text-xs flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{ninError}</span>
             </div>
@@ -396,7 +396,7 @@ export function IndividualFlow({
                 }}
                 placeholder="Enter 11-digit NIN"
                 maxLength={16}
-                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all pr-11"
+                className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all pr-11"
                 required
               />
               <button
@@ -454,7 +454,7 @@ export function IndividualFlow({
       {/* STEP 1: Phone Security Challenge & Contact Information              */}
       {/* ================================================================ */}
       {step === 1 && nimcData && (
-        <div className="bg-white shadow-float p-7 sm:p-9 rounded-[28px] space-y-6">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float p-7 sm:p-9 rounded-[28px] space-y-6">
           <div>
             <h2 className="font-display text-xl sm:text-2xl font-bold text-[var(--ink)] tracking-tight mb-1">
               Identity Verification &amp; Contact Setup
@@ -550,7 +550,7 @@ export function IndividualFlow({
                     onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="000000"
                     maxLength={6}
-                    className="w-48 px-4 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                    className="w-48 px-4 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   />
                   <button
                     type="button"
@@ -625,10 +625,10 @@ export function IndividualFlow({
                     value={email}
                     onChange={(e) => handleEmailChange(e.target.value)}
                     placeholder="e.g. yourname@example.com"
-                    className={`w-full px-4 py-3 border rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none ${
+                    className={`w-full px-4 py-3 border rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none ${
                       emailDuplicateError
                         ? 'border-rose-300 focus:ring-2 focus:ring-rose-200'
-                        : 'border-[var(--gray-200)] focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10'
+                        : 'border-[var(--input-border)] focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10'
                     }`}
                     required
                   />
@@ -657,7 +657,7 @@ export function IndividualFlow({
                     value={phone}
                     onChange={(e) => handlePhoneChange(e.target.value)}
                     placeholder="e.g. +234 814 555 1212"
-                    className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                    className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                     required
                   />
                   <span className="text-[11px] text-[var(--gray-500)] mt-1.5 block">
@@ -704,7 +704,7 @@ export function IndividualFlow({
       {/* STEP 2: Location & Tax Jurisdiction                                */}
       {/* ================================================================ */}
       {step === 2 && (
-        <div className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               Location &amp; Tax Jurisdiction
@@ -722,7 +722,7 @@ export function IndividualFlow({
               <select
                 value={selectedLga}
                 onChange={(e) => setSelectedLga(e.target.value)}
-                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
+                className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
               >
                 {KADUNA_LGAS.map((lga) => (
                   <option key={lga} value={lga}>{lga}</option>
@@ -731,8 +731,8 @@ export function IndividualFlow({
             </div>
 
             {/* Assigned Tax Office Highlight Card */}
-            <div className="border border-emerald-200 bg-emerald-50/50 p-4 rounded-2xl flex items-start gap-3">
-              <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5 text-[#1AA260]">
+            <div className="border border-emerald-500/20 bg-emerald-500/10 p-4 rounded-2xl flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center shrink-0 mt-0.5 text-[#1AA260]">
                 <MapPin className="w-4 h-4" />
               </div>
               <div className="min-w-0">
@@ -756,7 +756,7 @@ export function IndividualFlow({
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="e.g. 14 Swimming Pool Road, Kabala Doki"
-                className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
               />
             </div>
           </div>
@@ -785,7 +785,7 @@ export function IndividualFlow({
       {/* STEP 3: Security & 2-Step Verification                             */}
       {/* ================================================================ */}
       {step === 3 && (
-        <div className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               Account Password &amp; 2-Step Verification
@@ -806,7 +806,7 @@ export function IndividualFlow({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a secure password"
-                  className="w-full px-4 py-3 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
+                  className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
                 />
                 <button
                   type="button"
@@ -822,32 +822,32 @@ export function IndividualFlow({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
                 <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
                   isPasswordLongEnough
-                    ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
-                    : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                    : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
                 }`}>
                   <span className="text-xs">{isPasswordLongEnough ? '✓' : '○'}</span>
                   <span>8+ characters</span>
                 </div>
                 <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
                   hasUpper
-                    ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
-                    : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                    : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
                 }`}>
                   <span className="text-xs">{hasUpper ? '✓' : '○'}</span>
                   <span>Uppercase</span>
                 </div>
                 <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
                   hasLower
-                    ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
-                    : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                    : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
                 }`}>
                   <span className="text-xs">{hasLower ? '✓' : '○'}</span>
                   <span>Lowercase</span>
                 </div>
                 <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
                   hasNumber
-                    ? 'border-emerald-200 bg-emerald-50 text-[#1AA260]'
-                    : 'border-[var(--gray-200)] bg-[var(--paper)] text-[var(--gray-500)]'
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                    : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
                 }`}>
                   <span className="text-xs">{hasNumber ? '✓' : '○'}</span>
                   <span>Number</span>
@@ -865,12 +865,12 @@ export function IndividualFlow({
                   onClick={() => setTwoFactorMethod('sms')}
                   className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
                     twoFactorMethod === 'sms'
-                      ? 'border-[#1AA260] bg-emerald-50/40 ring-2 ring-[#1AA260]/20'
-                      : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)]'
+                      ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
+                      : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02] dark:hover:bg-white/[0.03]'
                   }`}
                 >
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                    twoFactorMethod === 'sms' ? 'bg-[#1AA260] text-white' : 'bg-[var(--gray-200)] text-[var(--gray-500)]'
+                    twoFactorMethod === 'sms' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] dark:bg-white/[0.08] text-[var(--gray-500)]'
                   }`}>
                     <Smartphone className="w-4 h-4" />
                   </div>
@@ -887,12 +887,12 @@ export function IndividualFlow({
                   onClick={() => setTwoFactorMethod('totp')}
                   className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
                     twoFactorMethod === 'totp'
-                      ? 'border-[#1AA260] bg-emerald-50/40 ring-2 ring-[#1AA260]/20'
-                      : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)]'
+                      ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
+                      : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02] dark:hover:bg-white/[0.03]'
                   }`}
                 >
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                    twoFactorMethod === 'totp' ? 'bg-[#1AA260] text-white' : 'bg-[var(--gray-200)] text-[var(--gray-500)]'
+                    twoFactorMethod === 'totp' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] dark:bg-white/[0.08] text-[var(--gray-500)]'
                   }`}>
                     <KeyRound className="w-4 h-4" />
                   </div>
@@ -931,9 +931,9 @@ export function IndividualFlow({
       {/* STEP 4: Privacy & Consent Agreement                               */}
       {/* ================================================================ */}
       {step === 4 && (
-        <div className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#1AA260] text-[11px] font-semibold mb-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#1AA260] text-[11px] font-semibold mb-3">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Statutory Data Protection</span>
             </div>
@@ -946,7 +946,7 @@ export function IndividualFlow({
           </div>
 
           <div className="space-y-3.5 border-t border-b border-[var(--gray-200)] py-5">
-            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-[var(--gray-100)]/70 transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
+            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
               <input
                 type="checkbox"
                 checked={consentStorage}
@@ -963,7 +963,7 @@ export function IndividualFlow({
               </div>
             </label>
 
-            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-[var(--gray-100)]/70 transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
+            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
               <input
                 type="checkbox"
                 checked={consentSharing}
@@ -980,7 +980,7 @@ export function IndividualFlow({
               </div>
             </label>
 
-            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-[var(--gray-100)]/70 transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
+            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
               <input
                 type="checkbox"
                 checked={consentPolicy}

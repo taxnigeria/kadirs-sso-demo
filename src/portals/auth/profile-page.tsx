@@ -290,7 +290,7 @@ export default function ProfilePage() {
       {/* ========================================================================= */}
       {/* CITIZEN PROFILE HERO CARD                                                 */}
       {/* ========================================================================= */}
-      <div className="bg-white shadow-float rounded-[28px] p-6">
+      <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
           {/* Avatar & Identification */}
           <div className="flex items-center gap-4">
@@ -394,7 +394,7 @@ export default function ProfilePage() {
       {/* TAB 1: IDENTITY & BIOMETRICS (LOCKED LAYER 1)                             */}
       {/* ========================================================================= */}
       {activeTab === 'identity' && (
-        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--gray-200)] pb-4">
             <div>
               <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
@@ -496,7 +496,7 @@ export default function ProfilePage() {
       {/* TAB 2: CONTACT DETAILS (24-HOUR SECURITY WINDOW)                          */}
       {/* ========================================================================= */}
       {activeTab === 'contact' && (
-        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 space-y-6">
           <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
               <Phone className="w-4 h-4 text-[#1AA260]" />
@@ -613,7 +613,7 @@ export default function ProfilePage() {
                         ? 'e.g. fatimah.new@kaduna.gov.ng'
                         : 'e.g. +234 802 999 8877'
                     }
-                    className="w-full px-3 py-2 text-xs border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] focus:outline-hidden focus:border-[var(--green)]"
+                    className="w-full px-3.5 py-2.5 text-xs border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] focus:outline-hidden focus:border-[var(--green)]"
                     required
                   />
                 </div>
@@ -639,7 +639,7 @@ export default function ProfilePage() {
                   value={enteredContactOtp}
                   onChange={(e) => setEnteredContactOtp(e.target.value)}
                   placeholder="123456"
-                  className="w-full px-3 py-2 text-center tracking-widest font-mono text-sm font-bold border border-[var(--line)] rounded-[var(--radius)] bg-white"
+                  className="w-full px-3.5 py-2.5 text-center tracking-widest font-mono text-sm font-bold border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)]"
                 />
                 <div className="flex items-center gap-2 pt-1">
                   <button
@@ -667,7 +667,7 @@ export default function ProfilePage() {
       {/* TAB 3: ADDRESS & TAX OFFICE (AUTOMATIC REASSIGNMENT)                      */}
       {/* ========================================================================= */}
       {activeTab === 'address' && (
-        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 space-y-6">
           <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
               <MapPin className="w-4 h-4 text-[#1AA260]" />
@@ -697,7 +697,7 @@ export default function ProfilePage() {
                 type="text"
                 value={addressInput}
                 onChange={(e) => setAddressInput(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] focus:outline-hidden focus:border-[#1AA260]"
+                className="w-full px-3.5 py-2.5 text-xs border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] focus:outline-hidden focus:border-[#1AA260]"
                 required
               />
             </div>
@@ -710,7 +710,7 @@ export default function ProfilePage() {
               <select
                 value={selectedLga}
                 onChange={(e) => setSelectedLga(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] focus:outline-hidden focus:border-[#1AA260] font-medium"
+                className="w-full px-3.5 py-2.5 text-xs border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] focus:outline-hidden focus:border-[#1AA260] font-medium"
               >
                 {KADUNA_LGAS.map((lga) => (
                   <option key={lga} value={lga}>
@@ -748,7 +748,7 @@ export default function ProfilePage() {
       {/* TAB 4: DATA SHARING & NDPA CONSENT MANAGEMENT                             */}
       {/* ========================================================================= */}
       {activeTab === 'sharing' && (
-        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 space-y-6">
           <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
               <Layers className="w-4 h-4 text-[#1AA260]" />
@@ -859,7 +859,7 @@ export default function ProfilePage() {
       {/* TAB 5: SECURITY & SESSIONS (2FA & ACTIVE DEVICES)                         */}
       {/* ========================================================================= */}
       {activeTab === 'security' && (
-        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 space-y-6">
           <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
               <KeyRound className="w-4 h-4 text-[#1AA260]" />
@@ -898,7 +898,7 @@ export default function ProfilePage() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] focus:outline-hidden focus:border-[var(--green)]"
+                className="w-full px-3.5 py-2.5 text-xs border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] focus:outline-hidden focus:border-[var(--green)]"
                 required
               />
             </div>
@@ -912,7 +912,7 @@ export default function ProfilePage() {
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] focus:outline-hidden focus:border-[var(--green)]"
+                  className="w-full px-3.5 py-2.5 text-xs border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] focus:outline-hidden focus:border-[var(--green)]"
                   required
                 />
               </div>
@@ -925,7 +925,7 @@ export default function ProfilePage() {
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-[var(--line)] rounded-[var(--radius)] bg-[var(--paper)] focus:outline-hidden focus:border-[var(--green)]"
+                  className="w-full px-3.5 py-2.5 text-xs border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] focus:outline-hidden focus:border-[var(--green)]"
                   required
                 />
               </div>
@@ -1022,32 +1022,32 @@ export default function ProfilePage() {
               What happens to your information when you delete your account:
             </span>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="bg-white p-3.5 rounded border border-red-200 space-y-1">
-                <span className="text-[10.5px] font-bold text-red-700 uppercase block">
+              <div className="bg-[var(--card-bg)] text-[var(--ink)] p-3.5 rounded-xl border border-red-200 dark:border-red-900/60 space-y-1">
+                <span className="text-[10.5px] font-bold text-rose-600 dark:text-rose-400 uppercase block">
                   1. Permanently Deleted
                 </span>
-                <span className="font-semibold text-slate-900 block">Personal &amp; Contact Details</span>
-                <p className="text-[11px] text-slate-600 leading-relaxed">
+                <span className="font-semibold text-[var(--ink)] block">Personal &amp; Contact Details</span>
+                <p className="text-[11px] text-[var(--gray-600)] leading-relaxed">
                   After the 30-day grace period, your name, phone number, email address, password, and linked NIN are completely erased from our servers.
                 </p>
               </div>
 
-              <div className="bg-white p-3.5 rounded border border-amber-200 space-y-1">
-                <span className="text-[10.5px] font-bold text-amber-700 uppercase block">
+              <div className="bg-[var(--card-bg)] text-[var(--ink)] p-3.5 rounded-xl border border-amber-200 dark:border-amber-900/60 space-y-1">
+                <span className="text-[10.5px] font-bold text-amber-600 dark:text-amber-400 uppercase block">
                   2. Kept by Law for Audits
                 </span>
-                <span className="font-semibold text-slate-900 block">Past Payments &amp; Consent History</span>
-                <p className="text-[11px] text-slate-600 leading-relaxed">
+                <span className="font-semibold text-[var(--ink)] block">Past Payments &amp; Consent History</span>
+                <p className="text-[11px] text-[var(--gray-600)] leading-relaxed">
                   Official receipts for past tax and revenue payments (kept for 2 years) and records of permissions you previously granted must be preserved for government auditing.
                 </p>
               </div>
 
-              <div className="bg-white p-3.5 rounded border border-slate-300 space-y-1">
-                <span className="text-[10.5px] font-bold text-slate-700 uppercase block">
+              <div className="bg-[var(--card-bg)] text-[var(--ink)] p-3.5 rounded-xl border border-[var(--input-border)] space-y-1">
+                <span className="text-[10.5px] font-bold text-slate-500 uppercase block">
                   3. De-Identified ID Number
                 </span>
-                <span className="font-semibold text-slate-900 block">Anonymous System ID</span>
-                <p className="text-[11px] text-slate-600 leading-relaxed">
+                <span className="font-semibold text-[var(--ink)] block">Anonymous System ID</span>
+                <p className="text-[11px] text-[var(--gray-600)] leading-relaxed">
                   Your ID number (<code className="font-mono">CIT-KAD-...</code>) is kept without any name or contact info attached, so previous state revenue receipts remain valid without pointing to you.
                 </p>
               </div>
@@ -1055,12 +1055,12 @@ export default function ProfilePage() {
           </div>
 
           {/* Action Row */}
-          <div className="pt-2 border-t border-red-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="pt-2 border-t border-red-200 dark:border-red-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <strong className="text-red-950 text-xs block font-semibold">
+              <strong className="text-red-950 dark:text-red-300 text-xs block font-semibold">
                 30-Day Grace Period:
               </strong>
-              <span className="text-[11px] text-red-800">
+              <span className="text-[11px] text-red-800 dark:text-red-400">
                 Changed your mind? You can log in and restore your account at any time within 30 days of your request.
               </span>
             </div>
@@ -1081,33 +1081,33 @@ export default function ProfilePage() {
       {/* ========================================================================= */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-md bg-white rounded-[28px] border border-red-300 p-6 space-y-4">
-            <div className="flex items-center gap-3 text-red-700">
+          <div className="w-full max-w-md bg-[var(--card-bg)] text-[var(--ink)] rounded-[28px] border border-red-300 dark:border-red-900/60 p-6 space-y-4">
+            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
               <AlertTriangle className="w-6 h-6 shrink-0" />
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-[var(--ink)]">
                 Are you sure you want to delete your account?
               </h3>
             </div>
 
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-[var(--gray-600)] leading-relaxed">
               This starts a <strong>30-day grace period</strong> before permanent deletion. During this time, your logins to PayKaduna, KADVREG, PIT, and all other state services will be paused. If you don't cancel within 30 days, your account and personal details will be permanently removed.
             </p>
 
             {deleteError && (
-              <div className="p-2.5 bg-red-50 border border-red-200 text-red-800 text-xs rounded">
+              <div className="p-2.5 bg-rose-500/15 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs rounded-xl">
                 {deleteError}
               </div>
             )}
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="font-semibold text-slate-700 block mb-1">
+                <label className="font-semibold text-[var(--ink)] block mb-1">
                   Why are you deleting your account?
                 </label>
                 <select
                   value={deleteReason}
                   onChange={(e) => setDeleteReason(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded bg-white text-xs"
+                  className="w-full px-3 py-2 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-xs cursor-pointer"
                 >
                   <option value="Personal privacy preference">I want to remove my personal data (Privacy preference)</option>
                   <option value="Relocated outside Kaduna State">I moved outside Kaduna State</option>
@@ -1117,20 +1117,20 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="font-semibold text-slate-700 block mb-1">
-                  Type <strong className="text-red-700">DELETE</strong> in capital letters to confirm:
+                <label className="font-semibold text-[var(--ink)] block mb-1">
+                  Type <strong className="text-rose-600 dark:text-rose-400">DELETE</strong> in capital letters to confirm:
                 </label>
                 <input
                   type="text"
                   value={deleteConfirmationText}
                   onChange={(e) => setDeleteConfirmationText(e.target.value)}
                   placeholder="DELETE"
-                  className="w-full px-3 py-2 border border-slate-300 rounded font-mono text-center font-bold text-xs"
+                  className="w-full px-3 py-2 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-center font-bold text-xs"
                 />
               </div>
 
               <div>
-                <label className="font-semibold text-slate-700 block mb-1">
+                <label className="font-semibold text-[var(--ink)] block mb-1">
                   Enter Your Password:
                 </label>
                 <input
@@ -1138,7 +1138,7 @@ export default function ProfilePage() {
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
                   placeholder="Enter your current password"
-                  className="w-full px-3 py-2 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-xs"
                 />
               </div>
             </div>

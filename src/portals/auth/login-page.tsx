@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router'
 import {
-  Scale,
   Lock,
   Smartphone,
   MessageSquare,
@@ -18,7 +17,8 @@ import {
   Sparkles,
   Car,
   Wallet,
-  FileText
+  FileText,
+  Scale
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { DEMO_PERSONAS } from '@/data/personas'
@@ -59,6 +59,7 @@ export default function LoginPage() {
   const [isVerifying, setIsVerifying] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(30)
   const [authenticatedName, setAuthenticatedName] = useState<string>('')
+  const [showDemoPanel, setShowDemoPanel] = useState(false)
 
   // Handle countdown for lockout
   useEffect(() => {
@@ -85,6 +86,18 @@ export default function LoginPage() {
     }
     return () => clearTimeout(timer)
   }, [step, resendCooldown])
+
+  // Ctrl+D toggles evaluator demo panel
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault()
+        setShowDemoPanel((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const handleResetLockout = () => {
     setIsLockedOut(false)
@@ -227,25 +240,26 @@ export default function LoginPage() {
 
   return (
     <div className="py-10 sm:py-16 px-4 sm:px-6 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
-      {/* Official State Header */}
-      <div className="text-center mb-8 max-w-[540px]">
-        <div className="w-14 h-14 rounded-full bg-[#1AA260]/10 border border-[#1AA260]/30 flex items-center justify-center text-[#1AA260] mb-4 mx-auto">
-          <Scale className="w-7 h-7" />
+
+      {/* Editorial Header */}
+      <div className="text-center max-w-md mx-auto mb-8 space-y-2">
+        <div className="w-12 h-12 rounded-2xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center mx-auto mb-3">
+          <Scale className="w-6 h-6" />
         </div>
-        <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-[var(--ink)] tracking-tight mb-2">
+        <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-[var(--ink)] tracking-tight">
           Sign In to Kaduna State Portal
         </h1>
-        <p className="text-sm text-[var(--gray-700)] leading-relaxed max-w-[48ch] mx-auto">
+        <p className="text-xs sm:text-sm text-[var(--gray-700)] leading-relaxed">
           One unified citizen account for PayKaduna revenue, road vehicle licensing, and tax assessment.
         </p>
       </div>
 
       {/* Main Authentication Card */}
-      <div className="w-full max-w-[480px] bg-white rounded-[28px] p-7 sm:p-9 shadow-float transition-all">
+      <div className="w-full max-w-[480px] bg-[var(--card-bg)] text-[var(--ink)] rounded-[28px] p-7 sm:p-9 shadow-float transition-all">
         
-        {/* Evaluator Demo Quick Fill Bar */}
-        {step === 1 && (
-          <div className="mb-6 p-3 rounded-2xl bg-[var(--paper)] border border-[var(--gray-200)] text-xs">
+        {/* Evaluator Demo Quick Fill Bar — hidden by default, toggle with Ctrl+D */}
+        {step === 1 && showDemoPanel && (
+          <div className="mb-6 p-3 rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] border border-[var(--gray-200)] text-xs">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-500)] mb-2">
               <Sparkles className="w-3.5 h-3.5 text-[#1AA260]" />
               <span>Demo Accounts (1-Click Fill)</span>
@@ -325,7 +339,7 @@ export default function LoginPage() {
                 onChange={(e) => setIdentifier(e.target.value)}
                 disabled={isLockedOut}
                 placeholder="e.g. fatimah.a@gmail.com or 12345678901"
-                className="w-full px-4 py-3 rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all disabled:opacity-50"
+                className="w-full px-4 py-3 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all disabled:opacity-50"
                 required
               />
             </div>
@@ -351,7 +365,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLockedOut}
                   placeholder="••••••••••••"
-                  className="w-full px-4 py-3 rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all disabled:opacity-50 pr-11"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all disabled:opacity-50 pr-11"
                   required
                 />
                 <button
@@ -591,7 +605,7 @@ export default function LoginPage() {
                   onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
                   placeholder="------"
                   autoFocus
-                  className="w-full px-4 py-3 text-center font-mono text-2xl tracking-[0.5em] font-bold rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-[var(--ink)] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all"
+                  className="w-full px-4 py-3 text-center font-mono text-2xl tracking-[0.5em] font-bold rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--ink)] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all"
                   required
                 />
               </div>

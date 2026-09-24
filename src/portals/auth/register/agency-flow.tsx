@@ -168,7 +168,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-white shadow-float p-8 sm:p-9 rounded-[28px] space-y-6"
+          className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float p-8 sm:p-9 rounded-[28px] space-y-6"
           onSubmit={handleStep0Submit}
         >
           <div>
@@ -193,7 +193,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                   setSelectedLga('Kaduna North')
                   setAddress('State Secretariat Complex, Independence Way, Kaduna')
                 }}
-                className="px-2.5 py-1 rounded-full border border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--gray-700)] text-[11px] font-medium transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-full border border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] text-[11px] font-medium transition-colors cursor-pointer"
               >
                 Ministry of Environment (New Agency)
               </button>
@@ -203,7 +203,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                   handleTinChange('KAD-MIN-FIN-001')
                   setAgencyName('Kaduna State Ministry of Finance')
                 }}
-                className="px-2.5 py-1 rounded-full border border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--gray-700)] text-[11px] font-medium transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-full border border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] text-[11px] font-medium transition-colors cursor-pointer"
               >
                 Ministry of Finance (Duplicate Test)
               </button>
@@ -212,15 +212,15 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
 
           {/* Hard Block on Duplicate TIN */}
           {duplicateTINBlocked && (
-            <div className="border border-rose-200 bg-rose-50/70 p-5 rounded-2xl space-y-3 animate-in fade-in">
+            <div className="border border-rose-300 dark:border-rose-900/60 bg-rose-50/80 dark:bg-rose-950/30 p-5 rounded-2xl space-y-3 animate-in fade-in">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-sm text-rose-700">
+                  <h4 className="font-semibold text-sm text-rose-900 dark:text-rose-200">
                     Duplicate Agency Registration Blocked
                   </h4>
                   <p className="text-xs text-[var(--ink)] mt-1 leading-relaxed">
-                    Agency TIN <span className="font-mono font-bold">{duplicateTINBlocked.tin}</span> is already registered in the KADIRS agency registry (<span className="font-medium">{duplicateTINBlocked.agencyName}</span>, Status: <span className="capitalize font-semibold">{duplicateTINBlocked.status?.replace('_', ' ')}</span>).
+                    Agency TIN <span className="font-mono font-bold text-rose-800 dark:text-rose-300">{duplicateTINBlocked.tin}</span> is already registered in the KADIRS agency registry (<span className="font-medium">{duplicateTINBlocked.agencyName}</span>, Status: <span className="capitalize font-semibold">{duplicateTINBlocked.status?.replace('_', ' ')}</span>).
                     To maintain registry integrity, duplicate registration of the same TIN is prohibited.
                   </p>
                 </div>
@@ -241,7 +241,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
           )}
 
           {tinError && !duplicateTINBlocked && (
-            <div className="p-3.5 border border-rose-300 bg-rose-50 text-rose-700 rounded-xl text-xs flex items-center gap-2">
+            <div className="p-3.5 border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 rounded-xl text-xs flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{tinError}</span>
             </div>
@@ -255,7 +255,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
               <select
                 value={jurisdiction}
                 onChange={(e) => setJurisdiction(e.target.value as any)}
-                className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-[14px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
               >
                 <option value="State">Kaduna State Government (MDA)</option>
                 <option value="Federal">Federal Parastatal in Kaduna</option>
@@ -274,7 +274,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                 value={tin}
                 onChange={(e) => handleTinChange(e.target.value)}
                 placeholder="e.g. KAD-MIN-ENV-004"
-                className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-[14.5px] uppercase focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-[14.5px] uppercase focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                 required
               />
             </div>
@@ -288,7 +288,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
               value={agencyName}
               onChange={(e) => setAgencyName(e.target.value)}
               placeholder="e.g. Kaduna State Ministry of Environment"
-              className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+              className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
               required
             />
           </div>
@@ -306,11 +306,11 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                 value={email}
                 onChange={(e) => handleEmailChange(e.target.value)}
                 placeholder="e.g. contact@environment.kdsg.gov.ng"
-                className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                 required
               />
               {emailWarning && (
-                <div className="p-3 mt-2 border border-amber-200 bg-amber-50/70 rounded-xl text-xs text-[var(--ink)] flex items-start gap-2">
+                <div className="p-3 mt-2 border border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 rounded-xl text-xs text-[var(--ink)] flex items-start gap-2">
                   <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                   <span className="leading-relaxed">{emailWarning}</span>
                 </div>
@@ -326,7 +326,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="e.g. +234 802 333 4455"
-                className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                 required
               />
             </div>
@@ -341,7 +341,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                 value={stateName}
                 readOnly
                 disabled
-                className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--gray-100)] text-[var(--gray-500)] text-[14px] cursor-not-allowed select-none"
+                className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-black/[0.04] dark:bg-white/[0.05] text-[var(--gray-500)] text-[14px] cursor-not-allowed select-none"
               />
             </div>
 
@@ -352,7 +352,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
               <select
                 value={selectedLga}
                 onChange={(e) => setSelectedLga(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-[14px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-[14px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 cursor-pointer"
               >
                 {KADUNA_LGAS.map((lga) => (
                   <option key={lga} value={lga}>{lga}</option>
@@ -368,7 +368,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                 value={assignedTaxOffice}
                 readOnly
                 disabled
-                className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--gray-100)] text-[var(--gray-600)] text-[13.5px] cursor-not-allowed select-none font-medium"
+                className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-black/[0.04] dark:bg-white/[0.05] text-[var(--gray-500)] text-[13.5px] cursor-not-allowed select-none font-medium"
               />
             </div>
           </div>
@@ -381,7 +381,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="e.g. State Secretariat Complex, Independence Way, Kaduna"
-              className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+              className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
               required
             />
           </div>
@@ -410,7 +410,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {/* ================================================================ */}
       {step === 1 && (
         <form
-          className="bg-white shadow-float p-8 sm:p-9 rounded-[28px] space-y-6"
+          className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float p-8 sm:p-9 rounded-[28px] space-y-6"
           onSubmit={(e) => {
             e.preventDefault()
             changeStep(2)
@@ -427,8 +427,8 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
 
           {/* Mandate Document Upload Area */}
           {!mandateDocUploaded ? (
-            <div className="border-2 border-dashed border-[var(--gray-200)] hover:border-[#1AA260]/50 rounded-2xl p-6 sm:p-7 text-center bg-[var(--paper)]/50 transition-colors">
-              <div className="w-10 h-10 rounded-full bg-emerald-50 text-[#1AA260] flex items-center justify-center mx-auto mb-3">
+            <div className="border-2 border-dashed border-[var(--input-border)] hover:border-[#1AA260]/50 rounded-2xl p-6 sm:p-7 text-center bg-black/[0.02] dark:bg-white/[0.03] transition-colors">
+              <div className="w-10 h-10 rounded-full bg-emerald-500/15 text-[#1AA260] flex items-center justify-center mx-auto mb-3">
                 <UploadCloud className="w-5 h-5" />
               </div>
               <h4 className="font-semibold text-[14.5px] text-[var(--ink)]">
@@ -441,19 +441,19 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                 <button
                   type="button"
                   onClick={handleSimulateUpload}
-                  className="inline-flex items-center gap-2 border border-[var(--gray-200)] bg-white hover:bg-[var(--gray-100)] text-xs text-[var(--ink)] px-4 py-2 rounded-full font-medium transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 border border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-xs text-[var(--ink)] px-4 py-2 rounded-full font-medium transition-colors cursor-pointer"
                 >
                   <UploadCloud className="w-3.5 h-3.5 text-[var(--gray-500)]" />
                   <span>Select mandate document &uarr;</span>
                 </button>
               </div>
               <p className="text-[11px] text-[var(--gray-500)] mt-2.5">
-                Optional but recommended. If omitted, filing enters <span className="font-mono text-[10.5px] bg-[var(--gray-100)] px-1.5 py-0.5 rounded">Pending_Documents</span> review status.
+                Optional but recommended. If omitted, filing enters <span className="font-mono text-[10.5px] bg-black/[0.05] dark:bg-white/[0.08] px-1.5 py-0.5 rounded">Pending_Documents</span> review status.
               </p>
             </div>
           ) : (
-            <div className="border border-emerald-200 bg-emerald-50/60 rounded-2xl p-5 text-center space-y-2 animate-in fade-in">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 text-[#1AA260] flex items-center justify-center mx-auto">
+            <div className="border border-emerald-500/20 bg-emerald-500/10 rounded-2xl p-5 text-center space-y-2 animate-in fade-in">
+              <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-[#1AA260] flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
@@ -479,7 +479,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
             </div>
           )}
 
-          <div className="border border-[var(--gray-200)] bg-[var(--paper)] p-3.5 rounded-xl text-xs text-[var(--gray-600)] leading-relaxed">
+          <div className="border border-[var(--input-border)] bg-black/[0.02] dark:bg-white/[0.03] p-3.5 rounded-xl text-xs text-[var(--gray-600)] leading-relaxed">
             <span className="font-medium text-[var(--ink)]">Security Guarantee:</span> Uploaded mandate documents are encrypted using AES-256 and stored strictly for KADIRS Maker/Checker authorization review. Never shared externally.
           </div>
 
@@ -512,7 +512,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                   onChange={(e) => handleOfficerNINChange(e.target.value)}
                   placeholder="e.g. 33322211100"
                   maxLength={11}
-                  className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] font-mono text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                  className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   required
                 />
               </div>
@@ -525,14 +525,14 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                   value={officerName}
                   onChange={(e) => setOfficerName(e.target.value)}
                   placeholder="e.g. Aliyu Usman Dangida"
-                  className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                  className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                   required
                 />
               </div>
             </div>
 
             {repNINMatch?.found && (
-              <div className="border border-emerald-200 bg-emerald-50/60 p-3.5 rounded-xl text-xs text-[var(--ink)] flex items-center gap-2">
+              <div className="border border-emerald-500/20 bg-emerald-500/10 p-3.5 rounded-xl text-xs text-[var(--ink)] flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#1AA260] shrink-0" />
                 <span>
                   ✓ Verified Citizen Account Found: <strong className="text-[#1AA260]">{repNINMatch.name}</strong> &middot; Pre-linked as Agency Authorized Officer.
@@ -551,7 +551,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
                 value={officerRole}
                 onChange={(e) => setOfficerRole(e.target.value)}
                 placeholder="e.g. Director of Finance & Accounts / Permanent Secretary"
-                className="w-full px-3.5 py-2.5 border border-[var(--gray-200)] rounded-xl bg-[var(--paper)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
+                className="w-full px-3.5 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-[14.5px] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
                 required
               />
             </div>
@@ -580,7 +580,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {/* STEP 2: Summary Review Before Submitting to Maker/Checker        */}
       {/* ================================================================ */}
       {step === 2 && (
-        <div className="bg-white shadow-float p-8 sm:p-9 rounded-[28px] space-y-6">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float p-8 sm:p-9 rounded-[28px] space-y-6">
           <div>
             <h2 className="font-semibold text-[22px] tracking-tight text-[var(--ink)] mb-1">
               Review agency submission
@@ -591,40 +591,40 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
           </div>
 
           {/* High-density Review Summary Table with subtle zebra rows */}
-          <div className="border border-[var(--gray-200)] rounded-2xl overflow-hidden">
-            <div className="divide-y divide-[var(--gray-200)] text-[13px]">
-              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-[var(--paper)]">
+          <div className="border border-[var(--input-border)] rounded-2xl overflow-hidden">
+            <div className="divide-y divide-[var(--input-border)] text-[13px]">
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-black/[0.02] dark:bg-white/[0.03]">
                 <span className="font-medium text-[var(--gray-500)]">Agency Name</span>
                 <span className="font-semibold text-[var(--ink)]">{agencyName}</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-white">
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-[var(--card-bg)]">
                 <span className="font-medium text-[var(--gray-500)]">Agency TIN</span>
                 <span className="font-mono font-medium text-[var(--ink)]">{tin}</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-[var(--paper)]">
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-black/[0.02] dark:bg-white/[0.03]">
                 <span className="font-medium text-[var(--gray-500)]">Jurisdiction</span>
                 <span className="text-[var(--ink)]">{jurisdiction} &middot; {selectedLga} LGA</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-white">
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-[var(--card-bg)]">
                 <span className="font-medium text-[var(--gray-500)]">Assigned Tax Office</span>
                 <span className="text-[var(--ink)]">{assignedTaxOffice}</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-[var(--paper)]">
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-black/[0.02] dark:bg-white/[0.03]">
                 <span className="font-medium text-[var(--gray-500)]">Official Contact</span>
                 <span className="text-[var(--ink)] font-mono text-[12.5px]">{email} &middot; {phone}</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-white">
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-[var(--card-bg)]">
                 <span className="font-medium text-[var(--gray-500)]">Headquarters Address</span>
                 <span className="text-[var(--ink)]">{address}</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-[var(--paper)]">
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-black/[0.02] dark:bg-white/[0.03]">
                 <span className="font-medium text-[var(--gray-500)]">Accounting Officer</span>
                 <span className="text-[var(--ink)]">
                   {officerName} &mdash; <span className="font-medium text-[#1AA260]">{officerRole}</span> (NIN:{' '}
                   <span className="font-mono">{officerNIN.slice(0, 3)}••••{officerNIN.slice(-3)}</span>)
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-white items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] px-4 py-3 bg-[var(--card-bg)] items-center">
                 <span className="font-medium text-[var(--gray-500)]">Mandate Document</span>
                 <div>
                   {mandateDocUploaded ? (
@@ -642,7 +642,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
             </div>
           </div>
 
-          <div className="flex gap-2.5 items-start bg-amber-50/60 border border-amber-200 border-l-4 border-l-amber-500 p-4 rounded-xl text-[12.5px] text-[var(--ink)] leading-relaxed">
+          <div className="flex gap-2.5 items-start bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 border-l-4 border-l-amber-500 p-4 rounded-xl text-[12.5px] text-[var(--ink)] leading-relaxed">
             <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <span>
               Submitting sends this record to the KADIRS Maker/Checker queue for dual-control authorization. You will receive activation updates at <strong className="text-[var(--ink)]">{email}</strong>.
@@ -672,8 +672,8 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {/* STEP 3: Confirmed / Submitted to Queue                           */}
       {/* ================================================================ */}
       {step === 3 && (
-        <div className="bg-white shadow-float p-10 sm:p-12 text-center rounded-[28px] space-y-5 animate-in fade-in">
-          <div className="w-14 h-14 rounded-full border-2 border-[#1AA260] flex items-center justify-center text-[#1AA260] mx-auto bg-emerald-50">
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float p-10 sm:p-12 text-center rounded-[28px] space-y-5 animate-in fade-in">
+          <div className="w-14 h-14 rounded-full border-2 border-[#1AA260] flex items-center justify-center text-[#1AA260] mx-auto bg-emerald-500/15">
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <div>
@@ -686,7 +686,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
             </p>
           </div>
 
-          <div className="inline-block border border-[var(--gray-200)] px-6 py-3 text-sm font-mono tracking-wider text-[var(--ink)] bg-[var(--paper)] rounded-xl font-semibold">
+          <div className="inline-block border border-[var(--input-border)] px-6 py-3 text-sm font-mono tracking-wider text-[var(--ink)] bg-[var(--input-bg)] rounded-xl font-semibold">
             {refNumber}
           </div>
 

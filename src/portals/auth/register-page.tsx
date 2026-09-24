@@ -6,7 +6,8 @@ import {
   Building2,
   Landmark,
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
+  Check
 } from 'lucide-react'
 import { IndividualFlow } from './register/individual-flow'
 import { CorporateFlow } from './register/corporate-flow'
@@ -60,7 +61,7 @@ export default function RegisterPage() {
       )}
 
       {/* Modern Stepper Progress Bar */}
-      <div className="sticky top-0 z-30 bg-white rounded-2xl shadow-float mb-8 sm:mb-10 p-2 transition-all overflow-x-auto no-scrollbar">
+      <div className="sticky top-0 z-30 bg-[var(--card-bg)] text-[var(--ink)] rounded-2xl shadow-float mb-8 sm:mb-10 p-2 transition-all overflow-x-auto no-scrollbar">
         <div className="flex items-center min-w-max sm:min-w-full">
           {steps.map((stepName, idx) => {
             const isActive = idx === activeIndex
@@ -76,8 +77,8 @@ export default function RegisterPage() {
                     isDone
                       ? 'bg-[#1AA260] text-white'
                       : isActive
-                      ? 'bg-[var(--black)] text-white ring-2 ring-[#1AA260]'
-                      : 'bg-[var(--gray-200)] text-[var(--gray-500)]'
+                      ? 'bg-[#123D35] text-white ring-2 ring-[#1AA260]'
+                      : 'bg-black/[0.05] dark:bg-white/[0.08] text-[var(--gray-500)]'
                   }`}
                 >
                   {isDone ? (
@@ -118,24 +119,26 @@ export default function RegisterPage() {
       {!isStarted ? (
         <div className="space-y-8">
           {/* Pathway Selection Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {/* Path A: Individual */}
             <div
               onClick={() => setSelectedPath('individual')}
-              className={`rounded-[28px] p-7 cursor-pointer transition-all flex flex-col justify-between bg-white shadow-float ${
+              className={`rounded-[28px] p-7 cursor-pointer transition-all duration-300 flex flex-col justify-between ${
                 selectedPath === 'individual'
-                  ? 'ring-2 ring-[#1AA260]'
-                  : 'hover:shadow-float-hover'
+                  ? 'bg-[var(--card-bg)] text-[var(--ink)] shadow-float-hover ring-2 ring-[#1AA260] scale-[1.03] opacity-100 z-10'
+                  : 'bg-[var(--card-bg)]/75 text-[var(--ink)] shadow-float scale-100 opacity-60 hover:opacity-90 hover:scale-[1.01]'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#1AA260] flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] flex items-center justify-center">
                     <User className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#1AA260] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    Individual
-                  </span>
+                  {selectedPath === 'individual' && (
+                    <div className="w-6 h-6 rounded-full bg-[#1AA260] text-white flex items-center justify-center shadow-xs">
+                      <Check className="w-3.5 h-3.5" />
+                    </div>
+                  )}
                 </div>
                 <h3 className="font-display font-bold text-xl text-[var(--ink)] mb-2">
                   Individual Citizen
@@ -147,27 +150,29 @@ export default function RegisterPage() {
 
               <div className="pt-4 border-t border-[var(--gray-200)] flex items-center justify-between text-xs">
                 <span className="text-[var(--gray-500)]">Requirements:</span>
-                <span className="font-semibold text-[#1AA260]">11-Digit NIN</span>
+                <span className="font-medium text-[var(--gray-700)]">11-Digit NIN</span>
               </div>
             </div>
 
             {/* Path B: Corporate */}
             <div
               onClick={() => setSelectedPath('corporate')}
-              className={`rounded-[28px] p-7 cursor-pointer transition-all flex flex-col justify-between bg-white shadow-float ${
+              className={`rounded-[28px] p-7 cursor-pointer transition-all duration-300 flex flex-col justify-between ${
                 selectedPath === 'corporate'
-                  ? 'ring-2 ring-[#1AA260]'
-                  : 'hover:shadow-float-hover'
+                  ? 'bg-[var(--card-bg)] text-[var(--ink)] shadow-float-hover ring-2 ring-[#1AA260] scale-[1.03] opacity-100 z-10'
+                  : 'bg-[var(--card-bg)]/75 text-[var(--ink)] shadow-float scale-100 opacity-60 hover:opacity-90 hover:scale-[1.01]'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                     <Building2 className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                    Corporate
-                  </span>
+                  {selectedPath === 'corporate' && (
+                    <div className="w-6 h-6 rounded-full bg-[#1AA260] text-white flex items-center justify-center shadow-xs">
+                      <Check className="w-3.5 h-3.5" />
+                    </div>
+                  )}
                 </div>
                 <h3 className="font-display font-bold text-xl text-[var(--ink)] mb-2">
                   Corporate Entity
@@ -179,27 +184,29 @@ export default function RegisterPage() {
 
               <div className="pt-4 border-t border-[var(--gray-200)] flex items-center justify-between text-xs">
                 <span className="text-[var(--gray-500)]">Requirements:</span>
-                <span className="font-semibold text-amber-600">CAC RC &amp; Director NIN</span>
+                <span className="font-medium text-[var(--gray-700)]">CAC RC &amp; Director NIN</span>
               </div>
             </div>
 
             {/* Path C: Agency */}
             <div
               onClick={() => setSelectedPath('agency')}
-              className={`rounded-[28px] p-7 cursor-pointer transition-all flex flex-col justify-between bg-white shadow-float ${
+              className={`rounded-[28px] p-7 cursor-pointer transition-all duration-300 flex flex-col justify-between ${
                 selectedPath === 'agency'
-                  ? 'ring-2 ring-[#1AA260]'
-                  : 'hover:shadow-float-hover'
+                  ? 'bg-[var(--card-bg)] text-[var(--ink)] shadow-float-hover ring-2 ring-[#1AA260] scale-[1.03] opacity-100 z-10'
+                  : 'bg-[var(--card-bg)]/75 text-[var(--ink)] shadow-float scale-100 opacity-60 hover:opacity-90 hover:scale-[1.01]'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                     <Landmark className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
-                    Public Sector
-                  </span>
+                  {selectedPath === 'agency' && (
+                    <div className="w-6 h-6 rounded-full bg-[#1AA260] text-white flex items-center justify-center shadow-xs">
+                      <Check className="w-3.5 h-3.5" />
+                    </div>
+                  )}
                 </div>
                 <h3 className="font-display font-bold text-xl text-[var(--ink)] mb-2">
                   Government Agency
@@ -211,7 +218,7 @@ export default function RegisterPage() {
 
               <div className="pt-4 border-t border-[var(--gray-200)] flex items-center justify-between text-xs">
                 <span className="text-[var(--gray-500)]">Requirements:</span>
-                <span className="font-semibold text-blue-600">Official State Mandate</span>
+                <span className="font-medium text-[var(--gray-700)]">Official State Mandate</span>
               </div>
             </div>
           </div>

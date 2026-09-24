@@ -158,7 +158,7 @@ export default function HomePage() {
             <button
               onClick={toggleTheme}
               aria-label="Toggle Theme"
-              className="p-2 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] text-[var(--gray-700)] transition-colors cursor-pointer"
+              className="p-2.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.14] text-[var(--gray-700)] dark:text-[var(--ink)] transition-colors cursor-pointer border-0"
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400" />
@@ -171,7 +171,7 @@ export default function HomePage() {
             {currentUser ? (
               <Link
                 to="/paykaduna"
-                className="px-5 py-2.5 rounded-full bg-[var(--black)] hover:bg-[#123D35] text-white text-xs font-semibold tracking-wide transition-all shadow-sm flex items-center gap-2"
+                className="px-5 py-2.5 rounded-full bg-[#123D35] hover:bg-[#174D43] text-white text-xs font-semibold tracking-wide transition-all shadow-xs hover:shadow flex items-center gap-2 cursor-pointer"
               >
                 <span>Dashboard ({identity?.legalName.split(' ')[0] || 'Citizen'})</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -179,7 +179,7 @@ export default function HomePage() {
             ) : (
               <Link
                 to="/auth/login"
-                className="px-5 py-2.5 rounded-full bg-[var(--black)] hover:bg-[#123D35] text-white text-xs font-semibold tracking-wide transition-all shadow-sm flex items-center gap-2"
+                className="px-5 py-2.5 rounded-full bg-[#123D35] hover:bg-[#174D43] text-white text-xs font-semibold tracking-wide transition-all shadow-xs hover:shadow flex items-center gap-2 cursor-pointer"
               >
                 <span>Sign In / Register</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -679,7 +679,7 @@ export default function HomePage() {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       placeholder="e.g. Fatima"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
                     />
                   </div>
                   <div>
@@ -691,7 +691,7 @@ export default function HomePage() {
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       placeholder="e.g. Abdullahi"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
                     />
                   </div>
                 </div>
@@ -707,7 +707,7 @@ export default function HomePage() {
                       value={contactEmail}
                       onChange={(e) => setContactEmail(e.target.value)}
                       placeholder="citizen@kaduna.gov.ng"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
                     />
                   </div>
                   <div>
@@ -719,7 +719,7 @@ export default function HomePage() {
                       value={contactPhone}
                       onChange={(e) => setContactPhone(e.target.value)}
                       placeholder="+234 803 123 4567"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
                     />
                   </div>
                 </div>
@@ -734,7 +734,7 @@ export default function HomePage() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Describe your tax inquiry or record linking question..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-[var(--gray-200)] bg-[var(--paper)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors resize-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors resize-none"
                   />
                 </div>
 
