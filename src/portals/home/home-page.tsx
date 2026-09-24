@@ -19,11 +19,14 @@ import {
   Phone,
   Star,
   Check,
-  Send
+  Send,
+  Code2,
+  ChevronRight
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
 import { usePresentationStore } from '@/engine/presentation-store'
+import { useInspectorStore } from '@/engine/inspector-store'
 import { useThemeStore } from '@/engine/theme-store'
 import { toast } from 'sonner'
 
@@ -31,8 +34,20 @@ export default function HomePage() {
   const { theme, toggleTheme } = useThemeStore()
   const currentUser = useAuthEngine((s) => s.currentUser)
   const identity = useAuthEngine((s) => s.identity)
+  const logoutCitizen = useAuthEngine((s) => s.logout)
   const currentAdmin = useAdminEngine((s) => s.currentAdmin)
+  const logoutAdmin = useAdminEngine((s) => s.logoutAdmin)
   const openPalette = usePresentationStore((s) => s.openPalette)
+  const openInspector = useInspectorStore((s) => s.openInspector)
+
+  // Smooth scroll handler for anchor links
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault()
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   // Contact form state
   const [firstName, setFirstName] = useState('')
@@ -64,27 +79,21 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-body antialiased transition-colors selection:bg-[#1AA260]/20 selection:text-[var(--ink)]">
-      {/* Top Notification Bar for Evaluators / Quick Switcher */}
-      <div className="bg-[#123D35] text-white/90 text-xs py-2 px-4 border-b border-white/10 hidden sm:block">
+      {/* Official State Announcement Bar — Plain Language Citizen Notice */}
+      <div className="bg-[#123D35] text-white/90 text-xs py-2.5 px-4 border-b border-white/10 hidden sm:block">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#1AA260] animate-pulse" />
             <span className="font-medium text-[11.5px] tracking-wide">
-              Official Kaduna State Government Identity &amp; Revenue Gateway &mdash; Auth 2.0
+              Official Notice: 2026 Unified Tax Assessments and Vehicle Licensing renewals are now open online.
             </span>
           </div>
           <div className="flex items-center gap-4 text-[11px] text-white/70">
-            <span>Live NIMC Verification</span>
+            <span>Direct NIMC Verification</span>
             <span>&bull;</span>
             <span>14 Connected State MDAs</span>
             <span>&bull;</span>
-            <button
-              onClick={openPalette}
-              className="hover:text-white transition-colors cursor-pointer flex items-center gap-1 font-semibold text-emerald-300"
-            >
-              <span>Demo Quick Switcher</span>
-              <kbd className="px-1 py-0.2 bg-white/10 rounded text-[9.5px]">⌘K</kbd>
-            </button>
+            <span className="text-emerald-300 font-medium">Helpline: 0800-KADIRS (Toll Free)</span>
           </div>
         </div>
       </div>
@@ -93,7 +102,7 @@ export default function HomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-20">
         
         {/* ========================================================================= */}
-        {/* NAVIGATION BAR                                                            */}
+        {/* NAVIGATION BAR — Pure Citizen Focus (Evaluator links moved to footer)    */}
         {/* ========================================================================= */}
         <nav className="flex items-center justify-between py-4 border-b border-[var(--gray-200)]/70">
           {/* Logo Mark: Green Scales of Justice & Official State Branding */}
@@ -103,7 +112,7 @@ export default function HomePage() {
             </div>
             <div>
               <div className="font-display font-extrabold text-base tracking-tight text-[var(--ink)] leading-tight">
-                KADIRS <span className="font-medium text-[var(--gray-500)] text-xs">Auth 2.0</span>
+                KADIRS <span className="font-medium text-[#1AA260] text-xs">Portal</span>
               </div>
               <span className="block text-[10.5px] uppercase tracking-wider text-[var(--gray-500)] font-medium">
                 Kaduna State Revenue Service
@@ -111,36 +120,40 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Nav Links */}
+          {/* Nav Links with Smooth Scrolling */}
           <div className="hidden md:flex items-center gap-8 text-[13.5px] font-medium text-[var(--gray-700)]">
-            <a href="#services" className="hover:text-[var(--ink)] transition-colors">
+            <a
+              href="#services"
+              onClick={(e) => scrollToSection(e, 'services')}
+              className="hover:text-[var(--ink)] transition-colors cursor-pointer"
+            >
               Services
             </a>
-            <a href="#how-it-works" className="hover:text-[var(--ink)] transition-colors">
+            <a
+              href="#how-it-works"
+              onClick={(e) => scrollToSection(e, 'how-it-works')}
+              className="hover:text-[var(--ink)] transition-colors cursor-pointer"
+            >
               How It Works
             </a>
-            <a href="#reviews" className="hover:text-[var(--ink)] transition-colors">
+            <a
+              href="#reviews"
+              onClick={(e) => scrollToSection(e, 'reviews')}
+              className="hover:text-[var(--ink)] transition-colors cursor-pointer"
+            >
               Citizen Stories
             </a>
-            <a href="#contact" className="hover:text-[var(--ink)] transition-colors">
+            <a
+              href="#contact"
+              onClick={(e) => scrollToSection(e, 'contact')}
+              className="hover:text-[var(--ink)] transition-colors cursor-pointer"
+            >
               Tax Offices &amp; Support
             </a>
           </div>
 
-          {/* Nav Action Buttons */}
+          {/* Nav Action Buttons — Theme Toggle + Clean Citizen CTA */}
           <div className="flex items-center gap-2.5">
-            {/* Quick Switch Button (Mobile / Desktop) */}
-            <button
-              type="button"
-              onClick={openPalette}
-              title="Quick Switch Personas (Cmd+K)"
-              className="p-2 sm:px-3 sm:py-1.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] text-xs font-medium text-[var(--gray-700)] flex items-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <Search className="w-3.5 h-3.5 text-[#1AA260]" />
-              <span className="hidden sm:inline">Switch</span>
-              <kbd className="hidden lg:inline text-[9.5px] font-mono opacity-60">⌘K</kbd>
-            </button>
-
             {/* Dark / Light Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -154,21 +167,13 @@ export default function HomePage() {
               )}
             </button>
 
-            {/* Primary Action Button */}
+            {/* Primary Action Button (Citizen Focused) */}
             {currentUser ? (
               <Link
                 to="/paykaduna"
                 className="px-5 py-2.5 rounded-full bg-[var(--black)] hover:bg-[#123D35] text-white text-xs font-semibold tracking-wide transition-all shadow-sm flex items-center gap-2"
               >
                 <span>Dashboard ({identity?.legalName.split(' ')[0] || 'Citizen'})</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            ) : currentAdmin ? (
-              <Link
-                to="/admin/dashboard"
-                className="px-5 py-2.5 rounded-full bg-[var(--black)] hover:bg-[#123D35] text-white text-xs font-semibold tracking-wide transition-all shadow-sm flex items-center gap-2"
-              >
-                <span>Admin Console ({currentAdmin.name.split(' ')[0]})</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             ) : (
@@ -184,7 +189,7 @@ export default function HomePage() {
         </nav>
 
         {/* ========================================================================= */}
-        {/* HERO SECTION (Matching Thomas Northman Reference)                         */}
+        {/* HERO SECTION                                                             */}
         {/* ========================================================================= */}
         <section className="pt-12 sm:pt-16 pb-16 lg:pb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
@@ -202,7 +207,7 @@ export default function HomePage() {
             </h1>
 
             <p className="text-[15.5px] sm:text-[17px] text-[var(--gray-700)] leading-relaxed max-w-xl font-normal">
-              We simplify state taxes, revenue payments, and public licensing with one verified digital identity. Direct NIMC verification, automatic past-record linking, and zero paperwork.
+              We simplify state taxes, revenue payments, and vehicle licensing with one verified digital identity. Direct National ID verification, automatic record matching, and zero paperwork.
             </p>
 
             {/* CTAs */}
@@ -223,7 +228,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Pill Tags Row (Exact look from the reference) */}
+            {/* Pill Tags Row */}
             <div className="pt-6">
               <span className="block text-[11px] font-semibold text-[var(--gray-500)] uppercase tracking-wider mb-3">
                 Supported State Services
@@ -233,7 +238,7 @@ export default function HomePage() {
                   'PayKaduna Revenue',
                   'Vehicle Licensing (KADVREG)',
                   'Personal Income Tax (PIT)',
-                  'Direct NIMC Verification',
+                  'Direct National ID Verification',
                   '1-Click Record Linking'
                 ].map((tag, idx) => (
                   <span
@@ -269,12 +274,12 @@ export default function HomePage() {
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   <span>NIMC Gateway Verified</span>
                 </div>
-                <span className="text-[11px] font-mono text-white/60 tracking-wider">
-                  KAD-AUTH-2.0
+                <span className="text-[11px] text-white/70 font-medium">
+                  State Digital Gateway
                 </span>
               </div>
 
-              {/* Center Artwork: Classical Scales of Fair Revenue Assurance with Lush Green Laurels */}
+              {/* Center Artwork: Classical Scales of Fair Revenue Assurance */}
               <div className="relative z-10 py-10 flex flex-col items-center justify-center text-center">
                 <div className="relative mb-6">
                   {/* Outer Laurel Halo */}
@@ -321,7 +326,7 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* MISSION PULL-QUOTE BANNER (Matching Reference Image 2)                    */}
+        {/* MISSION PULL-QUOTE BANNER                                                 */}
         {/* ========================================================================= */}
         <section className="my-10">
           <div className="rounded-[28px] bg-[var(--gray-100)] border border-[var(--gray-200)]/70 p-8 sm:p-14 text-center relative overflow-hidden shadow-2xs">
@@ -338,7 +343,7 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* DISCOVER OUR UNIFIED PLATFORM (Split Feature Section)                     */}
+        {/* DISCOVER OUR UNIFIED PLATFORM                                             */}
         {/* ========================================================================= */}
         <section id="how-it-works" className="py-16 sm:py-20 border-t border-[var(--gray-200)]/70">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -346,12 +351,12 @@ export default function HomePage() {
             {/* Left Content */}
             <div className="lg:col-span-6 space-y-6">
               <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1AA260]">
-                <span>Discover Our Brand &amp; Architecture</span>
+                <span>How The Unified System Works</span>
               </div>
 
               <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight leading-tight">
                 No More Fragmented Accounts. <br />
-                <span className="text-[#1AA260]">One NIN</span> Controls Everything.
+                <span className="text-[#1AA260]">One National ID</span> Unlocks Everything.
               </h2>
 
               <p className="text-[15px] text-[var(--gray-700)] leading-relaxed">
@@ -361,16 +366,16 @@ export default function HomePage() {
               <div className="space-y-3 pt-2">
                 {[
                   {
-                    title: 'Deterministic National Identity Lookup',
-                    desc: 'Your 11-digit NIN verifies your identity directly with NIMC. Name and birthdate are guaranteed authentic.'
+                    title: 'Direct National ID Verification (NIMC)',
+                    desc: 'Your 11-digit NIN verifies your identity directly with NIMC. Name and birthdate are automatically confirmed without extra paperwork.'
                   },
                   {
-                    title: 'Silent Legacy Record Discovery',
-                    desc: 'The system scans historical databases and connects past vehicle registrations and tax receipts to your profile automatically.'
+                    title: 'Automatic Past Record Matching',
+                    desc: 'The system links your previous vehicle registrations, tax receipts, and payment history to your account automatically.'
                   },
                   {
-                    title: 'Statutory Data Protection (NDPA 2023)',
-                    desc: 'Your information is governed by law. You control permissions and can download or erase your records at any time.'
+                    title: 'Strict Privacy & Data Protection',
+                    desc: 'Protected under the Nigeria Data Protection Act 2023. Your personal data is encrypted, secure, and never shared without your permission.'
                   }
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-3 p-3.5 rounded-2xl bg-[var(--white)] border border-[var(--gray-200)] shadow-2xs">
@@ -452,7 +457,7 @@ export default function HomePage() {
 
                 <div className="mt-6 pt-5 border-t border-[var(--gray-200)] flex items-center justify-between text-xs text-[var(--gray-500)]">
                   <span>Kaduna State Internal Revenue Service</span>
-                  <span className="font-mono text-[10.5px]">AAL2 Certified</span>
+                  <span className="text-[11px] font-medium text-emerald-600">State Certified Portal</span>
                 </div>
               </div>
             </div>
@@ -461,18 +466,18 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* PLATFORM PILLARS (3 Clean Cards from Image 2)                             */}
+        {/* PLATFORM PILLARS                                                          */}
         {/* ========================================================================= */}
         <section id="services" className="py-16 sm:py-20 border-t border-[var(--gray-200)]/70">
           <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
             <span className="text-xs font-bold uppercase tracking-wider text-[#1AA260]">
-              The Core Architecture
+              Built For Kaduna Citizens
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight">
               Built for Speed, Trust, and Inclusion
             </h2>
             <p className="text-sm text-[var(--gray-700)] leading-relaxed">
-              Every design decision in Auth 2.0 eliminates taxpayer friction while enforcing statutory compliance.
+              Simplifying public services, eliminating queues, and giving you fast, transparent access to your tax and vehicle records.
             </p>
           </div>
 
@@ -499,7 +504,7 @@ export default function HomePage() {
                 1-Click Record Linking
               </h3>
               <p className="text-xs text-[var(--gray-700)] leading-relaxed">
-                The smart matching engine scans disparate legacy databases. Previous tax payments and vehicle registrations registered under older emails are discovered and linked with one click.
+                The smart matching engine scans state databases. Previous tax payments and vehicle registrations registered under older emails are discovered and linked with one click.
               </p>
             </div>
 
@@ -512,14 +517,14 @@ export default function HomePage() {
                 Total Data Privacy
               </h3>
               <p className="text-xs text-[var(--gray-700)] leading-relaxed">
-                Full statutory compliance with the Nigeria Data Protection Act 2023. You have complete transparency over authorized services, with one-click data export and account erasure rights.
+                Full statutory compliance with the Nigeria Data Protection Act 2023. You have complete transparency over authorized services, with one-click data export and account privacy controls.
               </p>
             </div>
           </div>
         </section>
 
         {/* ========================================================================= */}
-        {/* CITIZEN VOICES / TESTIMONIALS (Exact look from Image 2)                   */}
+        {/* CITIZEN VOICES / TESTIMONIALS                                             */}
         {/* ========================================================================= */}
         <section id="reviews" className="py-16 sm:py-20 border-t border-[var(--gray-200)]/70">
           <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
@@ -537,7 +542,7 @@ export default function HomePage() {
               <div>
                 <span className="text-[11px] text-[var(--gray-500)] block mb-3">September 18</span>
                 <p className="text-xs text-[var(--gray-700)] leading-relaxed mb-4">
-                  &ldquo;I had an old vehicle registered under my Kaduna North civil service email, and PayKaduna under my personal Gmail. Auth 2.0 linked both records to my NIN in under 30 seconds. Outstanding!&rdquo;
+                  &ldquo;I had an old vehicle registered under my Kaduna North civil service email, and PayKaduna under my personal Gmail. The portal linked both records to my NIN in under 30 seconds. Outstanding!&rdquo;
                 </p>
                 <div className="flex items-center gap-1 text-amber-400 mb-4">
                   {[...Array(5)].map((_, i) => (
@@ -607,7 +612,7 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* SCHEDULE ASSISTANCE & TAX OFFICES (Image 2 Contact Section)               */}
+        {/* SCHEDULE ASSISTANCE & TAX OFFICES                                         */}
         {/* ========================================================================= */}
         <section id="contact" className="py-16 sm:py-20 border-t border-[var(--gray-200)]/70">
           <div className="mb-12">
@@ -749,54 +754,225 @@ export default function HomePage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* EXECUTIVE DARK FOOTER (Matching Image 2)                                 */}
+      {/* EXPANDED EXECUTIVE FOOTER                                                 */}
       {/* ========================================================================= */}
       <footer className="bg-[var(--black)] text-white/90 rounded-t-[28px] sm:rounded-t-[36px] pt-16 pb-12 px-6 sm:px-12 border-t border-white/10">
         <div className="max-w-7xl mx-auto space-y-12">
           
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 pb-10 border-b border-white/10">
-            {/* Brand in Footer */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#1AA260]/20 border border-[#1AA260]/40 flex items-center justify-center text-[#1AA260]">
-                <Scale className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="font-display font-extrabold text-base tracking-tight text-white">
-                  KADIRS Auth 2.0
+          {/* Main Footer Links Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
+            {/* Column 1: KADIRS Brand & Summary (Spans 2 on lg) */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#1AA260]/20 border border-[#1AA260]/40 flex items-center justify-center text-[#1AA260]">
+                  <Scale className="w-5 h-5" />
                 </div>
-                <span className="text-[11px] text-white/60">
-                  Kaduna State Internal Revenue Service
-                </span>
+                <div>
+                  <div className="font-display font-extrabold text-base tracking-tight text-white">
+                    Kaduna State Internal Revenue Service
+                  </div>
+                  <span className="text-[11px] text-white/60">
+                    Central Identity &amp; Revenue Gateway
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-white/70 leading-relaxed max-w-sm">
+                Empowering citizens and businesses in Kaduna State with unified digital tax assessments, vehicle registration, and verified public revenue services.
+              </p>
+              <div className="pt-2 text-xs text-white/60 space-y-1">
+                <div>Revenue House, Muhammadu Buhari Way, Kaduna</div>
+                <div>Helpline: <span className="text-white font-medium">+234 800-KADIRS</span> (Toll Free)</div>
+                <div>Email: <span className="text-white font-medium">taxpayer.support@kadirs.gov.ng</span></div>
               </div>
             </div>
 
-            {/* Footer Navigation Links */}
-            <div className="flex flex-wrap gap-6 sm:gap-8 text-xs font-medium text-white/70">
-              <Link to="/paykaduna" className="hover:text-white transition-colors">
-                PayKaduna
-              </Link>
-              <Link to="/kadvreg" className="hover:text-white transition-colors">
-                KADVREG Vehicles
-              </Link>
-              <Link to="/pit" className="hover:text-white transition-colors">
-                Income Tax (PIT)
-              </Link>
-              <Link to="/auth/profile" className="hover:text-white transition-colors">
-                Privacy Center
-              </Link>
-              <Link to="/admin" className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors flex items-center gap-1">
-                <Lock className="w-3 h-3" />
-                <span>Admin Gateway</span>
-              </Link>
+            {/* Column 2: State Services */}
+            <div className="space-y-3">
+              <h5 className="font-display font-bold text-xs uppercase tracking-wider text-emerald-400">
+                Citizen Portals
+              </h5>
+              <ul className="space-y-2 text-xs text-white/70">
+                <li>
+                  <Link to="/paykaduna" className="hover:text-white transition-colors flex items-center gap-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-400" />
+                    <span>PayKaduna Revenue</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/kadvreg" className="hover:text-white transition-colors flex items-center gap-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-400" />
+                    <span>Vehicle Licensing (KADVREG)</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/pit" className="hover:text-white transition-colors flex items-center gap-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-400" />
+                    <span>Personal Income Tax (PIT)</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/paykaduna/services" className="hover:text-white transition-colors flex items-center gap-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-400" />
+                    <span>Connected State MDAs</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: Zonal Centers */}
+            <div className="space-y-3">
+              <h5 className="font-display font-bold text-xs uppercase tracking-wider text-emerald-400">
+                Zonal Tax Offices
+              </h5>
+              <ul className="space-y-2 text-xs text-white/70">
+                <li>Kawo Zonal Center (Kaduna North)</li>
+                <li>Barnawa Zonal Center (Kaduna South)</li>
+                <li>Zaria Central Tax Office</li>
+                <li>Kafanchan Zonal Office</li>
+                <li>Mando Integrated Revenue Station</li>
+              </ul>
+            </div>
+
+            {/* Column 4: Privacy & Governance */}
+            <div className="space-y-3">
+              <h5 className="font-display font-bold text-xs uppercase tracking-wider text-emerald-400">
+                Privacy &amp; Compliance
+              </h5>
+              <ul className="space-y-2 text-xs text-white/70">
+                <li>
+                  <Link to="/auth/profile" className="hover:text-white transition-colors flex items-center gap-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-400" />
+                    <span>Citizen Privacy Center</span>
+                  </Link>
+                </li>
+                <li>
+                  <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')} className="hover:text-white transition-colors flex items-center gap-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-400" />
+                    <span>NDPA 2023 Compliance</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')} className="hover:text-white transition-colors flex items-center gap-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-400" />
+                    <span>NIMC Identity Safeguards</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} className="hover:text-white transition-colors flex items-center gap-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-400" />
+                    <span>Taxpayer Bill of Rights</span>
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-white/50">
+          {/* ========================================================================= */}
+          {/* DEDICATED EVALUATOR, DEMO & ADMINISTRATIVE SUITE (Moved from Top & Overlay) */}
+          {/* ========================================================================= */}
+          <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5 sm:p-6 backdrop-blur-xs">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              
+              {/* Left: Section Context & Active Session Badges */}
+              <div className="space-y-1.5 max-w-xl">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span className="font-display font-bold text-xs uppercase tracking-wider text-emerald-300">
+                    State Officers, Evaluators &amp; Architecture Suite
+                  </span>
+                </div>
+                <p className="text-xs text-white/60">
+                  Switch between citizen and officer personas, access the administrative console, or inspect live security tokens and system architecture.
+                </p>
+
+                {/* Active Session Indicator */}
+                <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                  {currentAdmin && (
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11.5px]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>Officer Session: <strong>{currentAdmin.name}</strong> ({currentAdmin.role.replace('_', ' ')})</span>
+                      <button
+                        onClick={() => {
+                          logoutAdmin()
+                          toast.info('Admin officer logged out')
+                        }}
+                        className="hover:text-white ml-1 underline cursor-pointer text-[10.5px]"
+                        title="Sign out officer"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+
+                  {currentUser && (
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-[11.5px]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                      <span>Citizen Session: <strong>{identity?.legalName || 'Active'}</strong></span>
+                      <button
+                        onClick={() => {
+                          logoutCitizen()
+                          toast.info('Citizen session ended')
+                        }}
+                        className="hover:text-white ml-1 underline cursor-pointer text-[10.5px]"
+                        title="Sign out citizen"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right: The 3 Moved Utility Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3">
+                {/* 1. Demo Quick Switcher Button */}
+                <button
+                  type="button"
+                  onClick={openPalette}
+                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs hover:border-emerald-400/50"
+                  title="Switch between Citizens, Directors, and Officers (Cmd+K)"
+                >
+                  <Search className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Demo Quick Switcher</span>
+                  <kbd className="px-1.5 py-0.5 rounded bg-black/40 text-[9.5px] font-mono text-emerald-300 border border-white/10">⌘K</kbd>
+                </button>
+
+                {/* 2. Admin Officer Gateway Button */}
+                <Link
+                  to={currentAdmin ? "/admin/dashboard" : "/admin"}
+                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-semibold transition-all flex items-center gap-2 shadow-xs hover:border-emerald-400/50"
+                  title="Open KADIRS Administrative & Maker/Checker Console"
+                >
+                  <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{currentAdmin ? "Admin Console" : "Admin Gateway"}</span>
+                  <ArrowRight className="w-3 h-3 text-white/50" />
+                </Link>
+
+                {/* 3. Architecture Inspector Button (Moved from Floating Overlay) */}
+                <button
+                  type="button"
+                  onClick={() => openInspector()}
+                  className="px-4 py-2.5 rounded-xl bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:shadow-md"
+                  title="Inspect RS256 JWT Tokens, Event Streams & OAuth Flow (Alt+I)"
+                >
+                  <Code2 className="w-3.5 h-3.5" />
+                  <span>Inspect Architecture</span>
+                  <kbd className="px-1.5 py-0.5 rounded bg-black/20 text-[9.5px] font-mono text-white/90">Alt+I</kbd>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Bottom Legal & Security Attributions */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-white/50 pt-2">
             <span>&copy; 2026 Kaduna State Internal Revenue Service. All rights reserved.</span>
-            <div className="flex items-center gap-4">
-              <span>NDPA 2023 Compliant</span>
+            <div className="flex flex-wrap items-center gap-4">
+              <span>NDPA 2023 Statutory Protection</span>
               <span>&bull;</span>
               <span>NIMC Official Identity Partner</span>
+              <span>&bull;</span>
+              <span>State Certified Portal</span>
             </div>
           </div>
 
