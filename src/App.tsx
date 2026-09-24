@@ -34,10 +34,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Home — no sidebar */}
-        <Route element={<PortalShell portal={PORTALS.home} noSidebar />}>
-          <Route index element={<HomePage />} />
-        </Route>
+        {/* Modern Editorial Landing Page */}
+        <Route index element={<HomePage />} />
 
         {/* Auth Standalone Pages — no sidebar */}
         <Route path="auth" element={<PortalShell portal={PORTALS.auth} noSidebar />}>
