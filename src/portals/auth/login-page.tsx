@@ -239,31 +239,82 @@ export default function LoginPage() {
   })()
 
   return (
-    <div className="py-10 sm:py-16 px-4 sm:px-6 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
+    <div className="py-6 sm:py-10 lg:py-14 px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-[calc(100vh-80px)]">
+      <div className="w-full max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-      {/* Editorial Header */}
-      <div className="text-center max-w-md mx-auto mb-8 space-y-2">
-        <div className="w-12 h-12 rounded-2xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center mx-auto mb-3">
-          <Scale className="w-6 h-6" />
-        </div>
-        <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-[var(--ink)] tracking-tight">
-          Sign In to Kaduna State Portal
-        </h1>
-        <p className="text-xs sm:text-sm text-[var(--gray-700)] leading-relaxed">
-          One unified citizen account for PayKaduna revenue, road vehicle licensing, and tax assessment.
-        </p>
-      </div>
-
-      {/* Main Authentication Card */}
-      <div className="w-full max-w-[480px] bg-[var(--card-bg)] text-[var(--ink)] rounded-[28px] p-7 sm:p-9 shadow-float transition-all">
-        
-        {/* Evaluator Demo Quick Fill Bar — hidden by default, toggle with Ctrl+D */}
-        {step === 1 && showDemoPanel && (
-          <div className="mb-6 p-3 rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] border border-[var(--gray-200)] text-xs">
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-500)] mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-[#1AA260]" />
-              <span>Demo Accounts (1-Click Fill)</span>
+          {/* Left Column: Official Info & Trust Context */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1AA260]/10 text-[#1AA260] text-xs font-semibold uppercase tracking-wider">
+                <Scale className="w-3.5 h-3.5" />
+                <span>Kaduna State Gateway</span>
+              </div>
+              <h1 className="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl text-[var(--ink)] tracking-tight leading-tight">
+                One Verified Identity for Kaduna State
+              </h1>
+              <p className="text-xs sm:text-sm text-[var(--gray-700)] leading-relaxed">
+                Sign in once to access state revenue payments, vehicle licensing, and tax self-service with statutory privacy protection.
+              </p>
             </div>
+
+            {/* Feature highlights list */}
+            <div className="space-y-3 pt-1 hidden sm:block">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0 mt-0.5">
+                  <CheckCircle2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-[var(--ink)]">Unified Public Services</h4>
+                  <p className="text-xs text-[var(--gray-500)] leading-relaxed">
+                    PayKaduna revenue, KADVREG road licensing, and personal tax assessment.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0 mt-0.5">
+                  <KeyRound className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-[var(--ink)]">High-Assurance Security</h4>
+                  <p className="text-xs text-[var(--gray-500)] leading-relaxed">
+                    Protected with 2-Factor Authentication (SMS, WhatsApp, or Authenticator app).
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0 mt-0.5">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-[var(--ink)]">Automatic Record Discovery</h4>
+                  <p className="text-xs text-[var(--gray-500)] leading-relaxed">
+                    Historical tax IDs and vehicle registrations link directly to your National ID.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Institutional Seal */}
+            <div className="pt-4 border-t border-[var(--gray-200)] flex items-center gap-2 text-xs text-[var(--gray-500)]">
+              <Lock className="w-3.5 h-3.5 text-[#1AA260] shrink-0" />
+              <span>KADIRS Unified Identity &middot; NDPA 2023 Statutory Protection</span>
+            </div>
+          </div>
+
+          {/* Right Column: Authentication Card */}
+          <div className="lg:col-span-7">
+            <div className="w-full max-w-[480px] mx-auto lg:ml-auto bg-[var(--card-bg)] text-[var(--ink)] rounded-[24px] p-6 sm:p-8 shadow-float transition-all">
+        
+              {/* Evaluator Demo Quick Fill Bar — hidden by default, toggle with Ctrl+D */}
+              {step === 1 && showDemoPanel && (
+                <div className="mb-6 p-3 rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] border border-[var(--gray-200)] text-xs">
+                  <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-500)] mb-2">
+                    <Sparkles className="w-3.5 h-3.5 text-[#1AA260]" />
+                    <span>Demo Accounts (1-Click Fill)</span>
+                  </div>
             <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
@@ -744,14 +795,10 @@ export default function LoginPage() {
             </div>
           </div>
         )}
-      </div>
+            </div>
+          </div>
 
-      {/* Security & Official Trust Seal */}
-      <div className="mt-8 text-center text-xs text-[var(--gray-500)] max-w-[460px] flex items-center justify-center gap-2">
-        <Lock className="w-3.5 h-3.5 text-[#1AA260] shrink-0" />
-        <span>
-          Kaduna State Internal Revenue Service &middot; Unified Citizen Gateway
-        </span>
+        </div>
       </div>
     </div>
   )
