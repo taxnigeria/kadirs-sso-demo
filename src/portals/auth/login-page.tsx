@@ -15,9 +15,6 @@ import {
   EyeOff,
   RefreshCw,
   Sparkles,
-  Car,
-  Wallet,
-  FileText,
   Scale
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
@@ -36,8 +33,8 @@ export default function LoginPage() {
   const login = useAuthEngine((s) => s.login)
   const reconciledRecordIds = useAuthEngine((s) => s.reconciledRecordIds)
 
-  // Step state: 1 = Credentials, 2 = 2FA Challenge, 3 = Post-Login Transition
-  const [step, setStep] = useState<1 | 2 | 3>(1)
+  // Step state: 1 = Credentials, 2 = 2FA Challenge
+  const [step, setStep] = useState<1 | 2>(1)
 
   // Credentials form state
   const [identifier, setIdentifier] = useState('')
@@ -58,7 +55,6 @@ export default function LoginPage() {
   const [otpError, setOtpError] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(30)
-  const [authenticatedName, setAuthenticatedName] = useState<string>('')
   const [showDemoPanel, setShowDemoPanel] = useState(false)
 
   // Handle countdown for lockout
@@ -202,19 +198,13 @@ export default function LoginPage() {
 
       // Successful 2FA verification -> call Auth Engine login
       const loginResult = login(identifier, password)
-      setAuthenticatedName(loginResult.citizen.citizenId)
-
-      const foundPersona = DEMO_PERSONAS.find((p) => p.id === loginResult.personaId)
-      if (foundPersona) {
-        setAuthenticatedName(foundPersona.identity.legalName)
-      }
 
       // Check if this persona has un-reconciled legacy records (e.g. Fatima)
       const isFatima = loginResult.personaId === 'fatima' || identifier.toLowerCase().includes('fatima')
       const hasUnlinkedRecords = isFatima && reconciledRecordIds.length === 0
 
       if (hasUnlinkedRecords) {
-        setStep(3)
+        navigate('/auth/discovery')
       } else {
         const target = redirectUrl ? decodeURIComponent(redirectUrl) : '/paykaduna'
         navigate(target)
@@ -710,93 +700,8 @@ export default function LoginPage() {
             </form>
           </div>
         )}
-
-        {/* STEP 3: Past Records Discovery Interstitial (Fatima's Journey) */}
-        {step === 3 && (
-          <div className="space-y-5 animate-in fade-in duration-300">
-            <div className="text-center pb-2">
-              <div className="w-14 h-14 rounded-full bg-emerald-50 text-[#1AA260] flex items-center justify-center mx-auto mb-3 border border-emerald-200">
-                <CheckCircle2 className="w-7 h-7" />
-              </div>
-              <span className="text-xs font-bold uppercase tracking-wider text-[#1AA260] block mb-1">
-                Identity Verified &middot; Welcome
-              </span>
-              <h2 className="font-display font-extrabold text-2xl text-[var(--ink)] tracking-tight">
-                Welcome back, {authenticatedName.split(' ')[0]}!
-              </h2>
-              <p className="text-xs text-[var(--gray-700)] max-w-[40ch] mx-auto mt-1 leading-relaxed">
-                We discovered 3 past records linked to your National ID across state revenue databases.
-              </p>
-            </div>
-
-            {/* Found legacy records notice */}
-            <div className="border border-[var(--gray-200)] bg-[var(--paper)] p-4 rounded-2xl space-y-3 text-xs">
-              <div className="font-bold text-[var(--ink)] flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#1AA260]" />
-                <span>Discovered Historical Accounts:</span>
-              </div>
-              <div className="space-y-2">
-                <div className="p-2.5 rounded-xl bg-[var(--white)] border border-[var(--gray-200)] flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <Wallet className="w-4 h-4 text-[#1AA260]" />
-                    <div>
-                      <strong className="text-[var(--ink)] block">PayKaduna Revenue</strong>
-                      <span className="text-[11px] text-[var(--gray-500)]">fatimah.a@gmail.com &middot; ₦15,000 paid</span>
-                    </div>
-                  </div>
-                  <span className="text-[11px] font-semibold text-emerald-600">Ready to link</span>
-                </div>
-
-                <div className="p-2.5 rounded-xl bg-[var(--white)] border border-[var(--gray-200)] flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <Car className="w-4 h-4 text-[#1AA260]" />
-                    <div>
-                      <strong className="text-[var(--ink)] block">KADVREG Vehicle Licensing</strong>
-                      <span className="text-[11px] text-[var(--gray-500)]">Plate: KD-123-ABC &middot; Honda Accord</span>
-                    </div>
-                  </div>
-                  <span className="text-[11px] font-semibold text-emerald-600">Ready to link</span>
-                </div>
-
-                <div className="p-2.5 rounded-xl bg-[var(--white)] border border-[var(--gray-200)] flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <FileText className="w-4 h-4 text-[#1AA260]" />
-                    <div>
-                      <strong className="text-[var(--ink)] block">Personal Income Tax (PIT)</strong>
-                      <span className="text-[11px] text-[var(--gray-500)]">TIN-PIT-008472 &middot; Prior filings</span>
-                    </div>
-                  </div>
-                  <span className="text-[11px] font-semibold text-emerald-600">Ready to link</span>
-                </div>
-              </div>
-              <p className="text-[11px] text-[var(--gray-500)] pt-1">
-                You can review and merge these into your single account now, or do it later from your profile.
-              </p>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-2.5 pt-2">
-              <button
-                type="button"
-                onClick={() => navigate('/auth/reconciliation')}
-                className="w-full bg-[#1AA260] hover:bg-[#158A52] text-white py-3 rounded-full text-sm font-semibold tracking-wide transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span>Review &amp; Link Past Accounts</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => navigate('/paykaduna')}
-                className="w-full border border-[var(--gray-200)] bg-[var(--white)] hover:bg-[var(--gray-100)] text-[var(--gray-700)] py-2.5 rounded-full text-xs font-semibold transition-colors cursor-pointer"
-              >
-                Skip for now &rarr; Go to Dashboard
-              </button>
-            </div>
-          </div>
-        )}
-            </div>
-          </div>
+      </div>
+    </div>
 
         </div>
       </div>

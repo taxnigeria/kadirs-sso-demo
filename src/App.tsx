@@ -8,6 +8,7 @@ import { RequireAuth } from "@/components/auth/require-auth"
 import HomePage from "@/portals/home/home-page"
 import RegisterPage from "@/portals/auth/register-page"
 import LoginPage from "@/portals/auth/login-page"
+import DiscoveryPage from "@/portals/auth/discovery-page"
 import ProfilePage from "@/portals/auth/profile-page"
 import ReconciliationPage from "@/portals/auth/reconciliation-page"
 import PayKadunaDashboard from "@/portals/paykaduna/dashboard-page"
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="auth" element={<PortalShell portal={PORTALS.auth} noSidebar />}>
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="discovery" element={<RequireAuth><DiscoveryPage /></RequireAuth>} />
           <Route path="reconciliation" element={<RequireAuth><ReconciliationPage /></RequireAuth>} />
         </Route>
 
