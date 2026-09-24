@@ -3,29 +3,29 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
 
 :root {
-  --ink: #152A2E;
-  --ink-soft: #3F5458;
+  --ink: #142924;
+  --ink-soft: #3B534B;
   --green: #1F6F4A;
   --green-deep: #164F35;
   --green-light: #4FAE80;
   --gold: #B98A2E;
-  --paper: #FAF8F3;
+  --paper: #F0F7F4;
   --paper-raised: #FFFFFF;
-  --line: #DEDACD;
-  --line-soft: #ECE9DF;
+  --line: #D5E4DB;
+  --line-soft: #E3EEE7;
   --danger: #A3402C;
   --radius: 3px;
-  --path-selected-bg: #F4EFE6;
+  --path-selected-bg: #DEEEE4;
 
   /* Modern Editorial Design Tokens */
   --green-deep: #123D35;
   --green-accent: #1AA260;
   --green-accent-dark: #158A52;
   --black: #111110;
-  --gray-700: #585854;
-  --gray-500: #8A8A85;
-  --gray-200: #E3E2DD;
-  --gray-100: #F2F1EC;
+  --gray-700: #4B5E55;
+  --gray-500: #788D82;
+  --gray-200: #D5E4DB;
+  --gray-100: #E7F1EB;
   --font-display: 'Plus Jakarta Sans', sans-serif;
   --font-body: 'Inter', sans-serif;
 
