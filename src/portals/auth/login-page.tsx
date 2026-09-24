@@ -241,7 +241,7 @@ export default function LoginPage() {
       </div>
 
       {/* Main Authentication Card */}
-      <div className="w-full max-w-[480px] bg-white border border-[var(--gray-200)] rounded-[28px] p-7 sm:p-9 transition-all">
+      <div className="w-full max-w-[480px] bg-white rounded-[28px] p-7 sm:p-9 shadow-float transition-all">
         
         {/* Evaluator Demo Quick Fill Bar */}
         {step === 1 && (

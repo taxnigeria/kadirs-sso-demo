@@ -271,7 +271,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
+          className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
           onSubmit={handleLookup}
         >
           <div>
@@ -412,7 +412,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       {/* ================================================================ */}
       {step === 1 && cacData && (
         <form
-          className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
+          className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200"
           onSubmit={handleStep1Submit}
         >
           <div>
@@ -604,7 +604,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       {/* STEP 2: Representative Signatory, Separate Password & OTP        */}
       {/* ================================================================ */}
       {step === 2 && cacData && (
-        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+        <div className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               Authorized Representative &amp; Credentials

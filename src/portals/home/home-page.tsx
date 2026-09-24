@@ -329,7 +329,7 @@ export default function HomePage() {
         {/* MISSION PULL-QUOTE BANNER                                                 */}
         {/* ========================================================================= */}
         <section className="my-10">
-          <div className="rounded-[28px] bg-[var(--gray-100)] border border-[var(--gray-200)]/70 p-8 sm:p-14 text-center relative overflow-hidden shadow-2xs">
+          <div className="rounded-[28px] bg-[var(--white)] p-8 sm:p-14 text-center relative overflow-hidden shadow-float">
             <span className="text-4xl sm:text-5xl text-[#1AA260] font-serif leading-none block mb-2 select-none">
               &ldquo;
             </span>
@@ -403,7 +403,7 @@ export default function HomePage() {
 
             {/* Right Card: Interactive Identity Portfolio Preview */}
             <div className="lg:col-span-6">
-              <div className="rounded-[28px] bg-[var(--white)] border border-[var(--gray-200)] p-7 sm:p-9 shadow-lg relative overflow-hidden">
+              <div className="rounded-[28px] bg-[var(--white)] p-7 sm:p-9 shadow-float relative overflow-hidden">
                 <div className="flex items-center justify-between border-b border-[var(--gray-200)] pb-5 mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-[#123D35] text-white flex items-center justify-center font-display font-bold text-sm">
@@ -483,7 +483,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Card 1 */}
-            <div className="rounded-[24px] bg-[var(--white)] border border-[var(--gray-200)] p-8 shadow-xs hover:shadow-md transition-shadow group">
+            <div className="rounded-[24px] bg-[var(--white)] p-8 shadow-float hover:shadow-float-hover transition-all group">
               <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
                 <User className="w-6 h-6" />
               </div>
@@ -496,7 +496,7 @@ export default function HomePage() {
             </div>
 
             {/* Card 2 */}
-            <div className="rounded-[24px] bg-[var(--white)] border border-[var(--gray-200)] p-8 shadow-xs hover:shadow-md transition-shadow group">
+            <div className="rounded-[24px] bg-[var(--white)] p-8 shadow-float hover:shadow-float-hover transition-all group">
               <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
                 <Sparkles className="w-6 h-6" />
               </div>
@@ -509,7 +509,7 @@ export default function HomePage() {
             </div>
 
             {/* Card 3 */}
-            <div className="rounded-[24px] bg-[var(--white)] border border-[var(--gray-200)] p-8 shadow-xs hover:shadow-md transition-shadow group">
+            <div className="rounded-[24px] bg-[var(--white)] p-8 shadow-float hover:shadow-float-hover transition-all group">
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#1AA260] flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
                 <ShieldCheck className="w-6 h-6" />
               </div>
@@ -538,7 +538,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Testimonial 1 */}
-            <div className="rounded-[20px] bg-[var(--white)] border border-[var(--gray-200)] p-6 shadow-xs flex flex-col justify-between">
+            <div className="rounded-[20px] bg-[var(--white)] p-6 shadow-float hover:shadow-float-hover transition-all flex flex-col justify-between">
               <div>
                 <span className="text-[11px] text-[var(--gray-500)] block mb-3">September 18</span>
                 <p className="text-xs text-[var(--gray-700)] leading-relaxed mb-4">
@@ -562,7 +562,7 @@ export default function HomePage() {
             </div>
 
             {/* Testimonial 2 */}
-            <div className="rounded-[20px] bg-[var(--white)] border border-[var(--gray-200)] p-6 shadow-xs flex flex-col justify-between">
+            <div className="rounded-[20px] bg-[var(--white)] p-6 shadow-float hover:shadow-float-hover transition-all flex flex-col justify-between">
               <div>
                 <span className="text-[11px] text-[var(--gray-500)] block mb-3">August 29</span>
                 <p className="text-xs text-[var(--gray-700)] leading-relaxed mb-4">
@@ -586,7 +586,7 @@ export default function HomePage() {
             </div>
 
             {/* Testimonial 3 */}
-            <div className="rounded-[20px] bg-[var(--white)] border border-[var(--gray-200)] p-6 shadow-xs flex flex-col justify-between">
+            <div className="rounded-[20px] bg-[var(--white)] p-6 shadow-float hover:shadow-float-hover transition-all flex flex-col justify-between">
               <div>
                 <span className="text-[11px] text-[var(--gray-500)] block mb-3">August 14</span>
                 <p className="text-xs text-[var(--gray-700)] leading-relaxed mb-4">
@@ -629,7 +629,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Card: Offices & Hotline */}
-            <div className="lg:col-span-5 rounded-[24px] bg-[var(--white)] border border-[var(--gray-200)] p-7 sm:p-8 space-y-6 shadow-xs">
+            <div className="lg:col-span-5 rounded-[24px] bg-[var(--white)] p-7 sm:p-8 space-y-6 shadow-float">
               <div>
                 <h4 className="font-display font-bold text-sm text-[var(--ink)] mb-1 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-[#1AA260]" />
@@ -666,7 +666,7 @@ export default function HomePage() {
             </div>
 
             {/* Right Card: Contact Form */}
-            <div className="lg:col-span-7 rounded-[24px] bg-[var(--white)] border border-[var(--gray-200)] p-7 sm:p-8 shadow-xs">
+            <div className="lg:col-span-7 rounded-[24px] bg-[var(--white)] p-7 sm:p-8 shadow-float">
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>

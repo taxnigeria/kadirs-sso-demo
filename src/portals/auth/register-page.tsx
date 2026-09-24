@@ -60,7 +60,7 @@ export default function RegisterPage() {
       )}
 
       {/* Modern Stepper Progress Bar */}
-      <div className="sticky top-0 z-30 bg-white rounded-2xl border border-[var(--gray-200)] mb-8 sm:mb-10 p-2 transition-all overflow-x-auto no-scrollbar">
+      <div className="sticky top-0 z-30 bg-white rounded-2xl shadow-float mb-8 sm:mb-10 p-2 transition-all overflow-x-auto no-scrollbar">
         <div className="flex items-center min-w-max sm:min-w-full">
           {steps.map((stepName, idx) => {
             const isActive = idx === activeIndex
@@ -122,10 +122,10 @@ export default function RegisterPage() {
             {/* Path A: Individual */}
             <div
               onClick={() => setSelectedPath('individual')}
-              className={`rounded-[28px] p-7 cursor-pointer transition-all flex flex-col justify-between border ${
+              className={`rounded-[28px] p-7 cursor-pointer transition-all flex flex-col justify-between bg-white shadow-float ${
                 selectedPath === 'individual'
-                  ? 'border-[#1AA260] bg-white ring-2 ring-[#1AA260]'
-                  : 'border-[var(--gray-200)] bg-white hover:border-emerald-300'
+                  ? 'ring-2 ring-[#1AA260]'
+                  : 'hover:shadow-float-hover'
               }`}
             >
               <div>
@@ -154,10 +154,10 @@ export default function RegisterPage() {
             {/* Path B: Corporate */}
             <div
               onClick={() => setSelectedPath('corporate')}
-              className={`rounded-[28px] p-7 cursor-pointer transition-all flex flex-col justify-between border ${
+              className={`rounded-[28px] p-7 cursor-pointer transition-all flex flex-col justify-between bg-white shadow-float ${
                 selectedPath === 'corporate'
-                  ? 'border-[#1AA260] bg-white ring-2 ring-[#1AA260]'
-                  : 'border-[var(--gray-200)] bg-white hover:border-emerald-300'
+                  ? 'ring-2 ring-[#1AA260]'
+                  : 'hover:shadow-float-hover'
               }`}
             >
               <div>
@@ -186,10 +186,10 @@ export default function RegisterPage() {
             {/* Path C: Agency */}
             <div
               onClick={() => setSelectedPath('agency')}
-              className={`rounded-[28px] p-7 cursor-pointer transition-all flex flex-col justify-between border ${
+              className={`rounded-[28px] p-7 cursor-pointer transition-all flex flex-col justify-between bg-white shadow-float ${
                 selectedPath === 'agency'
-                  ? 'border-[#1AA260] bg-white ring-2 ring-[#1AA260]'
-                  : 'border-[var(--gray-200)] bg-white hover:border-emerald-300'
+                  ? 'ring-2 ring-[#1AA260]'
+                  : 'hover:shadow-float-hover'
               }`}
             >
               <div>

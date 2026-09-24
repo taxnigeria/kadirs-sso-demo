@@ -168,7 +168,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-white border border-[var(--gray-200)] p-8 sm:p-9 rounded-[28px] space-y-6"
+          className="bg-white shadow-float p-8 sm:p-9 rounded-[28px] space-y-6"
           onSubmit={handleStep0Submit}
         >
           <div>
@@ -410,7 +410,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {/* ================================================================ */}
       {step === 1 && (
         <form
-          className="bg-white border border-[var(--gray-200)] p-8 sm:p-9 rounded-[28px] space-y-6"
+          className="bg-white shadow-float p-8 sm:p-9 rounded-[28px] space-y-6"
           onSubmit={(e) => {
             e.preventDefault()
             changeStep(2)
@@ -580,7 +580,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {/* STEP 2: Summary Review Before Submitting to Maker/Checker        */}
       {/* ================================================================ */}
       {step === 2 && (
-        <div className="bg-white border border-[var(--gray-200)] p-8 sm:p-9 rounded-[28px] space-y-6">
+        <div className="bg-white shadow-float p-8 sm:p-9 rounded-[28px] space-y-6">
           <div>
             <h2 className="font-semibold text-[22px] tracking-tight text-[var(--ink)] mb-1">
               Review agency submission
@@ -672,7 +672,7 @@ export function AgencyFlow({ onBackToSelection, onStepChange }: AgencyFlowProps)
       {/* STEP 3: Confirmed / Submitted to Queue                           */}
       {/* ================================================================ */}
       {step === 3 && (
-        <div className="bg-white border border-[var(--gray-200)] p-10 sm:p-12 text-center rounded-[28px] space-y-5 animate-in fade-in">
+        <div className="bg-white shadow-float p-10 sm:p-12 text-center rounded-[28px] space-y-5 animate-in fade-in">
           <div className="w-14 h-14 rounded-full border-2 border-[#1AA260] flex items-center justify-center text-[#1AA260] mx-auto bg-emerald-50">
             <CheckCircle2 className="w-8 h-8" />
           </div>

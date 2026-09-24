@@ -306,7 +306,7 @@ export function IndividualFlow({
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-white border border-[var(--gray-200)] p-7 sm:p-9 rounded-[28px] space-y-6"
+          className="bg-white shadow-float p-7 sm:p-9 rounded-[28px] space-y-6"
           onSubmit={handleVerifyNIN}
         >
           <div>
@@ -454,7 +454,7 @@ export function IndividualFlow({
       {/* STEP 1: Phone Security Challenge & Contact Information              */}
       {/* ================================================================ */}
       {step === 1 && nimcData && (
-        <div className="bg-white border border-[var(--gray-200)] p-7 sm:p-9 rounded-[28px] space-y-6">
+        <div className="bg-white shadow-float p-7 sm:p-9 rounded-[28px] space-y-6">
           <div>
             <h2 className="font-display text-xl sm:text-2xl font-bold text-[var(--ink)] tracking-tight mb-1">
               Identity Verification &amp; Contact Setup
@@ -704,7 +704,7 @@ export function IndividualFlow({
       {/* STEP 2: Location & Tax Jurisdiction                                */}
       {/* ================================================================ */}
       {step === 2 && (
-        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+        <div className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               Location &amp; Tax Jurisdiction
@@ -785,7 +785,7 @@ export function IndividualFlow({
       {/* STEP 3: Security & 2-Step Verification                             */}
       {/* ================================================================ */}
       {step === 3 && (
-        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+        <div className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               Account Password &amp; 2-Step Verification
@@ -931,7 +931,7 @@ export function IndividualFlow({
       {/* STEP 4: Privacy & Consent Agreement                               */}
       {/* ================================================================ */}
       {step === 4 && (
-        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+        <div className="bg-white shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#1AA260] text-[11px] font-semibold mb-3">
               <ShieldCheck className="w-3.5 h-3.5" />

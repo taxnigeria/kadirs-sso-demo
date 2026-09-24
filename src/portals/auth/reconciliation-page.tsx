@@ -132,7 +132,7 @@ export default function ReconciliationPage() {
       )}
 
       {/* Verified Citizen Master Identity Banner */}
-      <div className="bg-white border border-[var(--gray-200)] p-6 sm:p-7 rounded-[28px] flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-white shadow-float p-6 sm:p-7 rounded-[28px] flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-[#1AA260] border border-emerald-200">
@@ -165,7 +165,7 @@ export default function ReconciliationPage() {
 
       {/* Completion Banner (When all accounts are unified) */}
       {allLinked && (
-        <div className="bg-emerald-50/70 border border-emerald-200 p-8 sm:p-10 rounded-[28px] text-center space-y-4 animate-in fade-in">
+        <div className="bg-emerald-50/70 border border-emerald-200 p-8 sm:p-10 rounded-[28px] text-center space-y-4 animate-in fade-in shadow-float">
           <div className="w-14 h-14 rounded-full bg-emerald-100 text-[#1AA260] flex items-center justify-center mx-auto border border-emerald-200">
             <CheckCircle2 className="w-7 h-7" />
           </div>
@@ -201,7 +201,7 @@ export default function ReconciliationPage() {
       {/* RECOGNITION CARDS LIST */}
       <div className="space-y-4">
         {!allLinked && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white border border-[var(--gray-200)] rounded-2xl text-xs mb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white shadow-float rounded-2xl text-xs mb-2">
             <div className="flex items-center gap-2 text-[var(--gray-600)]">
               <Info className="w-4 h-4 text-amber-500 shrink-0" />
               <span>
@@ -242,12 +242,12 @@ export default function ReconciliationPage() {
             return (
               <div
                 key={candidate.record.id}
-                className={`border rounded-[24px] p-5 sm:p-6 transition-all bg-white ${
+                className={`rounded-[24px] p-5 sm:p-6 transition-all bg-white shadow-float hover:shadow-float-hover ${
                   isLinked
-                    ? 'border-emerald-300'
+                    ? 'ring-2 ring-[#1AA260]'
                     : isConflict
-                    ? 'border-rose-300'
-                    : 'border-[var(--gray-200)] hover:border-[#1AA260]/60'
+                    ? 'ring-2 ring-rose-400'
+                    : ''
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">

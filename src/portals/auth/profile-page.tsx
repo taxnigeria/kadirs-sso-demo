@@ -290,7 +290,7 @@ export default function ProfilePage() {
       {/* ========================================================================= */}
       {/* CITIZEN PROFILE HERO CARD                                                 */}
       {/* ========================================================================= */}
-      <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6">
+      <div className="bg-white shadow-float rounded-[28px] p-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
           {/* Avatar & Identification */}
           <div className="flex items-center gap-4">
@@ -394,7 +394,7 @@ export default function ProfilePage() {
       {/* TAB 1: IDENTITY & BIOMETRICS (LOCKED LAYER 1)                             */}
       {/* ========================================================================= */}
       {activeTab === 'identity' && (
-        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--gray-200)] pb-4">
             <div>
               <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
@@ -496,7 +496,7 @@ export default function ProfilePage() {
       {/* TAB 2: CONTACT DETAILS (24-HOUR SECURITY WINDOW)                          */}
       {/* ========================================================================= */}
       {activeTab === 'contact' && (
-        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
           <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
               <Phone className="w-4 h-4 text-[#1AA260]" />
@@ -667,7 +667,7 @@ export default function ProfilePage() {
       {/* TAB 3: ADDRESS & TAX OFFICE (AUTOMATIC REASSIGNMENT)                      */}
       {/* ========================================================================= */}
       {activeTab === 'address' && (
-        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
           <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
               <MapPin className="w-4 h-4 text-[#1AA260]" />
@@ -748,7 +748,7 @@ export default function ProfilePage() {
       {/* TAB 4: DATA SHARING & NDPA CONSENT MANAGEMENT                             */}
       {/* ========================================================================= */}
       {activeTab === 'sharing' && (
-        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
           <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
               <Layers className="w-4 h-4 text-[#1AA260]" />
@@ -859,7 +859,7 @@ export default function ProfilePage() {
       {/* TAB 5: SECURITY & SESSIONS (2FA & ACTIVE DEVICES)                         */}
       {/* ========================================================================= */}
       {activeTab === 'security' && (
-        <div className="bg-white border border-[var(--gray-200)] rounded-[28px] p-6 space-y-6">
+        <div className="bg-white shadow-float rounded-[28px] p-6 space-y-6">
           <div className="border-b border-[var(--gray-200)] pb-4">
             <h2 className="font-sans font-semibold text-lg text-[var(--ink)] flex items-center gap-2">
               <KeyRound className="w-4 h-4 text-[#1AA260]" />
