@@ -1,18 +1,15 @@
 import { useState, useMemo } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 import {
   CheckCircle2,
   AlertTriangle,
-  ShieldCheck,
-  Car,
-  CreditCard,
-  FileText,
-  ArrowRight,
-  Sparkles,
-  Info,
   Check,
   XCircle,
-  ExternalLink
+  Wallet,
+  Car,
+  FileText,
+  ArrowRight,
+  Lock
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import {
@@ -78,18 +75,6 @@ export default function ReconciliationPage() {
     setTimeout(() => setFeedbackMessage(null), 4000)
   }
 
-  // Link all verified records at once (Hero 1-click action)
-  const handleLinkAll = () => {
-    let count = 0
-    for (const c of candidates) {
-      if (c.matchTier !== 'tier_3_conflict' && !reconciledRecordIds.includes(c.record.id)) {
-        executeReconciliation(c, activeProfile.citizenId, activeIdentity.nin)
-        count++
-      }
-    }
-    setFeedbackMessage(`Unified ${count} legacy service records under citizen ID ${activeProfile.citizenId}.`)
-  }
-
   // Dispute record
   const handleDispute = (candidateId: string) => {
     setDisputedIds((prev) => [...prev, candidateId])
@@ -97,328 +82,249 @@ export default function ReconciliationPage() {
     setTimeout(() => setFeedbackMessage(null), 4000)
   }
 
+  // Initials from name
+  const initials = activeIdentity.legalName
+    .split(' ')
+    .slice(0, 2)
+    .map((n) => n.charAt(0).toUpperCase())
+    .join('')
+
+  // Masked NIN
+  const maskedNin = `${activeIdentity.nin.slice(0, 3)}•••${activeIdentity.nin.slice(-3)}`
+
+  // Icon resolver for each TSP
+  const TspIcon = ({ tspId }: { tspId: string }) => {
+    switch (tspId) {
+      case 'paykaduna': return <Wallet className="w-5 h-5" />
+      case 'kadvreg': return <Car className="w-5 h-5" />
+      case 'pit': return <FileText className="w-5 h-5" />
+      default: return <Wallet className="w-5 h-5" />
+    }
+  }
+
   return (
-    <div className="py-10 sm:py-14 px-4 sm:px-6 max-w-5xl mx-auto space-y-8 animate-in fade-in duration-300">
-      {/* Official Header */}
-      <div className="text-center max-w-[620px] mx-auto">
-        <div className="w-12 h-12 rounded-full border border-emerald-200 flex items-center justify-center text-[#1AA260] font-sans font-semibold text-base mb-3.5 mx-auto bg-emerald-50">
-          KD
-        </div>
-        <h1 className="font-sans font-semibold text-[24px] sm:text-[30px] leading-tight text-[var(--ink)] tracking-tight mb-2">
-          Account Reconciliation &amp; Unification
-        </h1>
-        <p className="text-[13.5px] text-[var(--gray-600)] leading-relaxed max-w-[54ch] mx-auto">
-          We matched pre-migration records across Kaduna State revenue agencies.
-          <br className="hidden sm:inline" />
-          Review and unify them under your single authenticated citizen identity.
-        </p>
-      </div>
+    <div className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 flex items-start justify-center min-h-[calc(100vh-80px)]">
+      <div className="w-full max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300">
 
-      {/* Floating feedback message alert */}
-      {feedbackMessage && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 text-[#1AA260] rounded-2xl text-xs flex items-center justify-between gap-3 animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
-            <span className="font-medium">{feedbackMessage}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setFeedbackMessage(null)}
-            className="text-xs font-semibold underline cursor-pointer"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
-      {/* Verified Citizen Master Identity Banner */}
-      <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float p-6 sm:p-7 rounded-[28px] flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-[#1AA260] border border-emerald-500/25">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Verified Citizen Profile (NIMC Verified)
-            </span>
-          </div>
-          <h2 className="font-sans font-semibold text-[22px] sm:text-[24px] text-[var(--ink)] tracking-tight">
-            {activeIdentity.legalName}
-          </h2>
-          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-[var(--gray-500)]">
-            <span><strong className="text-[var(--ink)]">Citizen ID:</strong> <code className="font-mono">{activeProfile.citizenId}</code></span>
-            <span>&bull;</span>
-            <span><strong className="text-[var(--ink)]">Verified NIN:</strong> <code className="font-mono">{activeIdentity.nin.slice(0, 3)}••••{activeIdentity.nin.slice(-3)}</code></span>
-            <span>&bull;</span>
-            <span><strong className="text-[var(--ink)]">Primary Contact:</strong> {activeProfile.email}</span>
-          </div>
-        </div>
-
-        {/* Action Status Indicator */}
-        <div className="sm:text-right shrink-0">
-          <span className="text-[11px] uppercase tracking-wider font-semibold text-[var(--gray-500)] block">
-            Account Matching Review
-          </span>
-          <span className="text-xs text-[var(--ink)] font-medium block mt-0.5">
-            Individual Card Review Required
-          </span>
-        </div>
-      </div>
-
-      {/* Completion Banner (When all accounts are unified) */}
-      {allLinked && (
-        <div className="bg-emerald-500/10 border border-emerald-500/20 p-8 sm:p-10 rounded-[28px] text-center space-y-4 animate-in fade-in shadow-float">
-          <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-[#1AA260] flex items-center justify-center mx-auto border border-emerald-500/30">
-            <CheckCircle2 className="w-7 h-7" />
-          </div>
-          <div>
-            <h3 className="font-sans font-semibold text-[20px] sm:text-[22px] text-[var(--ink)] tracking-tight">
-              All Legacy Accounts Successfully Unified!
-            </h3>
-            <p className="text-xs sm:text-sm text-[var(--gray-600)] max-w-[55ch] mx-auto mt-1 leading-relaxed">
-              Your single login credentials now seamlessly authorize PayKaduna, KADVREG vehicle licensing, and the PIT Personal Income Tax portal.
-            </p>
-          </div>
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => navigate('/paykaduna')}
-              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-6 py-2.5 rounded-full text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
-            >
-              <span>Return to PayKaduna</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/kadvreg')}
-              className="border border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] px-6 py-2.5 rounded-full text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
-            >
-              <Car className="w-3.5 h-3.5 text-[#1AA260]" />
-              <span>Inspect Linked Vehicle in KADVREG</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* RECOGNITION CARDS LIST */}
-      <div className="space-y-4">
-        {!allLinked && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-2xl text-xs mb-2">
-            <div className="flex items-center gap-2 text-[var(--gray-600)]">
-              <Info className="w-4 h-4 text-amber-500 shrink-0" />
-              <span>
-                <strong className="text-[var(--ink)]">Privacy &amp; Security:</strong> Each discovered record requires your explicit confirmation before it is linked to your central ID.
-              </span>
+        {/* Floating feedback message */}
+        {feedbackMessage && (
+          <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 text-[#1AA260] rounded-2xl text-xs flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <span className="font-medium">{feedbackMessage}</span>
             </div>
             <button
               type="button"
-              onClick={handleLinkAll}
-              className="text-[11.5px] font-semibold text-[#1AA260] hover:underline flex items-center gap-1.5 shrink-0 cursor-pointer"
+              onClick={() => setFeedbackMessage(null)}
+              className="text-xs font-semibold underline cursor-pointer shrink-0"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>[Demo Shortcut] Fast-track link verified records &rarr;</span>
+              Dismiss
             </button>
           </div>
         )}
 
-        <div className="flex items-center justify-between border-b border-[var(--gray-200)] pb-3">
-          <div>
-            <h2 className="font-sans font-semibold text-[18px] sm:text-[20px] text-[var(--ink)] tracking-tight">
-              Discovered Agency Records ({candidates.length})
-            </h2>
-            <p className="text-xs text-[var(--gray-500)] mt-0.5">
-              The matching algorithm automatically mapped disparate emails and name variations to your NIN.
-            </p>
+        {/* ── Citizen Identity Card ── */}
+        <div className="bg-[var(--card-bg)] rounded-[20px] p-5 sm:p-6 border border-[var(--gray-200)] shadow-sm">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50 mb-3">
+            <CheckCircle2 className="w-3 h-3" />
+            NIMC Verified
+          </span>
+
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50 flex items-center justify-center text-sm font-bold shrink-0">
+              {initials}
+            </div>
+            <div>
+              <h2 className="font-display font-bold text-lg sm:text-xl text-[var(--ink)] tracking-tight leading-tight">
+                {activeIdentity.legalName}
+              </h2>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5 text-xs text-[var(--gray-500)]">
+                <span>Citizen ID: <span className="font-mono text-[var(--ink)]">{activeProfile.citizenId}</span></span>
+                <span className="hidden sm:inline text-[var(--gray-300)]">|</span>
+                <span>NIN: <span className="font-mono text-[var(--ink)]">{maskedNin}</span></span>
+                <span className="hidden sm:inline text-[var(--gray-300)]">|</span>
+                <span className="text-[var(--ink)]">{activeProfile.email}</span>
+              </div>
+            </div>
           </div>
-          <span className="text-xs text-[var(--gray-500)] font-mono">
-            {linkedCount} of {candidates.length} Linked
+        </div>
+
+        {/* ── Section Heading ── */}
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h1 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
+              {allLinked
+                ? 'All accounts linked!'
+                : `${candidates.length} account${candidates.length !== 1 ? 's' : ''} found under your NIN`}
+            </h1>
+            {!allLinked && (
+              <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-0.5">
+                Each one needs your confirmation before it joins your profile.
+              </p>
+            )}
+          </div>
+          <span className="text-xs text-[var(--gray-500)] font-medium shrink-0 pb-0.5">
+            {linkedCount} of {candidates.length} linked
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-5">
-          {candidates.map((candidate) => {
-            const isLinked = reconciledRecordIds.includes(candidate.record.id)
-            const isDisputed = disputedIds.includes(candidate.record.id)
-            const isConflict = candidate.matchTier === 'tier_3_conflict'
-
-            return (
-              <div
-                key={candidate.record.id}
-                className={`rounded-[24px] p-5 sm:p-6 transition-all bg-[var(--card-bg)] text-[var(--ink)] shadow-float hover:shadow-float-hover ${
-                  isLinked
-                    ? 'ring-2 ring-[#1AA260]'
-                    : isConflict
-                    ? 'ring-2 ring-rose-400'
-                    : ''
-                }`}
+        {/* ── All Linked Success State ── */}
+        {allLinked && (
+          <div className="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 p-6 sm:p-8 rounded-[20px] text-center space-y-4 animate-in fade-in duration-300">
+            <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-[#1AA260] flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-display font-bold text-lg text-[var(--ink)] tracking-tight">
+                All legacy accounts successfully unified
+              </h3>
+              <p className="text-xs text-[var(--gray-500)] max-w-md mx-auto mt-1 leading-relaxed">
+                Your single login now authorizes PayKaduna, KADVREG vehicle licensing, and the Personal Income Tax portal.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => navigate('/paykaduna')}
+                className="bg-[#1AA260] hover:bg-[#158A52] text-white h-10 px-6 rounded-full text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
               >
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  {/* Left: Origin & Attributes */}
-                  <div className="space-y-3 flex-1">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[var(--input-bg)] border border-[var(--input-border)] flex items-center justify-center text-[#1AA260] shrink-0">
-                        {candidate.record.tspId === 'paykaduna' && <CreditCard className="w-5 h-5" />}
-                        {candidate.record.tspId === 'kadvreg' && <Car className="w-5 h-5" />}
-                        {candidate.record.tspId === 'pit' && <FileText className="w-5 h-5" />}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-sm sm:text-base text-[var(--ink)]">
+                <span>Go to Dashboard</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Account Cards Grid ── */}
+        {!allLinked && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {candidates.map((candidate) => {
+              const isLinked = reconciledRecordIds.includes(candidate.record.id)
+              const isDisputed = disputedIds.includes(candidate.record.id)
+              const isConflict = candidate.matchTier === 'tier_3_conflict'
+
+              return (
+                <div
+                  key={candidate.record.id}
+                  className={`bg-[var(--card-bg)] rounded-[20px] border transition-all flex flex-col ${
+                    isLinked
+                      ? 'border-[#1AA260] ring-1 ring-[#1AA260]/20'
+                      : isConflict
+                      ? 'border-rose-300 dark:border-rose-700/50'
+                      : 'border-[var(--gray-200)] shadow-sm hover:shadow'
+                  }`}
+                >
+                  {/* Card Header */}
+                  <div className="p-4 sm:p-5 pb-0">
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-[#1AA260]/8 dark:bg-[#1AA260]/15 text-[#1AA260] flex items-center justify-center shrink-0">
+                          <TspIcon tspId={candidate.record.tspId} />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-sm text-[var(--ink)]">
                             {candidate.tspName}
                           </h3>
-                          <span className="font-mono text-xs text-[var(--gray-500)]">
-                            &middot; {candidate.record.id}
+                          <span className="text-[11px] text-[var(--gray-500)]">
+                            Opened {candidate.record.accountCreated}
                           </span>
                         </div>
-                        <span className="text-[11px] text-[var(--gray-500)] block">
-                          Legacy account created on {candidate.record.accountCreated}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Attribute Comparison Grid */}
-                    <div className="bg-black/[0.02] dark:bg-white/[0.03] border border-[var(--input-border)] p-4 rounded-2xl text-xs space-y-2">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[var(--ink)]">
-                        <div>
-                          <span className="text-[var(--gray-500)] block text-[11px] font-medium">Legacy Name on File:</span>
-                          <strong className="text-[var(--ink)]">{candidate.record.name}</strong>
-                          {candidate.record.name !== activeIdentity.legalName && (
-                            <span className="text-[11px] text-[var(--gray-500)] block mt-0.5">
-                              (Spelling variation verified via name similarity index)
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <span className="text-[var(--gray-500)] block text-[11px] font-medium">Registered Contact:</span>
-                          <span className="font-mono text-[12px]">{candidate.record.email}</span>
-                          <span className="block text-[11px] text-[var(--gray-500)]">{candidate.record.phone}</span>
-                        </div>
                       </div>
 
-                      <div className="pt-2 border-t border-[var(--input-border)] text-[var(--ink)] flex flex-wrap items-center gap-1.5">
-                        <span className="text-[var(--gray-500)] text-[11px]">Historical Activity:</span>
-                        <span className="font-medium text-[var(--ink)]">{candidate.record.lastActivity}</span>
-                        <span className="text-[11px] text-[var(--gray-500)] font-mono">({candidate.record.lastActivityDate})</span>
-                      </div>
-                    </div>
-
-                    {/* Matching Evidence Pills */}
-                    <div className="space-y-1.5">
-                      <span className="text-[10.5px] uppercase tracking-wider font-semibold text-[var(--gray-500)]">
-                        Verification Indicators:
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {candidate.matchReasons.map((reason, idx) => (
-                          <span
-                            key={idx}
-                            className="inline-flex items-center gap-1 text-[11px] px-3 py-1 rounded-full bg-[var(--input-bg)] text-[var(--ink)] border border-[var(--input-border)] font-medium"
-                          >
-                            <Info className="w-3 h-3 text-[#1AA260]" />
-                            {reason}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right: Confidence Score & Action */}
-                  <div className="sm:text-right shrink-0 space-y-3 min-w-[200px]">
-                    <div>
+                      {/* Match badge */}
                       {candidate.matchTier === 'tier_1_exact_nin' && (
-                        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full bg-emerald-500/15 text-[#1AA260] border border-emerald-500/25">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          Exact Verified Match (NIN)
+                        <span className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-[#1AA260] shrink-0">
+                          <CheckCircle2 className="w-3 h-3" />
+                          NIN match
                         </span>
                       )}
                       {candidate.matchTier === 'tier_2_strong_fuzzy' && (
-                        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/25">
-                          <Sparkles className="w-3.5 h-3.5" />
-                          Strong Match ({candidate.confidenceScore}%)
+                        <span className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-amber-600 dark:text-amber-400 shrink-0">
+                          <CheckCircle2 className="w-3 h-3" />
+                          {candidate.confidenceScore}% match
                         </span>
                       )}
                       {candidate.matchTier === 'tier_3_conflict' && (
-                        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/25">
-                          <AlertTriangle className="w-3.5 h-3.5" />
-                          Manual Review Required
+                        <span className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-rose-600 dark:text-rose-400 shrink-0">
+                          <AlertTriangle className="w-3 h-3" />
+                          Conflict
                         </span>
                       )}
                     </div>
 
-                    {/* Action Controls */}
-                    <div className="pt-2">
-                      {isLinked ? (
-                        <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1AA260] bg-emerald-500/15 px-4 py-2 rounded-full border border-emerald-500/25">
-                          <Check className="w-4 h-4" />
-                          <span>Linked to Citizen Account</span>
-                        </div>
-                      ) : isDisputed ? (
-                        <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 dark:text-rose-300 bg-rose-500/15 px-4 py-2 rounded-full border border-rose-500/25">
-                          <XCircle className="w-4 h-4" />
-                          <span>Flagged for Review</span>
-                        </div>
-                      ) : isConflict ? (
-                        <div className="space-y-2">
-                          <p className="text-[11.5px] text-rose-600 dark:text-rose-400 max-w-[32ch] text-left sm:text-right leading-relaxed">
-                            Conflicting Record: Account is registered to NIN {candidate.record.nin}. Auto-bind forbidden by security policy.
-                          </p>
-                          <button
-                            type="button"
-                            onClick={() => handleDispute(candidate.record.id)}
-                            className="bg-rose-600 hover:bg-rose-700 text-white text-xs px-4 py-2 rounded-full font-semibold transition-colors w-full sm:w-auto cursor-pointer"
-                          >
-                            Route to Dispute Queue
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col sm:items-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleLinkRecord(candidate)}
-                            className="bg-[#1AA260] hover:bg-[#158A52] text-white text-xs px-5 py-2.5 rounded-full font-semibold transition-colors flex items-center justify-center gap-1.5 w-full sm:w-auto cursor-pointer"
-                          >
-                            <span>Yes, This Is Me &mdash; Link Record</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDispute(candidate.record.id)}
-                            className="text-[11.5px] text-[var(--gray-500)] hover:text-rose-600 transition-colors underline cursor-pointer"
-                          >
-                            Not my record &middot; Dispute
-                          </button>
-                        </div>
-                      )}
+                    {/* Attribute Details */}
+                    <div className="border-t border-[var(--gray-200)] pt-3 space-y-2 text-xs">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="text-[var(--gray-500)] shrink-0">Name on file</span>
+                        <span className="text-[var(--ink)] font-medium text-right truncate">{candidate.record.name}</span>
+                      </div>
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="text-[var(--gray-500)] shrink-0">Contact</span>
+                        <span className="text-[var(--ink)] font-medium text-right truncate">{candidate.record.email}</span>
+                      </div>
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="text-[var(--gray-500)] shrink-0">Last activity</span>
+                        <span className="text-[var(--ink)] font-medium text-right truncate">
+                          {candidate.record.lastActivity} &middot; {candidate.record.lastActivityDate}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
 
-      {/* Navigation Footer */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[var(--line)] text-xs text-[var(--ink-soft)]">
-        <Link
-          to="/paykaduna"
-          className="hover:text-[var(--ink)] flex items-center gap-1 font-medium"
-        >
-          &larr; Back to PayKaduna Dashboard
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link
-            to="/kadvreg"
-            className="hover:text-[var(--green)] font-medium flex items-center gap-1"
-          >
-            <span>Proceed to KADVREG Vehicles</span>
-            <ExternalLink className="w-3 h-3" />
-          </Link>
-          <span>&middot;</span>
-          <Link
-            to="/pit"
-            className="hover:text-[var(--green)] font-medium flex items-center gap-1"
-          >
-            <span>Proceed to PIT Portal</span>
-            <ExternalLink className="w-3 h-3" />
-          </Link>
+                  {/* Card Footer / Actions */}
+                  <div className="p-4 sm:p-5 pt-4 mt-auto">
+                    {isLinked ? (
+                      <div className="flex items-center justify-center gap-2 text-xs font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/30 h-10 rounded-full border border-emerald-200 dark:border-emerald-800/40">
+                        <Check className="w-4 h-4" />
+                        <span>Linked to your account</span>
+                      </div>
+                    ) : isDisputed ? (
+                      <div className="flex items-center justify-center gap-2 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 h-10 rounded-full border border-rose-200 dark:border-rose-800/40">
+                        <XCircle className="w-4 h-4" />
+                        <span>Flagged for review</span>
+                      </div>
+                    ) : isConflict ? (
+                      <div className="space-y-2">
+                        <p className="text-[11px] text-rose-600 dark:text-rose-400 leading-relaxed">
+                          NIN mismatch — this record belongs to a different identity. Cannot auto-link.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => handleDispute(candidate.record.id)}
+                          className="w-full bg-rose-600 hover:bg-rose-700 text-white h-10 rounded-full text-xs font-semibold transition-colors cursor-pointer"
+                        >
+                          Report to Dispute Queue
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => handleLinkRecord(candidate)}
+                          className="flex-1 bg-[#1AA260] hover:bg-[#158A52] text-white h-10 rounded-full text-xs font-semibold transition-colors cursor-pointer"
+                        >
+                          Yes, link this account
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDispute(candidate.record.id)}
+                          className="text-xs text-[var(--gray-500)] hover:text-rose-600 dark:hover:text-rose-400 transition-colors underline cursor-pointer shrink-0 px-1"
+                        >
+                          Not mine
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* ── Footer ── */}
+        <div className="flex items-center justify-center gap-2 text-xs text-[var(--gray-500)] pt-2 pb-4">
+          <Lock className="w-3.5 h-3.5 text-[#1AA260] shrink-0" />
+          <span>Kaduna State Internal Revenue Service &middot; Unified Citizen Gateway</span>
         </div>
       </div>
     </div>
