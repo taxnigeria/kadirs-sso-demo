@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router'
 import {
   Eye,
@@ -10,7 +10,8 @@ import {
   ShieldCheck,
   MapPin,
   Smartphone,
-  KeyRound
+  KeyRound,
+  Hash
 } from 'lucide-react'
 import { KADUNA_LGAS, LGA_TAX_OFFICES } from '@/data/lga-tax-offices'
 import { verifyNINWithNIMC, maskNIMCPhone, type NIMCVerificationResponse } from '@/engine/kyc-simulator'
@@ -44,8 +45,9 @@ export function IndividualFlow({
   }
 
   // ==========================================
-  // Step 0: National Identity (NIN) Verification
+  // Step 0: National Identity (NIN / vNIN) Verification
   // ==========================================
+  const [idMethod, setIdMethod] = useState<'nin' | 'vnin' | null>(null)
   const [ninInput, setNinInput] = useState('')
   const [showNIN, setShowNIN] = useState(false)
   const [isVerifyingNIN, setIsVerifyingNIN] = useState(false)
@@ -66,6 +68,8 @@ export function IndividualFlow({
 
   const [otpSent, setOtpSent] = useState(false)
   const [otpInput, setOtpInput] = useState('')
+  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', ''])
+  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([])
   const [otpError, setOtpError] = useState<string | null>(null)
   const [otpVerified, setOtpVerified] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
@@ -135,6 +139,16 @@ export function IndividualFlow({
     setNinError(null)
     setDuplicateNINBlocked(null)
     const clean = ninInput.replace(/\s+/g, '')
+
+    if (idMethod === 'nin' && clean.length !== 11) {
+      setNinError('Please enter a valid 11-digit NIN.')
+      return
+    }
+
+    if (idMethod === 'vnin' && clean.length !== 16) {
+      setNinError('Please enter a valid 16-character virtual NIN (vNIN).')
+      return
+    }
 
     if (clean.length !== 11 && clean.length !== 16) {
       setNinError('Please enter a valid 11-digit NIN or 16-character virtual NIN (vNIN)')
@@ -212,28 +226,72 @@ export function IndividualFlow({
     }
 
     setOtpError(null)
-    sendSimulatedOTP(targetPhone, 'termii_sms_dnd')
+    const active = sendSimulatedOTP(targetPhone, 'termii_sms_dnd')
     setOtpSent(true)
-    setOtpInput('')
+    const code = active.code || '123456'
+    setOtpDigits(code.split('').slice(0, 6))
+    setOtpInput(code)
     setResendCooldown(30)
     setOtpAttemptsLeft(3)
+  }
+
+  // Handle individual OTP digit change
+  const handleOtpDigitChange = (index: number, val: string) => {
+    const char = val.replace(/\D/g, '').slice(-1)
+    const next = [...otpDigits]
+    next[index] = char
+    setOtpDigits(next)
+    setOtpInput(next.join(''))
+    setOtpError(null)
+
+    if (char && index < 5) {
+      otpInputRefs.current[index + 1]?.focus()
+    }
+  }
+
+  // Handle Backspace navigation across digit boxes
+  const handleOtpDigitKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      if (!otpDigits[index] && index > 0) {
+        otpInputRefs.current[index - 1]?.focus()
+      }
+    }
+  }
+
+  // Handle Paste of complete 6-digit code
+  const handleOtpPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    if (!pasted) return
+    const next = [...otpDigits]
+    for (let i = 0; i < 6; i++) {
+      next[i] = pasted[i] || ''
+    }
+    setOtpDigits(next)
+    setOtpInput(next.join(''))
+    setOtpError(null)
+    const focusIdx = Math.min(pasted.length, 5)
+    otpInputRefs.current[focusIdx]?.focus()
   }
 
   // Step 1: Verify OTP
   const handleVerifyOTP = () => {
     setOtpError(null)
-    if (!otpInput.trim() || otpInput.trim().length < 6) {
+    const codeToVerify = otpDigits.join('').trim() || otpInput.trim()
+    if (!codeToVerify || codeToVerify.length < 6) {
       setOtpError('Please enter the complete 6-digit verification code.')
       return
     }
 
-    const res = verifySimulatedOTP(otpInput)
+    const res = verifySimulatedOTP(codeToVerify)
     if (!res.valid) {
       const remaining = Math.max(0, otpAttemptsLeft - 1)
       setOtpAttemptsLeft(remaining)
       if (remaining === 0) {
         setOtpError('Maximum attempts exceeded (3). Please request a fresh verification code.')
         setOtpSent(false)
+        setOtpDigits(['', '', '', '', '', ''])
+        setOtpInput('')
       } else {
         setOtpError(`${res.message} (${remaining} attempts remaining)`)
       }
@@ -302,6 +360,7 @@ export function IndividualFlow({
   return (
     <div className="space-y-6">
       {/* ================================================================ */}
+      {/* ================================================================ */}
       {/* STEP 0: National Identity Verification (NIMC)                      */}
       {/* ================================================================ */}
       {step === 0 && (
@@ -314,24 +373,84 @@ export function IndividualFlow({
               National Identity Verification
             </h2>
             <p className="text-xs sm:text-sm text-[var(--gray-700)]">
-              Your official legal name, date of birth, and gender are verified directly with NIMC.
+              Choose your verification identifier to verify your citizen profile directly with NIMC.
             </p>
           </div>
 
-          {/* Evaluator Demo Quick Fill Bar */}
-          <div className="p-3 rounded-2xl bg-black/[0.03] dark:bg-white/[0.05] border border-[var(--gray-200)] text-xs flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-[var(--gray-500)] uppercase tracking-wider">Demo Quick Fill:</span>
-            <button
-              type="button"
-              onClick={() => {
-                setDuplicateNINBlocked(null)
-                setNinError(null)
-                setNinInput('23456789012')
-              }}
-              className="px-3 py-1 rounded-full bg-[var(--card-bg)] hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-[var(--gray-200)] text-xs font-semibold text-[#1AA260] cursor-pointer transition-colors"
-            >
-              Fill Sample NIN (23456789012)
-            </button>
+          {/* Identifier Method Selector (NIN vs vNIN) */}
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold text-[var(--ink)]">
+              Select Verification Method *
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Option 1: NIN */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIdMethod('nin')
+                  setNinInput('23456789012')
+                  setNinError(null)
+                  setDuplicateNINBlocked(null)
+                }}
+                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-start gap-3.5 ${
+                  idMethod === 'nin'
+                    ? 'border-[#1AA260] bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-[#1AA260]'
+                    : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--gray-700)]'
+                }`}
+              >
+                <div
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                    idMethod === 'nin'
+                      ? 'bg-[#1AA260] text-white'
+                      : 'bg-black/[0.04] dark:bg-white/[0.08] text-[var(--gray-700)]'
+                  }`}
+                >
+                  <Hash className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="font-bold text-xs sm:text-sm text-[var(--ink)]">
+                    11-Digit National ID (NIN)
+                  </div>
+                  <div className="text-[11px] text-[var(--gray-500)] mt-0.5">
+                    Standard National Identification Number
+                  </div>
+                </div>
+              </button>
+
+              {/* Option 2: vNIN */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIdMethod('vnin')
+                  setNinInput('1029384756102938')
+                  setNinError(null)
+                  setDuplicateNINBlocked(null)
+                }}
+                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-start gap-3.5 ${
+                  idMethod === 'vnin'
+                    ? 'border-[#1AA260] bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-[#1AA260]'
+                    : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--gray-700)]'
+                }`}
+              >
+                <div
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                    idMethod === 'vnin'
+                      ? 'bg-[#1AA260] text-white'
+                      : 'bg-black/[0.04] dark:bg-white/[0.08] text-[var(--gray-700)]'
+                  }`}
+                >
+                  <Smartphone className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="font-bold text-xs sm:text-sm text-[var(--ink)]">
+                    Virtual NIN (vNIN)
+                  </div>
+                  <div className="text-[11px] text-[var(--gray-500)] mt-0.5">
+                    16-character secure token from NIMC MWS App
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
 
           {/* Hard Block on Duplicate NIN */}
@@ -364,7 +483,7 @@ export function IndividualFlow({
                   }}
                   className="text-xs text-[var(--gray-500)] hover:text-[var(--ink)] underline cursor-pointer"
                 >
-                  Enter different NIN
+                  Enter different {idMethod === 'vnin' ? 'vNIN' : 'NIN'}
                 </button>
               </div>
             </div>
@@ -377,44 +496,54 @@ export function IndividualFlow({
             </div>
           )}
 
-          <div>
-            <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
-              <span>
-                11-digit NIN or 16-character virtual NIN (vNIN) *
-              </span>
-              <span className="text-[11px] text-[var(--gray-500)]">Masks after 3 digits</span>
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={getDisplayNIN()}
-                onChange={(e) => {
-                  setDuplicateNINBlocked(null)
-                  setNinError(null)
-                  const raw = e.target.value.replace(/\s+/g, '')
-                  setNinInput(raw)
-                }}
-                placeholder="Enter 11-digit NIN"
-                maxLength={16}
-                className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all pr-11"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowNIN(!showNIN)}
-                className="absolute right-3.5 top-3.5 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
-                title={showNIN ? 'Mask digits' : 'Show digits'}
-                tabIndex={-1}
-              >
-                {showNIN ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
+          {/* Corresponding Field - SHOWN ONLY AFTER METHOD IS SELECTED */}
+          {idMethod && (
+            <div className="space-y-4 animate-in fade-in">
+              <div>
+                <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
+                  <span>
+                    {idMethod === 'nin'
+                      ? '11-Digit National Identification Number (NIN) *'
+                      : '16-Character Virtual NIN (vNIN) *'}
+                  </span>
+                  <span className="text-[11px] text-[var(--gray-500)]">
+                    {idMethod === 'nin' ? 'Masks after 3 digits' : 'Auto-filled for demo'}
+                  </span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={getDisplayNIN()}
+                    onChange={(e) => {
+                      setDuplicateNINBlocked(null)
+                      setNinError(null)
+                      const raw = e.target.value.replace(/\s+/g, '')
+                      setNinInput(raw)
+                    }}
+                    placeholder={idMethod === 'nin' ? 'e.g. 23456789012' : 'e.g. 1029384756102938'}
+                    maxLength={idMethod === 'nin' ? 11 : 16}
+                    className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all pr-11"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNIN(!showNIN)}
+                    className="absolute right-3.5 top-3.5 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
+                    title={showNIN ? 'Mask digits' : 'Show digits'}
+                    tabIndex={-1}
+                  >
+                    {showNIN ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
 
-          <div className="border border-[var(--gray-200)] bg-[var(--paper)] p-4 rounded-2xl text-xs text-[var(--gray-700)] leading-relaxed">
-            <span className="font-bold text-[var(--ink)] block mb-1">Strict Privacy &amp; Protection:</span>
-            Your National ID (NIN) is kept strictly confidential. Kaduna State services only receive your verified citizen profile, never your raw identification number.
-          </div>
+              {/* Subtle Strict Privacy & Protection card with NO border */}
+              <div className="bg-black/[0.03] dark:bg-white/[0.04] p-3.5 rounded-2xl text-xs text-[var(--gray-600)] dark:text-[var(--gray-400)] leading-relaxed">
+                <span className="font-semibold text-[var(--ink)] block mb-0.5">Strict Privacy &amp; Protection:</span>
+                Your National ID ({idMethod === 'vnin' ? 'vNIN' : 'NIN'}) is kept strictly confidential. Kaduna State services only receive your verified citizen profile, never your raw identification number.
+              </div>
+            </div>
+          )}
 
           {/* NIMC Fallback Option */}
           <div className="pt-1 flex items-center justify-between text-xs">
@@ -439,7 +568,7 @@ export function IndividualFlow({
             )}
             <button
               type="submit"
-              disabled={isVerifyingNIN || Boolean(duplicateNINBlocked)}
+              disabled={!idMethod || !ninInput.trim() || isVerifyingNIN || Boolean(duplicateNINBlocked)}
               className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full font-semibold text-xs sm:text-sm transition-all ml-auto cursor-pointer disabled:opacity-50"
             >
               {isVerifyingNIN ? 'Verifying with NIMC...' : 'Verify Identity \u00a0\u2192'}
@@ -448,8 +577,6 @@ export function IndividualFlow({
         </form>
       )}
 
-      {/* ================================================================ */}
-      {/* ================================================================ */}
       {/* ================================================================ */}
       {/* STEP 1: Phone Security Challenge & Contact Information              */}
       {/* ================================================================ */}
@@ -460,45 +587,14 @@ export function IndividualFlow({
               Identity Verification &amp; Contact Setup
             </h2>
             <p className="text-xs sm:text-sm text-[var(--gray-700)]">
-              Confirm your verified national identity record using your registered mobile phone.
+              {otpVerified
+                ? 'Your national identity record has been verified. Confirm your contact channels below.'
+                : 'Confirm possession of your registered mobile phone to unlock and access your citizen record.'}
             </p>
           </div>
 
-          {/* Verified Identity Record (NIMC) */}
-          <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--gray-200)] space-y-3">
-            <div className="text-[#1AA260] font-semibold text-xs flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Verified Identity Record (NIMC)</span>
-              {isProvisionalNIMC && (
-                <span className="ml-2 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold uppercase">
-                  Provisional
-                </span>
-              )}
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[var(--ink)] pt-1">
-              <div>
-                <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
-                  Legal Name
-                </span>
-                <span className="font-bold text-sm mt-0.5 block">{nimcData.legalName}</span>
-              </div>
-              <div>
-                <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
-                  Gender
-                </span>
-                <span className="capitalize font-medium text-sm mt-0.5 block">{nimcData.gender}</span>
-              </div>
-              <div>
-                <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
-                  Date of Birth
-                </span>
-                <span className="font-mono text-sm text-[var(--gray-500)] mt-0.5 block">••••-••-•• (Masked)</span>
-              </div>
-            </div>
-          </div>
-
           {/* Phone Verification Challenge */}
-          <div className="border-t border-[var(--gray-200)] pt-6 space-y-4">
+          <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
@@ -508,7 +604,7 @@ export function IndividualFlow({
                   Confirm possession of your registered mobile line to secure your account.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-emerald-50 text-[#1AA260] border border-emerald-200 shrink-0 self-start sm:self-auto">
+              <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800 shrink-0 self-start sm:self-auto">
                 SMS Verification
               </span>
             </div>
@@ -543,28 +639,41 @@ export function IndividualFlow({
                   </strong>:
                 </p>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <input
-                    type="text"
-                    value={otpInput}
-                    onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    placeholder="000000"
-                    maxLength={6}
-                    className="w-48 px-4 py-2.5 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-center tracking-[0.3em] text-lg font-semibold focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10"
-                  />
+                <div className="flex flex-wrap items-center gap-2.5">
+                  {/* 6-Digit Multi-Input Group */}
+                  <div className="flex items-center gap-1.5 sm:gap-2" onPaste={handleOtpPaste}>
+                    {otpDigits.map((digit, idx) => (
+                      <input
+                        key={idx}
+                        ref={(el) => { otpInputRefs.current[idx] = el }}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
+                        onKeyDown={(e) => handleOtpDigitKeyDown(idx, e)}
+                        className="w-10 sm:w-11 h-11 text-center font-mono font-bold text-lg rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--ink)] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all"
+                      />
+                    ))}
+                  </div>
+
+                  {/* Verify Code Button - exactly matching h-11 height */}
                   <button
                     type="button"
                     onClick={handleVerifyOTP}
-                    disabled={otpInput.length < 6}
-                    className="bg-[#1AA260] hover:bg-[#158A52] text-white px-6 py-2.5 rounded-full text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
+                    disabled={otpDigits.join('').length < 6}
+                    className="h-11 px-6 rounded-xl bg-[#1AA260] hover:bg-[#158A52] text-white font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors disabled:opacity-50 cursor-pointer shrink-0"
                   >
                     Verify Code
                   </button>
+
+                  {/* Resend Code Button */}
                   <button
                     type="button"
                     onClick={handleSendOTP}
                     disabled={resendCooldown > 0}
-                    className="text-xs text-[var(--gray-500)] hover:text-[var(--ink)] disabled:opacity-50 underline px-2 py-1 cursor-pointer"
+                    className="h-11 px-3 text-xs text-[var(--gray-500)] hover:text-[var(--ink)] disabled:opacity-50 underline flex items-center cursor-pointer"
                   >
                     {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend code'}
                   </button>
@@ -587,19 +696,54 @@ export function IndividualFlow({
 
             {/* Verification Confirmation */}
             {otpVerified && (
-              <div className="border border-emerald-200 bg-emerald-50/60 p-4 rounded-2xl text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
+              <div className="border border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 p-4 rounded-2xl text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in">
                 <CheckCircle2 className="w-5 h-5 text-[#1AA260] shrink-0 mt-0.5" />
                 <div>
                   <div className="font-bold text-[#1AA260] text-sm">
                     Phone Verification Confirmed
                   </div>
                   <p className="text-[var(--gray-700)] mt-0.5 leading-relaxed">
-                    Identity ownership confirmed. Please confirm your primary contact details below.
+                    Identity ownership confirmed. Your verified national record has been unlocked below.
                   </p>
                 </div>
               </div>
             )}
           </div>
+
+          {/* Verified Identity Record (NIMC) — ONLY SHOWN AFTER OTP IS VERIFIED */}
+          {otpVerified && (
+            <div className="p-4 rounded-2xl bg-[var(--paper)] border border-[var(--gray-200)] space-y-3 animate-in fade-in duration-300">
+              <div className="text-[#1AA260] font-semibold text-xs flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4" />
+                <span>Verified Identity Record (NIMC)</span>
+                {isProvisionalNIMC && (
+                  <span className="ml-2 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold uppercase">
+                    Provisional
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[var(--ink)] pt-1">
+                <div>
+                  <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
+                    Legal Name
+                  </span>
+                  <span className="font-bold text-sm mt-0.5 block">{nimcData.legalName}</span>
+                </div>
+                <div>
+                  <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
+                    Gender
+                  </span>
+                  <span className="capitalize font-medium text-sm mt-0.5 block">{nimcData.gender}</span>
+                </div>
+                <div>
+                  <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
+                    Date of Birth
+                  </span>
+                  <span className="font-mono text-sm text-[var(--gray-500)] mt-0.5 block">••••-••-•• (Masked)</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Contact Information Fields (ONLY SHOWN WHEN OTP IS VERIFIED) */}
           {otpVerified && (
