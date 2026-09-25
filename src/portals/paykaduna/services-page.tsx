@@ -306,69 +306,69 @@ export default function ServicesPage() {
   ]
 
   return (
-    <div className="p-4 sm:p-6 lg:p-9 max-w-7xl mx-auto space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
-      {/* Compact Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--line)] pb-4">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
+      
+      {/* ── Page Header & Navigation Breadcrumb ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--gray-200)] pb-4">
         <div>
-          <div className="flex items-center gap-2 text-xs text-[var(--ink-soft)] mb-1">
+          <div className="flex items-center gap-2 text-xs text-[var(--gray-500)] mb-1">
             <Link
               to="/paykaduna"
-              className="hover:text-[var(--green)] flex items-center gap-1 font-medium transition-colors"
+              className="hover:text-[var(--ink)] flex items-center gap-1 font-medium transition-colors"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>PayKaduna Dashboard</span>
+              <ArrowLeft className="w-3.5 h-3.5 text-[#1AA260]" />
+              <span>Dashboard</span>
             </Link>
-            <span>/</span>
-            <span className="text-[var(--ink)] font-semibold">Services</span>
+            <span className="text-[var(--gray-300)]">/</span>
+            <span className="text-[var(--ink)] font-semibold">Services Directory</span>
           </div>
 
-          <h1 className="font-sans font-semibold text-[22px] sm:text-[24px] text-[var(--ink)] tracking-tight leading-tight">
+          <h1 className="font-display font-extrabold text-2xl sm:text-[28px] text-[var(--ink)] tracking-tight leading-tight">
             Kaduna State Services Directory
           </h1>
-          <p className="text-xs text-[var(--ink-soft)] mt-0.5">
-            Single sign-on access to all 14 connected state revenue, transport, and municipal agencies.
+          <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-0.5">
+            Single sign-on access across all 14 connected state revenue, transport, and municipal agencies.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[var(--radius)] text-xs font-medium bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20 font-semibold">
+        <div className="flex items-center gap-2.5 shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50 shadow-xs">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>NIN Segregated &middot; RS256 Scoped</span>
           </span>
-          <span className="text-xs font-mono text-[var(--ink-soft)] px-2 py-1 bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)]">
+          <span className="text-xs font-mono text-[var(--gray-500)] px-3 py-1 bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-full">
             {citizenId}
           </span>
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* SEARCH AND FILTERS BAR                                                    */}
-      {/* ========================================================================= */}
-      <div className="bg-[var(--paper-raised)] border border-[var(--line)] p-4 sm:p-5 rounded-[var(--radius)] space-y-4 shadow-2xs">
+      {/* ── Search & Filters Bar (Rounded Card) ── */}
+      <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-4 sm:p-5 rounded-[22px] space-y-3.5 shadow-sm">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+          
           {/* Search Box */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-[var(--ink-soft)] absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[var(--gray-400)] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by service name, agency (e.g. KADGIS, KADVREG), or description..."
-              className="w-full pl-10 pr-4 py-2 bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] text-xs text-[var(--ink)] placeholder:text-[var(--ink-soft)] focus:outline-none focus:border-[var(--green)] transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 bg-[var(--paper)]/50 dark:bg-white/[0.03] border border-[var(--gray-200)] rounded-full text-xs text-[var(--ink)] placeholder:text-[var(--gray-400)] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all shadow-xs"
             />
           </div>
 
-          {/* Persona Filter Dropdown/Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+          {/* Persona Filter Pills */}
+          <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0 bg-black/[0.02] dark:bg-white/[0.04] p-1 rounded-full border border-[var(--gray-200)] text-xs">
             {personas.map((p) => (
               <button
                 key={p.id}
                 type="button"
                 onClick={() => setSelectedPersona(p.id)}
-                className={`px-3 py-1.5 rounded-[var(--radius)] text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                className={`px-3.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                   selectedPersona === p.id
-                    ? 'bg-[var(--green)] text-white shadow-2xs'
-                    : 'bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)] border border-[var(--line)]'
+                    ? 'bg-[#1AA260] text-white shadow-xs font-semibold'
+                    : 'text-[var(--gray-500)] hover:text-[var(--ink)]'
                 }`}
               >
                 {p.label}
@@ -378,19 +378,19 @@ export default function ServicesPage() {
         </div>
 
         {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-[var(--line)]">
-          <span className="text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mr-2 shrink-0 flex items-center gap-1">
-            <Filter className="w-3 h-3" />
+        <div className="flex items-center gap-1.5 overflow-x-auto pt-2.5 border-t border-[var(--gray-200)] dark:border-white/5">
+          <span className="text-[11px] font-bold text-[var(--gray-400)] uppercase tracking-wider mr-1.5 shrink-0 flex items-center gap-1">
+            <Filter className="w-3 h-3 text-[#1AA260]" />
           </span>
           {categories.map((c) => (
             <button
               key={c.id}
               type="button"
               onClick={() => setSelectedCategory(c.id)}
-              className={`px-2.5 py-1 rounded-[var(--radius)] text-[11.5px] font-medium whitespace-nowrap transition-colors cursor-pointer ${
+              className={`px-3 py-1 rounded-full text-[11.5px] whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === c.id
-                  ? 'bg-[var(--ink)] text-white font-semibold'
-                  : 'bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)] border border-[var(--line)]'
+                  ? 'bg-[var(--ink)] text-white font-semibold shadow-xs'
+                  : 'bg-[var(--paper)]/70 dark:bg-white/[0.04] text-[var(--gray-500)] hover:text-[var(--ink)] border border-[var(--gray-200)] font-medium'
               }`}
             >
               {c.label}
@@ -399,26 +399,24 @@ export default function ServicesPage() {
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* ALL 14 STATE SERVICES GRID                                                */}
-      {/* ========================================================================= */}
+      {/* ── All 14 State Services Grid ── */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="font-sans font-semibold text-[18px] text-[var(--ink)] tracking-tight">
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               State Services Directory ({filteredServices.length} Results)
             </h2>
-            <p className="text-xs text-[var(--ink-soft)] mt-0.5">
+            <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-0.5">
               Click any service card to view its cryptographic permission scope, or launch directly into the application.
             </p>
           </div>
 
-          <div className="hidden sm:block text-xs font-mono text-[var(--ink-soft)]">
+          <div className="hidden sm:block text-xs font-mono text-[var(--gray-500)]">
             AAL2 Active Session
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {filteredServices.map((service) => {
             const Icon = service.icon
             const isConnected = connectedTsps.includes(service.id) || service.id === 'paykaduna'
@@ -426,28 +424,29 @@ export default function ServicesPage() {
             return (
               <div
                 key={service.id}
-                className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] p-5 hover:border-[var(--green)]/60 hover:shadow-sm transition-all flex flex-col justify-between group"
+                className="bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-[22px] p-5 hover:border-emerald-400 dark:hover:border-emerald-600/70 hover:shadow-md transition-all flex flex-col justify-between group shadow-sm gap-4"
               >
-                <div className="space-y-3.5">
+                <div className="space-y-3">
+                  
                   {/* Card Top: Icon & Badges */}
                   <div className="flex items-start justify-between gap-3">
-                    <div className="w-11 h-11 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)] flex items-center justify-center shrink-0 border border-[var(--green)]/20 group-hover:bg-[var(--green)] group-hover:text-white transition-colors">
+                    <div className="w-11 h-11 rounded-2xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0 border border-emerald-200/50 dark:border-emerald-800/40 group-hover:bg-[#1AA260] group-hover:text-white transition-all shadow-xs">
                       <Icon className="w-5 h-5" />
                     </div>
 
                     <div className="flex flex-col items-end gap-1">
                       {isConnected ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-medium bg-[var(--green)]/10 text-[var(--green)] border border-[var(--green)]/20 font-semibold">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50">
                           <CheckCircle2 className="w-3 h-3" />
                           Authorized
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-medium bg-[var(--paper)] text-[var(--ink-soft)] border border-[var(--line)]">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-medium bg-[var(--paper)] text-[var(--gray-500)] border border-[var(--gray-200)]">
                           <Lock className="w-3 h-3" />
                           SSO Ready
                         </span>
                       )}
-                      <span className="text-[10px] font-mono text-[var(--ink-soft)] uppercase">
+                      <span className="text-[10px] font-mono text-[var(--gray-400)] uppercase">
                         {service.acronym}
                       </span>
                     </div>
@@ -455,45 +454,45 @@ export default function ServicesPage() {
 
                   {/* Title & Agency */}
                   <div>
-                    <h3 className="font-sans font-semibold text-[15px] text-[var(--ink)] leading-snug">
+                    <h3 className="font-semibold text-[15px] sm:text-[16px] text-[var(--ink)] leading-snug group-hover:text-[#1AA260] transition-colors">
                       {service.name}
                     </h3>
-                    <div className="text-[11px] font-medium text-[var(--ink-soft)] mt-0.5 flex items-center gap-1">
-                      <Building2 className="w-3 h-3 shrink-0 text-[var(--green)]" />
+                    <div className="text-xs font-medium text-[var(--gray-500)] mt-1 flex items-center gap-1.5">
+                      <Building2 className="w-3.5 h-3.5 shrink-0 text-[#1AA260]" />
                       <span className="truncate">{service.agency}</span>
                     </div>
                   </div>
 
                   {/* Description */}
-                  <p className="text-xs text-[var(--ink-soft)] leading-relaxed line-clamp-3">
+                  <p className="text-xs text-[var(--gray-500)] leading-relaxed line-clamp-3">
                     {service.description}
                   </p>
 
                   {/* Personas & Audience */}
-                  <div className="pt-2 flex flex-wrap items-center gap-1.5 border-t border-[var(--line-soft)]">
+                  <div className="pt-2.5 flex flex-wrap items-center gap-1.5 border-t border-[var(--gray-200)] dark:border-white/5">
                     {service.personas.map((p) => (
                       <span
                         key={p}
-                        className="px-1.5 py-0.5 rounded bg-[var(--paper)] border border-[var(--line)] text-[10px] text-[var(--ink)] font-medium"
+                        className="px-2 py-0.5 rounded-full bg-[var(--paper)] border border-[var(--gray-200)] text-[10.5px] text-[var(--gray-700)] dark:text-[var(--gray-300)] font-medium"
                       >
                         {p}
                       </span>
                     ))}
-                    <span className="px-1.5 py-0.5 rounded bg-[var(--line-soft)] text-[10px] font-mono text-[var(--ink-soft)] ml-auto">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-50/50 dark:bg-emerald-950/30 text-[10px] font-mono text-[#1AA260] border border-emerald-200/40 dark:border-emerald-800/30 ml-auto">
                       aud: {service.audience}
                     </span>
                   </div>
                 </div>
 
                 {/* Card Actions */}
-                <div className="pt-4 mt-4 border-t border-[var(--line)] flex items-center justify-between text-xs">
+                <div className="pt-3.5 mt-2 border-t border-[var(--gray-200)] dark:border-white/5 flex items-center justify-between text-xs">
                   <button
                     type="button"
                     onClick={() => setInspectingService(service)}
-                    className="text-[var(--ink-soft)] hover:text-[var(--ink)] font-medium inline-flex items-center gap-1 cursor-pointer transition-colors"
+                    className="text-[var(--gray-500)] hover:text-[#1AA260] font-medium inline-flex items-center gap-1.5 cursor-pointer transition-colors"
                   >
                     <Eye className="w-3.5 h-3.5" />
-                    <span>View Claims</span>
+                    <span>Claims</span>
                   </button>
 
                   {service.isInteractive ? (
@@ -506,7 +505,7 @@ export default function ServicesPage() {
                           audience: service.audience
                         })
                       }
-                      className="px-3 py-1.5 bg-[var(--green)] hover:bg-[var(--green-deep)] text-white font-semibold rounded-[var(--radius)] transition-colors inline-flex items-center gap-1 shadow-2xs cursor-pointer"
+                      className="px-4 py-2 bg-[#1AA260] hover:bg-[#158A52] text-white font-semibold rounded-full transition-all inline-flex items-center gap-1.5 shadow-xs cursor-pointer text-xs"
                     >
                       <span>Launch Portal</span>
                       <ArrowRight className="w-3 h-3" />
@@ -515,10 +514,10 @@ export default function ServicesPage() {
                     <button
                       type="button"
                       onClick={() => setInspectingService(service)}
-                      className="px-2.5 py-1.5 bg-[var(--paper)] hover:bg-[var(--line-soft)] border border-[var(--line)] text-[var(--ink)] font-medium rounded-[var(--radius)] transition-colors inline-flex items-center gap-1 cursor-pointer"
+                      className="px-3.5 py-1.5 bg-[var(--paper)] hover:bg-[var(--line-soft)] border border-[var(--gray-200)] text-[var(--ink)] font-medium rounded-full transition-colors inline-flex items-center gap-1.5 cursor-pointer text-xs"
                     >
                       <span>Simulate Access</span>
-                      <ExternalLink className="w-3 h-3 text-[var(--ink-soft)]" />
+                      <ExternalLink className="w-3 h-3 text-[var(--gray-400)]" />
                     </button>
                   )}
                 </div>
@@ -528,22 +527,20 @@ export default function ServicesPage() {
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* TOKEN SCOPE & PERMISSIONS INSPECTOR MODAL                                */}
-      {/* ========================================================================= */}
+      {/* ── Token Scope & Permissions Inspector Modal ── */}
       {inspectingService && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-[var(--paper-raised)] border border-[var(--line)] rounded-[var(--radius)] max-w-xl w-full p-6 space-y-5 shadow-2xl animate-in zoom-in-95">
-            <div className="flex items-center justify-between border-b border-[var(--line)] pb-3.5">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-[26px] max-w-xl w-full p-6 sm:p-7 space-y-5 shadow-float animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-[var(--gray-200)] pb-3.5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-[var(--radius)] bg-[var(--green)]/10 text-[var(--green)] flex items-center justify-center shrink-0 border border-[var(--green)]/20">
+                <div className="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800/50 shadow-xs">
                   <inspectingService.icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-sans font-semibold text-[17px] text-[var(--ink)]">
+                  <h3 className="font-display font-bold text-lg sm:text-xl text-[var(--ink)]">
                     {inspectingService.name}
                   </h3>
-                  <span className="text-xs text-[var(--ink-soft)]">
+                  <span className="text-xs text-[var(--gray-500)]">
                     Cryptographic Token &amp; NDPA Scopes &middot; <code>aud: {inspectingService.audience}</code>
                   </span>
                 </div>
@@ -552,16 +549,17 @@ export default function ServicesPage() {
               <button
                 type="button"
                 onClick={() => setInspectingService(null)}
-                className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-lg cursor-pointer p-1"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--gray-400)] hover:text-[var(--ink)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-lg cursor-pointer"
+                aria-label="Close"
               >
                 &times;
               </button>
             </div>
 
             {/* Explanatory Banner */}
-            <div className="p-3 bg-[var(--green)]/10 border border-[var(--green)]/20 rounded-[var(--radius)] flex items-start gap-2.5 text-xs text-[var(--ink)]">
-              <ShieldCheck className="w-4 h-4 text-[var(--green)] shrink-0 mt-0.5" />
-              <p className="leading-relaxed">
+            <div className="p-3.5 bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/50 rounded-2xl flex items-start gap-3 text-xs text-[var(--ink)] leading-relaxed">
+              <ShieldCheck className="w-4 h-4 text-[#1AA260] shrink-0 mt-0.5" />
+              <p>
                 <strong>The Golden Rule Enforced:</strong> Your raw 11-digit National Identity Number (NIN) is never transferred to {inspectingService.agency}. Instead, this service receives an audience-locked RS256 JWT using your internal Citizen ID (<code>{citizenId}</code>).
               </p>
             </div>
@@ -570,45 +568,45 @@ export default function ServicesPage() {
             <div className="space-y-2">
               <div className="text-xs font-semibold text-[var(--ink)] flex items-center justify-between">
                 <span>Simulated RS256 JWT Claims Payload:</span>
-                <span className="font-mono text-[11px] text-[var(--green)] font-bold">AAL2 Biometric Verified</span>
+                <span className="font-mono text-[11px] text-[#1AA260] font-bold">AAL2 Biometric Verified</span>
               </div>
 
-              <div className="bg-[var(--paper)] border border-[var(--line)] rounded-[var(--radius)] p-4 font-mono text-xs space-y-1.5 text-[var(--ink)]">
-                <div><span className="text-[var(--ink-soft)]">"iss":</span> "https://auth.kaduna.gov.ng"</div>
-                <div><span className="text-[var(--ink-soft)]">"aud":</span> <strong className="text-[var(--green)]">"{inspectingService.audience}"</strong></div>
-                <div><span className="text-[var(--ink-soft)]">"sub":</span> "{citizenId}"</div>
-                <div><span className="text-[var(--ink-soft)]">"legal_name":</span> "{citizenName}"</div>
-                <div><span className="text-[var(--ink-soft)]">"acr":</span> "2" <span className="text-[var(--ink-soft)]">// Assurance Level 2 (2FA)</span></div>
-                <div><span className="text-[var(--ink-soft)]">"scopes":</span> {JSON.stringify(inspectingService.scopes)}</div>
-                <div><span className="text-[var(--ink-soft)]">"ndpa_statutory_basis":</span> "{inspectingService.statutoryBasis}"</div>
-                <div><span className="text-[var(--ink-soft)]">"nin_masked":</span> true <span className="text-[var(--ink-soft)]">// Raw NIN Segregated</span></div>
+              <div className="bg-[var(--paper)] border border-[var(--gray-200)] rounded-2xl p-4 font-mono text-xs space-y-1.5 text-[var(--ink)]">
+                <div><span className="text-[var(--gray-500)]">"iss":</span> "https://auth.kaduna.gov.ng"</div>
+                <div><span className="text-[var(--gray-500)]">"aud":</span> <strong className="text-[#1AA260]">"{inspectingService.audience}"</strong></div>
+                <div><span className="text-[var(--gray-500)]">"sub":</span> "{citizenId}"</div>
+                <div><span className="text-[var(--gray-500)]">"legal_name":</span> "{citizenName}"</div>
+                <div><span className="text-[var(--gray-500)]">"acr":</span> "2" <span className="text-[var(--gray-400)]">// Assurance Level 2 (2FA)</span></div>
+                <div><span className="text-[var(--gray-500)]">"scopes":</span> {JSON.stringify(inspectingService.scopes)}</div>
+                <div><span className="text-[var(--gray-500)]">"ndpa_statutory_basis":</span> "{inspectingService.statutoryBasis}"</div>
+                <div><span className="text-[var(--gray-500)]">"nin_masked":</span> true <span className="text-[var(--gray-400)]">// Raw NIN Segregated</span></div>
               </div>
             </div>
 
             {/* Permitted Scopes Breakdown */}
             <div className="space-y-1.5 text-xs">
               <div className="font-semibold text-[var(--ink)]">Authorized Functional Capabilities:</div>
-              <ul className="space-y-1 text-[var(--ink-soft)]">
+              <ul className="space-y-1 text-[var(--gray-600)] dark:text-[var(--gray-400)]">
                 {inspectingService.scopes.map((scope) => (
                   <li key={scope} className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[var(--green)] shrink-0" />
-                    <span><code className="text-[var(--ink)]">{scope}</code> &mdash; authorized under state revenue compliance guidelines.</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#1AA260] shrink-0" />
+                    <span><code className="text-[var(--ink)] font-mono">{scope}</code> &mdash; authorized under state revenue compliance guidelines.</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             {/* Modal Bottom Actions */}
-            <div className="pt-3 border-t border-[var(--line)] flex items-center justify-between">
-              <span className="text-[11px] text-[var(--ink-soft)]">
+            <div className="pt-3.5 border-t border-[var(--gray-200)] flex items-center justify-between">
+              <span className="text-[11px] text-[var(--gray-500)]">
                 Issuing Agency: {inspectingService.agency}
               </span>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <button
                   type="button"
                   onClick={() => setInspectingService(null)}
-                  className="px-3.5 py-2 border border-[var(--line)] text-xs font-semibold rounded-[var(--radius)] hover:bg-[var(--line-soft)] cursor-pointer transition-colors"
+                  className="px-4 py-2 border border-[var(--gray-200)] text-xs font-semibold rounded-full hover:bg-black/[0.03] dark:hover:bg-white/[0.05] cursor-pointer transition-colors"
                 >
                   Close
                 </button>
@@ -625,7 +623,7 @@ export default function ServicesPage() {
                         audience: s.audience
                       })
                     }}
-                    className="px-4 py-2 bg-[var(--green)] hover:bg-[var(--green-deep)] text-white text-xs font-bold rounded-[var(--radius)] cursor-pointer transition-colors flex items-center gap-1.5 shadow-2xs"
+                    className="px-5 py-2 bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-bold rounded-full cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
                   >
                     <span>Launch {inspectingService.acronym}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -637,9 +635,7 @@ export default function ServicesPage() {
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* SSO TRANSITION MODAL (For KADVREG & PIT Launches)                         */}
-      {/* ========================================================================= */}
+      {/* ── SSO Transition Modal (For KADVREG & PIT Launches) ── */}
       {transitioningTsp && (
         <SSOTransitionModal
           isOpen={true}
