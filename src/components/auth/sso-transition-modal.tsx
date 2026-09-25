@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { ShieldCheck, ArrowRight, X, KeyRound, Loader2 } from 'lucide-react'
+import { ShieldCheck, X } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 
 interface SSOTransitionModalProps {
@@ -25,17 +25,7 @@ function SSOTransitionModalContent({
   onClose
 }: ContentProps) {
   const navigate = useNavigate()
-  const currentUser = useAuthEngine((s) => s.currentUser)
-  const identity = useAuthEngine((s) => s.identity)
-
   const [isBarActive, setIsBarActive] = useState(false)
-
-  const citizenName = identity?.legalName || currentUser?.email || 'Citizen'
-
-  const handleProceedNow = () => {
-    onClose()
-    navigate(targetTspUrl)
-  }
 
   // Mounts fresh every time the modal is opened — runs strictly ONCE on mount
   useEffect(() => {
@@ -46,16 +36,16 @@ function SSOTransitionModalContent({
       // Safe fallback
     }
 
-    // 2. Trigger smooth CSS progress bar transition
+    // 2. Trigger smooth progress animation
     const barFrame = requestAnimationFrame(() => {
       setIsBarActive(true)
     })
 
-    // 3. Auto-redirect on complete (7 seconds)
+    // 3. Auto-redirect on complete (snappy 2.2 seconds)
     const navigateTimer = setTimeout(() => {
       onClose()
       navigate(targetTspUrl)
-    }, 7000)
+    }, 2200)
 
     return () => {
       cancelAnimationFrame(barFrame)
@@ -64,106 +54,79 @@ function SSOTransitionModalContent({
   }, [targetAudience, targetTspUrl, navigate, onClose])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-[var(--paper-raised)] border border-[var(--line)] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        {/* PayKaduna Forest Green Header with Kaduna Gold Accent */}
-        <div className="bg-gradient-to-r from-[#164F35] via-[#1F6F4A] to-[#164F35] border-b-2 border-[#B98A2E] text-white p-5 relative overflow-hidden">
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0 shadow-inner">
-                <ShieldCheck className="w-5 h-5 text-emerald-200 animate-pulse" />
-              </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-200 block">
-                  PayKaduna Central SSO
-                </span>
-                <h3 className="font-sans font-semibold text-base sm:text-lg text-white tracking-tight">
-                  Signing you into {targetTspName.split(' ')[0]}...
-                </h3>
-              </div>
-            </div>
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-200"
+    >
+      <div className="relative w-full max-w-sm bg-white dark:bg-[#1E2522] border border-gray-100 dark:border-white/10 rounded-[28px] p-7 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.12)] flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+        {/* Subtle top-right close button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 text-[var(--gray-400)] hover:text-[var(--ink)] p-2 rounded-full hover:bg-[var(--gray-100)] dark:hover:bg-white/5 transition-colors cursor-pointer"
+          title="Cancel transition"
+        >
+          <X className="w-4 h-4" />
+        </button>
 
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-emerald-100 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-              title="Cancel transition"
-            >
-              <X className="w-4 h-4" />
-            </button>
+        {/* Modern Spinning Ring with Emerald Center */}
+        <div className="relative w-16 h-16 my-2 flex items-center justify-center">
+          <svg className="w-16 h-16 animate-spin text-[#1AA260]" viewBox="0 0 64 64" fill="none">
+            <circle
+              cx="32"
+              cy="32"
+              r="26"
+              stroke="currentColor"
+              strokeWidth="3.5"
+              className="opacity-15 text-emerald-900 dark:text-emerald-200"
+            />
+            <circle
+              cx="32"
+              cy="32"
+              r="26"
+              stroke="currentColor"
+              strokeWidth="3.5"
+              strokeDasharray="163"
+              strokeDashoffset="115"
+              strokeLinecap="round"
+            />
+          </svg>
+          <div className="absolute w-9 h-9 rounded-full bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center shadow-2xs">
+            <ShieldCheck className="w-4 h-4 text-[#1AA260]" />
           </div>
         </div>
 
-        {/* Minimal, Instant-Read Body */}
-        <div className="p-5 space-y-4">
-          {/* Visual Handshake: PayKaduna -> Target TSP */}
-          <div className="bg-[var(--paper)] border border-[var(--line)] rounded-xl p-4">
-            <div className="flex items-center justify-between gap-3">
-              {/* Source */}
-              <div className="text-center w-24 sm:w-28 p-2.5 bg-[var(--paper-raised)] rounded-lg border border-[var(--line)] shadow-2xs">
-                <span className="text-[9px] text-[var(--ink-soft)] uppercase font-semibold block">From</span>
-                <strong className="text-[var(--ink)] text-xs truncate block font-semibold">PayKaduna</strong>
-              </div>
-
-              {/* Progress Stream */}
-              <div className="flex-1 flex flex-col items-center px-1">
-                <span className="text-[10px] text-[#1F6F4A] dark:text-emerald-400 font-medium mb-1.5 flex items-center gap-1">
-                  <KeyRound className="w-3 h-3" />
-                  Secure Token
-                </span>
-                <div className="w-full h-1.5 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden relative">
-                  <div
-                    className={`h-full bg-gradient-to-r from-[#1F6F4A] via-[#4FAE80] to-[#1F6F4A] transition-all duration-[7000ms] ease-out ${
-                      isBarActive ? 'w-full' : 'w-0'
-                    }`}
-                  />
-                </div>
-              </div>
-
-              {/* Target */}
-              <div className="text-center w-24 sm:w-28 p-2.5 bg-[#1F6F4A]/10 rounded-lg border border-[#1F6F4A]/30 text-[#164F35] dark:text-emerald-300 shadow-2xs">
-                <span className="text-[9px] uppercase font-semibold block opacity-75">To</span>
-                <strong className="text-xs truncate block font-bold">{targetTspName.split(' ')[0]}</strong>
-              </div>
-            </div>
-
-            {/* One Simple Status Line */}
-            <div className="mt-3 pt-3 border-t border-[var(--line-soft)] flex items-center justify-between text-xs">
-              <span className="text-[var(--ink-soft)] truncate">
-                Session: <strong className="text-[var(--ink)]">{citizenName.split(' ')[0]}</strong>
-              </span>
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#1F6F4A] dark:text-emerald-400">
-                <span>✓</span> Privacy Protected
-              </span>
-            </div>
-          </div>
-
-          {/* Active status */}
-          <div className="flex items-center justify-center gap-2 text-xs text-[var(--ink-soft)] py-0.5">
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#1F6F4A]" />
-            <span>Redirecting to {targetTspName.split(' ')[0]}...</span>
-          </div>
-
-          {/* Footer Actions */}
-          <div className="pt-2 flex items-center justify-between border-t border-[var(--line-soft)]">
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-
-            <button
-              type="button"
-              onClick={handleProceedNow}
-              className="bg-[#1F6F4A] hover:bg-[#164F35] text-white text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-xs hover:shadow-sm cursor-pointer"
-            >
-              <span>Proceed Now</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
+        {/* Clean, low-noise text */}
+        <div className="mt-4 space-y-1.5 max-w-[280px]">
+          <p className="text-[10.5px] font-semibold uppercase tracking-wider text-[#1AA260]">
+            Single Sign-On
+          </p>
+          <h3 className="text-base sm:text-[17px] font-semibold text-[var(--ink)] leading-snug">
+            Redirecting to {targetTspName}...
+          </h3>
+          <p className="text-xs text-[var(--gray-500)] leading-relaxed">
+            Connecting your verified credentials securely
+          </p>
         </div>
+
+        {/* Subtle progress bar */}
+        <div className="w-full max-w-[180px] h-1 bg-emerald-100 dark:bg-emerald-950/50 rounded-full overflow-hidden mt-5">
+          <div
+            className={`h-full bg-[#1AA260] rounded-full transition-all duration-[2200ms] ease-out ${
+              isBarActive ? 'w-full' : 'w-0'
+            }`}
+          />
+        </div>
+
+        {/* Quiet cancel action */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-5 text-xs text-[var(--gray-400)] hover:text-[var(--ink)] font-medium transition-colors cursor-pointer px-3 py-1 rounded-full hover:bg-[var(--gray-100)] dark:hover:bg-white/5"
+        >
+          Cancel
+        </button>
       </div>
     </div>
   )
