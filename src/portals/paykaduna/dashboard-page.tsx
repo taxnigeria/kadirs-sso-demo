@@ -3,14 +3,14 @@ import { useNavigate, Link } from 'react-router'
 import {
   ShieldCheck,
   CreditCard,
-  ExternalLink,
   CheckCircle2,
   ArrowRight,
   UserCheck,
   Layers,
   User,
   Sparkles,
-  Lock
+  Lock,
+  Plus
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { TSP_REGISTRY } from '@/components/layout/portal-branding'
@@ -66,8 +66,12 @@ export default function PayKadunaDashboard() {
   const isFatima = currentUser?.email.toLowerCase().includes('fatima') || identity?.nin === '12345678901'
   const hasUnreconciledAccounts = isFatima && reconciledRecordIds.length === 0
 
-  // Filter TSPs
-  const filteredTsps = TSP_REGISTRY.filter((tsp) => {
+  // Filter TSPs — show only connected TSPs on the dashboard
+  const connectedTspsList = TSP_REGISTRY.filter(
+    (tsp) => connectedTsps.includes(tsp.id) || tsp.id === 'paykaduna'
+  )
+
+  const filteredTsps = connectedTspsList.filter((tsp) => {
     if (filterCategory === 'all') return true
     if (filterCategory === 'individual') return tsp.personas.includes('Individual') || tsp.personas.includes('All')
     if (filterCategory === 'corporate') return tsp.personas.includes('Corporate') || tsp.personas.includes('All')
@@ -263,44 +267,56 @@ export default function PayKadunaDashboard() {
         </div>
       </div>
 
-      {/* ── Service Directory Section (14 TSPs) ── */}
+      {/* ── Connected Services Section (Only Connected TSPs) ── */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--gray-200)] pb-3">
           <div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
-              Kaduna State Revenue &amp; Service Directory (14 TSPs)
+              Connected Services ({connectedTspsList.length})
             </h2>
             <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-0.5">
-              Access any Kaduna State service instantly using your single authenticated SSO token.
+              Kaduna State portals authorized with your single citizen identity and active SSO session.
             </p>
           </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-1 bg-[var(--card-bg)] border border-[var(--gray-200)] p-1 rounded-full text-xs shadow-2xs">
-            {(['all', 'individual', 'corporate', 'government'] as const).map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setFilterCategory(cat)}
-                className={`px-3.5 py-1 rounded-full capitalize font-medium transition-all cursor-pointer ${
-                  filterCategory === cat
-                    ? 'bg-[#1AA260] text-white shadow-xs font-semibold'
-                    : 'text-[var(--gray-500)] hover:text-[var(--ink)]'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Category Filter Pills (if multiple connected) */}
+            {connectedTspsList.length > 3 && (
+              <div className="flex items-center gap-1 bg-[var(--card-bg)] border border-[var(--gray-200)] p-1 rounded-full text-xs shadow-2xs">
+                {(['all', 'individual', 'corporate', 'government'] as const).map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setFilterCategory(cat)}
+                    className={`px-3.5 py-1 rounded-full capitalize font-medium transition-all cursor-pointer ${
+                      filterCategory === cat
+                        ? 'bg-[#1AA260] text-white shadow-xs font-semibold'
+                        : 'text-[var(--gray-500)] hover:text-[var(--ink)]'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Link to full 14 services catalog */}
+            <Link
+              to="/paykaduna/services"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors cursor-pointer shrink-0 shadow-2xs"
+            >
+              <span>Explore All Services (14)</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
 
-        {/* 14 TSP Grid */}
+        {/* Connected TSP Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {filteredTsps.map((tsp) => {
             const isCurrent = tsp.id === 'paykaduna'
             const isKadvreg = tsp.id === 'kadvreg'
             const isPit = tsp.id === 'pit'
-            const isConnected = connectedTsps.includes(tsp.id)
 
             return (
               <div
@@ -331,14 +347,10 @@ export default function PayKadunaDashboard() {
                       <span className="text-[10.5px] font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-0.5 rounded-full shrink-0">
                         Current Portal
                       </span>
-                    ) : isConnected ? (
+                    ) : (
                       <span className="text-[10.5px] font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0">
                         <CheckCircle2 className="w-3 h-3" />
                         SSO Connected
-                      </span>
-                    ) : (
-                      <span className="text-[10.5px] font-medium text-[var(--gray-500)] bg-[var(--paper)] dark:bg-white/5 border border-[var(--gray-200)] dark:border-white/10 px-2.5 py-0.5 rounded-full shrink-0">
-                        Single Sign-On
                       </span>
                     )}
                   </div>
@@ -353,54 +365,89 @@ export default function PayKadunaDashboard() {
                     {tsp.personas}
                   </span>
 
-                  {isKadvreg ? (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setTransitioningTsp({
-                          name: 'KADVREG Vehicle Administration',
-                          url: '/kadvreg',
-                          audience: 'kadvreg'
-                        })
-                      }
-                      className="text-[#1AA260] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>Launch KADVREG</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  ) : isPit ? (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setTransitioningTsp({
-                          name: 'PIT Personal Income Tax',
-                          url: '/pit',
-                          audience: 'pit'
-                        })
-                      }
-                      className="text-[#1AA260] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>Launch PIT Portal</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  ) : isCurrent ? (
-                    <span className="text-[#1AA260] font-semibold text-xs">
-                      Active Portal
-                    </span>
-                  ) : (
+                  <div className="flex items-center gap-3">
                     <button
                       type="button"
                       onClick={() => setInspectingTsp(tsp)}
-                      className="text-[var(--gray-500)] hover:text-[#1AA260] font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                      className="text-[var(--gray-400)] hover:text-[#1AA260] text-[11.5px] font-medium cursor-pointer transition-colors"
+                      title="Inspect Token Details"
                     >
-                      <span>Simulate Access</span>
-                      <ExternalLink className="w-3 h-3" />
+                      Token
                     </button>
-                  )}
+
+                    {isKadvreg ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setTransitioningTsp({
+                            name: 'KADVREG Vehicle Administration',
+                            url: '/kadvreg',
+                            audience: 'kadvreg'
+                          })
+                        }
+                        className="text-[#1AA260] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Launch KADVREG</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    ) : isPit ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setTransitioningTsp({
+                            name: 'PIT Personal Income Tax',
+                            url: '/pit',
+                            audience: 'pit'
+                          })
+                        }
+                        className="text-[#1AA260] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Launch PIT Portal</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    ) : isCurrent ? (
+                      <span className="text-[#1AA260] font-semibold text-xs">
+                        Active Portal
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setTransitioningTsp({
+                            name: tsp.name,
+                            url: '/paykaduna/services',
+                            audience: tsp.id
+                          })
+                        }
+                        className="text-[#1AA260] font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Launch Portal</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             )
           })}
+
+          {/* Connect More Services Card */}
+          <Link
+            to="/paykaduna/services"
+            className="p-5 rounded-[22px] border-2 border-dashed border-[var(--gray-200)] hover:border-emerald-400 dark:hover:border-emerald-600/70 bg-black/[0.01] dark:bg-white/[0.01] hover:bg-emerald-50/20 dark:hover:bg-emerald-950/20 transition-all flex flex-col items-center justify-center text-center gap-3 group cursor-pointer min-h-[170px]"
+          >
+            <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+              <Plus className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-[var(--ink)] group-hover:text-[#1AA260] transition-colors">
+                Connect More Services
+              </h3>
+              <p className="text-xs text-[var(--gray-500)] mt-0.5 max-w-[26ch]">
+                Explore 14 Kaduna State MDAs &amp; authorize new TSP applications
+              </p>
+            </div>
+          </Link>
         </div>
       </div>
 
