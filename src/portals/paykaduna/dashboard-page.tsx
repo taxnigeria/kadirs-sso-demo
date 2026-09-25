@@ -187,82 +187,66 @@ export default function PayKadunaDashboard() {
         </div>
       )}
 
-      {/* ── Quick Stats Grid (4 Metrics) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      {/* ── Quick Stats Grid (4 Metrics - Slimmer Layout) ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
         
         {/* Stat 1: Revenue Contributed */}
-        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-5 rounded-[22px] shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold">Total State Revenue Paid</span>
-              <div className="w-8 h-8 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
-                <CreditCard className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="font-display font-extrabold text-2xl sm:text-[26px] text-[var(--ink)] tracking-tight mt-1.5">
+        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-4 sm:p-4.5 rounded-[20px] shadow-sm hover:shadow transition-all flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold block truncate">
+              Total Revenue Paid
+            </span>
+            <div className="font-display font-extrabold text-xl sm:text-[22px] text-[var(--ink)] tracking-tight mt-0.5 truncate">
               {activePersona === 'corporate' ? '₦285,000.00' : '₦15,000.00'}
             </div>
           </div>
-          <div className="text-xs text-emerald-600 dark:text-emerald-400 mt-3 pt-3 border-t border-[var(--gray-200)] dark:border-white/5 flex items-center gap-1.5 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1AA260]"></span>
-            <span>Verified receipts active</span>
+          <div className="w-9 h-9 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+            <CreditCard className="w-4 h-4" />
           </div>
         </div>
 
         {/* Stat 2: Active Identity Level */}
-        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-5 rounded-[22px] shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold">Identity Assurance</span>
-              <div className="w-8 h-8 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="font-display font-extrabold text-2xl sm:text-[26px] text-[var(--ink)] tracking-tight mt-1.5">
+        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-4 sm:p-4.5 rounded-[20px] shadow-sm hover:shadow transition-all flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold block truncate">
+              Identity Assurance
+            </span>
+            <div className="font-display font-extrabold text-xl sm:text-[22px] text-[var(--ink)] tracking-tight mt-0.5 truncate">
               Level 2 (NIMC)
             </div>
           </div>
-          <div className="text-xs text-[var(--gray-500)] mt-3 pt-3 border-t border-[var(--gray-200)] dark:border-white/5 flex items-center gap-1.5 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1AA260]"></span>
-            <span>Biometric NIN anchor</span>
+          <div className="w-9 h-9 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-4 h-4" />
           </div>
         </div>
 
         {/* Stat 3: Connected Portals */}
-        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-5 rounded-[22px] shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold">Connected Services</span>
-              <div className="w-8 h-8 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
-                <Layers className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="font-display font-extrabold text-2xl sm:text-[26px] text-[var(--ink)] tracking-tight mt-1.5">
+        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-4 sm:p-4.5 rounded-[20px] shadow-sm hover:shadow transition-all flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold block truncate">
+              Connected Services
+            </span>
+            <div className="font-display font-extrabold text-xl sm:text-[22px] text-[var(--ink)] tracking-tight mt-0.5 truncate">
               {connectedTsps.length} of 14 Portals
             </div>
           </div>
-          <div className="text-xs text-emerald-600 dark:text-emerald-400 mt-3 pt-3 border-t border-[var(--gray-200)] dark:border-white/5 flex items-center gap-1.5 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1AA260]"></span>
-            <span>Single sign-on active</span>
+          <div className="w-9 h-9 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+            <Layers className="w-4 h-4" />
           </div>
         </div>
 
         {/* Stat 4: Tax Compliance */}
-        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-5 rounded-[22px] shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold">Tax Assessment 2024</span>
-              <div className="w-8 h-8 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
-                <UserCheck className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="font-display font-extrabold text-2xl sm:text-[26px] text-[var(--ink)] tracking-tight mt-1.5">
+        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-4 sm:p-4.5 rounded-[20px] shadow-sm hover:shadow transition-all flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold block truncate">
+              Tax Assessment 2024
+            </span>
+            <div className="font-display font-extrabold text-xl sm:text-[22px] text-[var(--ink)] tracking-tight mt-0.5 truncate">
               In Good Standing
             </div>
           </div>
-          <div className="text-xs text-[var(--gray-500)] mt-3 pt-3 border-t border-[var(--gray-200)] dark:border-white/5 flex items-center gap-1.5 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1AA260]"></span>
-            <span>Next assessment: Dec 2024</span>
+          <div className="w-9 h-9 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+            <UserCheck className="w-4 h-4" />
           </div>
         </div>
       </div>
