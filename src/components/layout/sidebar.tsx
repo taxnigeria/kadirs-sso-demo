@@ -19,7 +19,7 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
   if (portal.navItems.length === 0) return null
 
   const navContent = (onItemClick?: () => void) => (
-    <nav className="p-3 space-y-1 overflow-y-auto">
+    <nav className="p-3 space-y-1.5 overflow-y-auto">
       {portal.navItems
         .filter((item) => item.path !== '/auth/profile' || Boolean(currentUser))
         .map((item) => {
@@ -30,17 +30,17 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
               key={item.path}
               to={item.path}
               onClick={onItemClick}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius)] text-xs transition-colors ${
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
                 isActive
-                  ? `${portal.color ? portal.color : 'bg-[var(--green)]'} text-white shadow-2xs font-semibold`
-                  : 'text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--line-soft)] font-medium'
+                  ? 'bg-[#1AA260] text-white shadow-sm font-semibold'
+                  : 'text-[var(--gray-500)] hover:text-[var(--ink)] hover:bg-black/[0.03] dark:hover:bg-white/[0.05] font-medium'
               }`}
             >
               <NavIcon className="h-4 w-4 flex-shrink-0" />
               <span className="flex-1">{item.label}</span>
               {item.path === '/admin/approvals' && pendingApprovalsCount > 0 && (
                 <span
-                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                  className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
                     isActive
                       ? 'bg-white/20 text-white'
                       : 'bg-amber-500/20 text-amber-800 dark:text-amber-300'
@@ -59,7 +59,7 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
   return (
     <>
       {/* Desktop Persistent Sidebar (No duplicate header, no connected services block) */}
-      <aside className="hidden md:flex w-60 shrink-0 h-full border-r border-[var(--line)] bg-[var(--paper)] flex-col transition-colors overflow-hidden">
+      <aside className="hidden md:flex w-60 shrink-0 h-full border-r border-[var(--gray-200)] bg-[var(--paper)] flex-col transition-colors overflow-hidden">
         {navContent()}
       </aside>
 
@@ -71,9 +71,9 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
           aria-label="Navigation Menu"
           className="fixed inset-0 z-50 md:hidden bg-black/60 backdrop-blur-xs flex animate-in fade-in duration-150"
         >
-          <aside className="w-64 max-w-[80vw] h-full bg-[var(--paper)] border-r border-[var(--line)] flex flex-col shadow-2xl animate-in slide-in-from-left duration-200">
+          <aside className="w-64 max-w-[80vw] h-full bg-[var(--paper)] border-r border-[var(--gray-200)] flex flex-col shadow-2xl animate-in slide-in-from-left duration-200">
             {/* Header with Close Button */}
-            <div className="p-3.5 border-b border-[var(--line)] flex items-center justify-between shrink-0">
+            <div className="p-3.5 border-b border-[var(--gray-200)] flex items-center justify-between shrink-0">
               <span className="text-xs font-semibold text-[var(--ink)] uppercase tracking-wider">
                 Navigation Menu
               </span>
