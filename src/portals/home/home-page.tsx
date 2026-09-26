@@ -1,981 +1,762 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import {
-  Scale,
   ShieldCheck,
-  CheckCircle2,
   ArrowRight,
-  User,
-  Lock,
-  Search,
+  ArrowDownRight,
+  Check,
+  LockKeyhole,
+  Sparkles,
   Sun,
   Moon,
-  Sparkles,
-  Car,
-  Wallet,
-  FileText,
-  MapPin,
-  Mail,
-  Phone,
-  Star,
-  Check,
-  Send,
-  Code2,
-  ChevronRight
+  Menu,
+  X
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
-import { useAdminEngine } from '@/engine/admin-engine'
+import { useThemeStore } from '@/engine/theme-store'
 import { usePresentationStore } from '@/engine/presentation-store'
 import { useInspectorStore } from '@/engine/inspector-store'
-import { useThemeStore } from '@/engine/theme-store'
-import { toast } from 'sonner'
 
 export default function HomePage() {
   const { theme, toggleTheme } = useThemeStore()
   const currentUser = useAuthEngine((s) => s.currentUser)
-  const identity = useAuthEngine((s) => s.identity)
-  const logoutCitizen = useAuthEngine((s) => s.logout)
-  const currentAdmin = useAdminEngine((s) => s.currentAdmin)
-  const logoutAdmin = useAdminEngine((s) => s.logoutAdmin)
   const openPalette = usePresentationStore((s) => s.openPalette)
   const openInspector = useInspectorStore((s) => s.openInspector)
 
-  // Smooth scroll handler for anchor links
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Smooth scroll handler for anchor navigation
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault()
+    setMobileMenuOpen(false)
     const element = document.getElementById(id)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
 
-  // Contact form state
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [contactEmail, setContactEmail] = useState('')
-  const [contactPhone, setContactPhone] = useState('')
-  const [message, setMessage] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!firstName.trim() || !contactEmail.trim() || !message.trim()) {
-      toast.error('Please complete all required fields')
-      return
-    }
-    setIsSubmitting(true)
-    setTimeout(() => {
-      setIsSubmitting(false)
-      toast.success('Inquiry Received', {
-        description: `Thank you, ${firstName}. A taxpayer support officer from KADIRS will contact you shortly.`
-      })
-      setFirstName('')
-      setLastName('')
-      setContactEmail('')
-      setContactPhone('')
-      setMessage('')
-    }, 700)
-  }
-
   return (
-    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-body antialiased transition-colors selection:bg-[#1AA260]/20 selection:text-[var(--ink)]">
-      {/* Official State Announcement Bar — Plain Language Citizen Notice */}
-      <div className="bg-[#123D35] text-white/90 text-xs py-2.5 px-4 border-b border-white/10 hidden sm:block">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#1AA260] animate-pulse" />
-            <span className="font-medium text-[11.5px] tracking-wide">
-              Official Notice: 2026 Unified Tax Assessments and Vehicle Licensing renewals are now open online.
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] antialiased transition-colors selection:bg-[#1AA260]/20 selection:text-[var(--ink)]">
+      {/* ── Official Notice Bar ── */}
+      <div className="bg-[#0A2E24] text-white/90 text-xs py-2.5 px-4 border-b border-white/10">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#1AA260] animate-pulse shrink-0" />
+            <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-300 shrink-0">
+              Official notice
+            </span>
+            <span className="text-[11.5px] text-white/80 hidden sm:inline">
+              2026 unified tax assessments & vehicle licensing renewals are now open online.
             </span>
           </div>
-          <div className="flex items-center gap-4 text-[11px] text-white/70">
-            <span>Direct NIMC Verification</span>
-            <span>&bull;</span>
-            <span>14 Connected State MDAs</span>
-            <span>&bull;</span>
-            <span className="text-emerald-300 font-medium">Helpline: 0800-KADIRS (Toll Free)</span>
-          </div>
+          <Link
+            to="/paykaduna/services"
+            className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-emerald-300 hover:text-white transition-colors shrink-0"
+          >
+            <span>Learn more</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
 
-      {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-20">
-        
-        {/* ========================================================================= */}
-        {/* NAVIGATION BAR — Pure Citizen Focus (Evaluator links moved to footer)    */}
-        {/* ========================================================================= */}
-        <nav className="flex items-center justify-between py-4 border-b border-[var(--gray-200)]/70">
-          {/* Logo Mark: Green Scales of Justice & Official State Branding */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full bg-[#1AA260]/10 border border-[#1AA260]/30 flex items-center justify-center text-[#1AA260] group-hover:bg-[#1AA260] group-hover:text-white transition-colors shadow-2xs">
-              <Scale className="w-5 h-5 transition-transform group-hover:scale-105" />
-            </div>
-            <div>
-              <div className="font-display font-extrabold text-base tracking-tight text-[var(--ink)] leading-tight">
-                KADIRS <span className="font-medium text-[#1AA260] text-xs">Portal</span>
-              </div>
-              <span className="block text-[10.5px] uppercase tracking-wider text-[var(--gray-500)] font-medium">
-                Kaduna State Revenue Service
-              </span>
-            </div>
-          </Link>
-
-          {/* Nav Links with Smooth Scrolling */}
-          <div className="hidden md:flex items-center gap-8 text-[13.5px] font-medium text-[var(--gray-700)]">
-            <a
-              href="#services"
-              onClick={(e) => scrollToSection(e, 'services')}
-              className="hover:text-[var(--ink)] transition-colors cursor-pointer"
-            >
-              Services
-            </a>
-            <a
-              href="#how-it-works"
-              onClick={(e) => scrollToSection(e, 'how-it-works')}
-              className="hover:text-[var(--ink)] transition-colors cursor-pointer"
-            >
-              How It Works
-            </a>
-            <a
-              href="#reviews"
-              onClick={(e) => scrollToSection(e, 'reviews')}
-              className="hover:text-[var(--ink)] transition-colors cursor-pointer"
-            >
-              Citizen Stories
-            </a>
-            <a
-              href="#contact"
-              onClick={(e) => scrollToSection(e, 'contact')}
-              className="hover:text-[var(--ink)] transition-colors cursor-pointer"
-            >
-              Tax Offices &amp; Support
-            </a>
+      {/* ── Site Header / Navigation ── */}
+      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between border-b border-[var(--line)]">
+        {/* Brand */}
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 flex items-center justify-center text-[#1AA260] shadow-2xs group-hover:scale-105 transition-transform">
+            <ShieldCheck className="w-5 h-5" />
           </div>
-
-          {/* Nav Action Buttons — Theme Toggle + Clean Citizen CTA */}
-          <div className="flex items-center gap-2.5">
-            {/* Dark / Light Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              aria-label="Toggle Theme"
-              className="p-2.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.14] text-[var(--gray-700)] dark:text-[var(--ink)] transition-colors cursor-pointer border-0"
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-[var(--gray-700)]" />
-              )}
-            </button>
-
-            {/* Primary Action Button (Citizen Focused) */}
-            {currentUser ? (
-              <Link
-                to="/paykaduna"
-                className="px-5 py-2.5 rounded-full bg-[#123D35] hover:bg-[#174D43] text-white text-xs font-semibold tracking-wide transition-all shadow-xs hover:shadow flex items-center gap-2 cursor-pointer"
-              >
-                <span>Dashboard ({identity?.legalName.split(' ')[0] || 'Citizen'})</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            ) : (
-              <Link
-                to="/auth/login"
-                className="px-5 py-2.5 rounded-full bg-[#123D35] hover:bg-[#174D43] text-white text-xs font-semibold tracking-wide transition-all shadow-xs hover:shadow flex items-center gap-2 cursor-pointer"
-              >
-                <span>Sign In / Register</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            )}
+          <div>
+            <div className="font-display font-extrabold text-lg tracking-tight text-[var(--ink)] leading-none">
+              KADIRS
+            </div>
+            <span className="text-[9.5px] uppercase tracking-widest text-[var(--gray-500)] font-semibold block mt-1">
+              Unified Identity Gateway
+            </span>
           </div>
+        </Link>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)]">
+          <a
+            href="#how-it-works"
+            onClick={(e) => scrollToSection(e, 'how-it-works')}
+            className="hover:text-[#1AA260] transition-colors"
+          >
+            How it works
+          </a>
+          <a
+            href="#services"
+            onClick={(e) => scrollToSection(e, 'services')}
+            className="hover:text-[#1AA260] transition-colors"
+          >
+            Services
+          </a>
+          <a
+            href="#trust"
+            onClick={(e) => scrollToSection(e, 'trust')}
+            className="hover:text-[#1AA260] transition-colors"
+          >
+            Trust & privacy
+          </a>
+          <a
+            href="#support"
+            onClick={(e) => scrollToSection(e, 'support')}
+            className="hover:text-[#1AA260] transition-colors"
+          >
+            Support
+          </a>
         </nav>
 
-        {/* ========================================================================= */}
-        {/* HERO SECTION                                                             */}
-        {/* ========================================================================= */}
-        <section className="pt-12 sm:pt-16 pb-16 lg:pb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
-          {/* Left Column: Headlines & Tailored Actions */}
+        {/* Header Actions */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <a
+            href="#support"
+            onClick={(e) => scrollToSection(e, 'support')}
+            className="hidden sm:inline-block text-xs font-medium text-[var(--gray-500)] hover:text-[var(--ink)] transition-colors mr-1"
+          >
+            Need help?
+          </a>
+
+          {/* Theme Toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-2 rounded-full text-[var(--gray-500)] hover:text-[var(--ink)] hover:bg-[var(--gray-100)] dark:hover:bg-white/5 transition-colors cursor-pointer"
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4" />
+            )}
+          </button>
+
+          {/* Sign In / Dashboard CTA */}
+          {currentUser ? (
+            <Link
+              to="/paykaduna"
+              className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+            >
+              <span>Dashboard</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          ) : (
+            <Link
+              to="/auth/login"
+              className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-[#07352C] hover:bg-[#0B5B4B] dark:bg-[#1AA260] dark:hover:bg-[#158A52] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+            >
+              <span>Sign in</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
+
+          {/* Mobile Menu Button */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-lg text-[var(--gray-500)] hover:text-[var(--ink)]"
+            aria-label="Toggle navigation"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Nav Dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-[var(--paper-raised)] border-b border-[var(--line)] px-4 py-4 space-y-3 animate-in slide-in-from-top-2 duration-150">
+          <a
+            href="#how-it-works"
+            onClick={(e) => scrollToSection(e, 'how-it-works')}
+            className="block text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] py-1"
+          >
+            How it works
+          </a>
+          <a
+            href="#services"
+            onClick={(e) => scrollToSection(e, 'services')}
+            className="block text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] py-1"
+          >
+            Services
+          </a>
+          <a
+            href="#trust"
+            onClick={(e) => scrollToSection(e, 'trust')}
+            className="block text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] py-1"
+          >
+            Trust & privacy
+          </a>
+          <a
+            href="#support"
+            onClick={(e) => scrollToSection(e, 'support')}
+            className="block text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] py-1"
+          >
+            Support
+          </a>
+        </div>
+      )}
+
+      {/* ── Hero Section ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 lg:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+          {/* Left Column: Copy */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1AA260]/10 border border-[#1AA260]/20 text-[#1AA260] text-[11.5px] font-semibold tracking-wide uppercase">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Unified Tax &amp; Identity Gateway</span>
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-widest text-[#1AA260]">
+              <span className="w-6 h-[1.5px] bg-[#1AA260]" />
+              <span>KADIRS CENTRAL IDENTITY GATEWAY</span>
             </div>
 
-            <h1 className="font-display text-4xl sm:text-6xl lg:text-[66px] font-extrabold text-[var(--ink)] leading-[1.08] tracking-tight">
-              Guiding You Through <br />
-              <span className="text-[#1AA260]">State Taxes</span> <br />
-              &amp; Identity
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--ink)] leading-[1.08]">
+              One identity.<br />
+              <em>Every</em> public service.
             </h1>
 
-            <p className="text-[15.5px] sm:text-[17px] text-[var(--gray-700)] leading-relaxed max-w-xl font-normal">
-              We simplify state taxes, revenue payments, and vehicle licensing with one verified digital identity. Direct National ID verification, automatic record matching, and zero paperwork.
+            {/* Intro Copy */}
+            <p className="text-base sm:text-lg text-[var(--gray-500)] leading-relaxed max-w-xl font-normal">
+              A simpler way to access Kaduna State tax, revenue, and vehicle services.
+              Verify your identity once, then move between connected portals without starting over.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            {/* Actions */}
+            <div className="pt-2 flex flex-wrap items-center gap-4">
               <Link
                 to="/auth/register"
-                className="px-7 py-3.5 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-sm font-semibold tracking-wide transition-all shadow-md hover:shadow-lg flex items-center gap-2 cursor-pointer group"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
               >
-                <span>Start with National ID (NIN)</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <span>Create your account</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
-
-              <Link
-                to="/auth/login"
-                className="px-6 py-3.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] text-[var(--ink)] text-sm font-semibold transition-colors cursor-pointer"
+              <a
+                href="#how-it-works"
+                onClick={(e) => scrollToSection(e, 'how-it-works')}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] hover:text-[#1AA260] transition-colors px-3 py-2 cursor-pointer"
               >
-                Sign In to Account
-              </Link>
+                <span>See how it works</span>
+                <ArrowDownRight className="w-4 h-4" />
+              </a>
             </div>
 
-            {/* Pill Tags Row */}
-            <div className="pt-6">
-              <span className="block text-[11px] font-semibold text-[var(--gray-500)] uppercase tracking-wider mb-3">
-                Supported State Services
-              </span>
-              <div className="flex flex-wrap gap-2.5">
-                {[
-                  'PayKaduna Revenue',
-                  'Vehicle Licensing (KADVREG)',
-                  'Personal Income Tax (PIT)',
-                  'Direct National ID Verification',
-                  '1-Click Record Linking'
-                ].map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className="px-4 py-1.5 rounded-full border border-[var(--gray-200)] bg-[var(--white)] text-[var(--gray-700)] text-xs font-medium hover:border-[#1AA260]/40 transition-colors shadow-2xs"
-                  >
-                    {tag}
-                  </span>
-                ))}
+            {/* Verification Checks */}
+            <div className="pt-6 border-t border-[var(--line)] flex flex-wrap items-center gap-6 text-xs text-[var(--gray-700)] dark:text-[var(--gray-300)] font-medium">
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#1AA260] flex items-center justify-center text-[10px]">
+                  <Check className="w-3 h-3 stroke-[3]" />
+                </span>
+                <span>NIMC verified</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#1AA260] flex items-center justify-center text-[10px]">
+                  <Check className="w-3 h-3 stroke-[3]" />
+                </span>
+                <span>NDPA protected</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#1AA260] flex items-center justify-center text-[10px]">
+                  <Check className="w-3 h-3 stroke-[3]" />
+                </span>
+                <span>14 connected MDAs</span>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Hero Visual Card (Deep Green Arch with Scales of Justice & Foliage) */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative rounded-[28px] sm:rounded-[36px] bg-[#123D35] overflow-hidden p-8 sm:p-10 shadow-2xl min-h-[460px] sm:min-h-[520px] flex flex-col justify-between text-white border border-white/10 group">
-              
-              {/* Background Architectural Fluting & Glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#0D2821] via-[#123D35] to-[#1AA260]/20 pointer-events-none" />
-              <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-[#1AA260]/20 blur-3xl pointer-events-none" />
-
-              {/* Decorative Subtle Vertical Lines */}
-              <div className="absolute inset-0 opacity-10 pointer-events-none flex justify-around">
-                <div className="w-px h-full bg-white" />
-                <div className="w-px h-full bg-white" />
-                <div className="w-px h-full bg-white" />
-                <div className="w-px h-full bg-white" />
+          {/* Right Column: Digital Identity Visual Card */}
+          <div className="lg:col-span-5">
+            <div className="space-y-3">
+              {/* Card Label */}
+              <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-widest px-2 text-[var(--gray-500)]">
+                <span>Your digital identity</span>
+                <span className="text-[#1AA260]">01 / 03</span>
               </div>
 
-              {/* Top Card Badge: Live NIMC Verification */}
-              <div className="relative z-10 flex items-center justify-between">
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium text-white shadow-xs">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>NIMC Gateway Verified</span>
+              {/* The Radar / Identity Diagram Card */}
+              <div className="bg-[#07352C] rounded-[28px] p-5 sm:p-6 text-white relative overflow-hidden shadow-[0_24px_55px_rgba(7,53,44,0.35)] border border-emerald-900/40">
+                {/* Background Concentric Radar Rings */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440px] h-[440px] rounded-full border border-emerald-400/10" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] rounded-full border border-emerald-400/5" />
                 </div>
-                <span className="text-[11px] text-white/70 font-medium">
-                  State Digital Gateway
+
+                {/* Card Topline */}
+                <div className="relative z-10 flex items-center justify-between text-[9px] uppercase font-extrabold tracking-widest text-white/60 mb-2">
+                  <span>SSO / KADIRS</span>
+                  <span className="text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    ACTIVE
+                  </span>
+                </div>
+
+                {/* Identity Diagram */}
+                <div
+                  className="identity-diagram my-2"
+                  aria-label="One verified identity connecting three Kaduna public services"
+                >
+                  <div className="diagram-orbit orbit-one" />
+                  <div className="diagram-orbit orbit-two" />
+                  <div className="diagram-line line-one" />
+                  <div className="diagram-line line-two" />
+                  <div className="diagram-line line-three" />
+
+                  {/* Connected Node 1: PayKaduna */}
+                  <div className="diagram-node node-paykaduna">
+                    <span>PK</span>
+                    <small>PayKaduna</small>
+                  </div>
+
+                  {/* Connected Node 2: KADVREG */}
+                  <div className="diagram-node node-kadvreg">
+                    <span>KV</span>
+                    <small>KADVREG</small>
+                  </div>
+
+                  {/* Connected Node 3: PIT */}
+                  <div className="diagram-node node-pit">
+                    <span>PI</span>
+                    <small>PIT</small>
+                  </div>
+
+                  {/* Central Core: NIN */}
+                  <div className="identity-core">
+                    <div className="core-ring">
+                      <span className="core-dot" />
+                      <span className="core-dot core-dot--two" />
+                      <span className="core-dot core-dot--three" />
+                      <ShieldCheck className="w-7 h-7 text-[#C1F2D9]" />
+                    </div>
+                    <strong className="text-white text-base tracking-wider font-extrabold">NIN</strong>
+                    <small className="text-white/60 text-[8px] uppercase tracking-widest font-semibold mt-0.5">
+                      verified identity
+                    </small>
+                  </div>
+                </div>
+
+                {/* Visual Card Footer */}
+                <div className="relative z-10 pt-3 border-t border-white/10 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(193,242,217,0.15)]" />
+                    <div>
+                      <strong className="block text-xs font-bold text-white leading-tight">
+                        Identity verified
+                      </strong>
+                      <span className="text-[9px] text-white/50 block">Last checked just now</span>
+                    </div>
+                  </div>
+                  <div className="w-7 h-7 rounded-full border border-emerald-400/30 flex items-center justify-center text-emerald-300">
+                    <ArrowDownRight className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Visual Card Note */}
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--gray-500)] pt-1">
+                <Sparkles className="w-3.5 h-3.5 text-[#1AA260]" />
+                <span>One secure sign-on across your Kaduna records.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── One Gateway Strip ── */}
+      <section id="services" className="border-y border-[var(--line)] bg-[var(--paper-raised)] py-7">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <p className="text-xs uppercase font-extrabold tracking-widest text-[var(--gray-500)] shrink-0">
+              One gateway for
+            </p>
+            <div className="flex flex-wrap items-center gap-3 sm:gap-5">
+              {/* PayKaduna */}
+              <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-[var(--paper)] border border-[var(--line)] shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-[#1AA260]" />
+                <div>
+                  <p className="text-xs font-bold text-[var(--ink)]">PayKaduna</p>
+                  <span className="text-[10px] text-[var(--gray-500)]">Revenue & payments</span>
+                </div>
+                <Check className="w-3.5 h-3.5 text-[#1AA260] ml-1 stroke-[2.5]" />
+              </div>
+
+              {/* KADVREG */}
+              <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-[var(--paper)] border border-[var(--line)] shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-[#1AA260]" />
+                <div>
+                  <p className="text-xs font-bold text-[var(--ink)]">KADVREG</p>
+                  <span className="text-[10px] text-[var(--gray-500)]">Vehicle licensing</span>
+                </div>
+                <Check className="w-3.5 h-3.5 text-[#1AA260] ml-1 stroke-[2.5]" />
+              </div>
+
+              {/* PIT */}
+              <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-[var(--paper)] border border-[var(--line)] shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-[#1AA260]" />
+                <div>
+                  <p className="text-xs font-bold text-[var(--ink)]">PIT</p>
+                  <span className="text-[10px] text-[var(--gray-500)]">Personal income tax</span>
+                </div>
+                <Check className="w-3.5 h-3.5 text-[#1AA260] ml-1 stroke-[2.5]" />
+              </div>
+
+              {/* Link to all 14 services */}
+              <Link
+                to="/paykaduna/services"
+                className="text-[11px] font-bold uppercase tracking-wider text-[#1AA260] hover:text-[#158A52] flex items-center gap-1 px-3 py-2 rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
+              >
+                <span>+11 more connected services</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── The SSO Difference Section ── */}
+      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left Column */}
+          <div className="lg:col-span-5 space-y-5">
+            <div className="inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-widest text-[#1AA260]">
+              <span className="w-6 h-[1.5px] bg-[#1AA260]" />
+              <span>The SSO difference</span>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[var(--ink)] leading-tight">
+              SSO should feel like <em>one door</em>, not three queues.
+            </h2>
+
+            <p className="text-sm sm:text-base text-[var(--gray-500)] leading-relaxed font-normal">
+              Public services work better when your identity follows you.
+              KADIRS brings your state records into one clear, secure starting point.
+            </p>
+
+            <div className="pt-2">
+              <Link
+                to="/auth/login"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#1AA260] hover:text-[#158A52] group"
+              >
+                <span>Experience the 1-click flow</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column: 3 Step Cards */}
+          <div className="lg:col-span-7 space-y-4">
+            {/* Step 1 */}
+            <div className="bg-[var(--card-bg)] border border-[var(--line)] rounded-[24px] p-6 sm:p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 dark:hover:border-emerald-800 transition-all flex items-center justify-between gap-5 group">
+              <div className="flex items-center gap-5 sm:gap-6">
+                <span className="text-2xl sm:text-3xl font-extrabold text-[var(--gray-400)] group-hover:text-[#1AA260] transition-colors">
+                  01
                 </span>
-              </div>
-
-              {/* Center Artwork: Classical Scales of Fair Revenue Assurance */}
-              <div className="relative z-10 py-10 flex flex-col items-center justify-center text-center">
-                <div className="relative mb-6">
-                  {/* Outer Laurel Halo */}
-                  <div className="w-36 h-36 rounded-full border-2 border-dashed border-[#1AA260]/40 flex items-center justify-center relative animate-[spin_60s_linear_infinite]">
-                    <div className="absolute -top-2 w-4 h-4 rounded-full bg-[#1AA260]" />
-                    <div className="absolute -bottom-2 w-4 h-4 rounded-full bg-emerald-400" />
-                  </div>
-                  {/* Central Scale Emblem */}
-                  <div className="absolute inset-0 m-auto w-24 h-24 rounded-full bg-gradient-to-b from-[#1AA260] to-[#123D35] flex items-center justify-center text-white shadow-xl shadow-black/40 border-2 border-white/30">
-                    <Scale className="w-12 h-12 text-white drop-shadow-md" />
-                  </div>
-                </div>
-
-                <div className="space-y-1 max-w-[280px]">
-                  <h3 className="font-display font-bold text-xl text-white tracking-tight">
-                    Fair. Transparent. Unified.
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-[var(--ink)] leading-snug">
+                    Sign in once
                   </h3>
-                  <p className="text-xs text-emerald-100/80 leading-relaxed">
-                    Protecting taxpayer rights while powering Kaduna State revenue development.
+                  <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-1 leading-relaxed">
+                    Your NIN becomes the secure key to your connected services.
                   </p>
                 </div>
               </div>
-
-              {/* Bottom Card Summary Pill */}
-              <div className="relative z-10 p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-                  <div>
-                    <span className="font-semibold block text-white">14 Connected MDAs</span>
-                    <span className="text-[10.5px] text-white/70">Zero duplicate registrations</span>
-                  </div>
-                </div>
-                <Link
-                  to="/paykaduna/services"
-                  className="px-3 py-1 rounded-full bg-white text-[#123D35] hover:bg-emerald-50 font-semibold text-[11px] transition-colors"
-                >
-                  Explore &rarr;
-                </Link>
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] flex items-center justify-center shrink-0">
+                <LockKeyhole className="w-5 h-5" />
               </div>
+            </div>
 
+            {/* Step 2 */}
+            <div className="bg-[var(--card-bg)] border border-[var(--line)] rounded-[24px] p-6 sm:p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 dark:hover:border-emerald-800 transition-all flex items-center justify-between gap-5 group">
+              <div className="flex items-center gap-5 sm:gap-6">
+                <span className="text-2xl sm:text-3xl font-extrabold text-[var(--gray-400)] group-hover:text-[#1AA260] transition-colors">
+                  02
+                </span>
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-[var(--ink)] leading-snug">
+                    Records find you
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-1 leading-relaxed">
+                    Past payments, vehicle records, and tax profiles are matched automatically.
+                  </p>
+                </div>
+              </div>
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] flex items-center justify-center shrink-0">
+                <ArrowDownRight className="w-5 h-5" />
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-[var(--card-bg)] border border-[var(--line)] rounded-[24px] p-6 sm:p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 dark:hover:border-emerald-800 transition-all flex items-center justify-between gap-5 group">
+              <div className="flex items-center gap-5 sm:gap-6">
+                <span className="text-2xl sm:text-3xl font-extrabold text-[var(--gray-400)] group-hover:text-[#1AA260] transition-colors">
+                  03
+                </span>
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-[var(--ink)] leading-snug">
+                    Keep moving
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-1 leading-relaxed">
+                    Switch between services without duplicate accounts or repeated verification.
+                  </p>
+                </div>
+              </div>
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] flex items-center justify-center shrink-0">
+                <Check className="w-5 h-5 stroke-[2.5]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Built Around Trust Section ── */}
+      <section id="trust" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-[var(--line)]">
+        {/* Intro */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-12">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-widest text-[#1AA260]">
+              <span className="w-6 h-[1.5px] bg-[#1AA260]" />
+              <span>Built around trust</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[var(--ink)] leading-tight">
+              Less friction for you.<br />
+              <em>More clarity</em> in the system.
+            </h2>
+          </div>
+          <div className="lg:col-span-5">
+            <p className="text-sm sm:text-base text-[var(--gray-500)] leading-relaxed">
+              Every part of the gateway is designed to make public services easier to understand,
+              easier to reach, and safer to use.
+            </p>
+          </div>
+        </div>
+
+        {/* 3 Trust Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card 1: Verify once (White card) */}
+          <div className="bg-[var(--card-bg)] border border-[var(--line)] rounded-[28px] p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold text-[#1AA260] mb-8">
+                <span className="text-sm">01</span>
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-[var(--ink)] mb-2">Verify once</h3>
+              <p className="text-xs sm:text-sm text-[var(--gray-500)] leading-relaxed">
+                Your National ID confirms who you are directly with NIMC—no repeated paperwork across portals.
+              </p>
+            </div>
+            <div className="mt-8 pt-4 border-t border-[var(--line)] text-[10px] uppercase font-bold tracking-widest text-[var(--gray-400)]">
+              KADIRS / SSO
             </div>
           </div>
 
-        </section>
-
-        {/* ========================================================================= */}
-        {/* MISSION PULL-QUOTE BANNER                                                 */}
-        {/* ========================================================================= */}
-        <section className="my-10">
-          <div className="rounded-[28px] bg-[var(--white)] p-8 sm:p-14 text-center relative overflow-hidden shadow-float">
-            <span className="text-4xl sm:text-5xl text-[#1AA260] font-serif leading-none block mb-2 select-none">
-              &ldquo;
-            </span>
-            <blockquote className="font-display italic text-lg sm:text-2xl font-bold text-[var(--ink)] max-w-3xl mx-auto leading-relaxed">
-              Tax compliance is a public trust &mdash; one that, with transparent, unified digital systems, reveals a clear, effortless path forward for every citizen and enterprise in Kaduna State.
-            </blockquote>
-            <cite className="block mt-4 text-xs font-semibold tracking-wider text-[var(--gray-500)] uppercase not-italic font-body">
-              Kaduna State Internal Revenue Service (KADIRS) &middot; Central Identity Initiative
-            </cite>
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* DISCOVER OUR UNIFIED PLATFORM                                             */}
-        {/* ========================================================================= */}
-        <section id="how-it-works" className="py-16 sm:py-20 border-t border-[var(--gray-200)]/70">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            
-            {/* Left Content */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1AA260]">
-                <span>How The Unified System Works</span>
+          {/* Card 2: Move freely (Mint / Soft Emerald card) */}
+          <div className="bg-[#D8F3E5] dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800/60 rounded-[28px] p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between hover:shadow-md transition-all text-[#0D3029] dark:text-emerald-100">
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold text-[#0B5B4B] dark:text-emerald-300 mb-8">
+                <span className="text-sm">02</span>
+                <ArrowDownRight className="w-5 h-5" />
               </div>
+              <h3 className="text-lg font-bold text-[#0D3029] dark:text-white mb-2">Move freely</h3>
+              <p className="text-xs sm:text-sm text-[#28554A] dark:text-emerald-200/80 leading-relaxed">
+                Open every connected Kaduna service from one account, without starting a new login each time.
+              </p>
+            </div>
+            <div className="mt-8 pt-4 border-t border-emerald-200/80 dark:border-emerald-800/40 text-[10px] uppercase font-bold tracking-widest text-[#0B5B4B]/80 dark:text-emerald-300">
+              KADIRS / SSO
+            </div>
+          </div>
 
-              <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight leading-tight">
-                No More Fragmented Accounts. <br />
-                <span className="text-[#1AA260]">One National ID</span> Unlocks Everything.
+          {/* Card 3: Stay in control (Deep forest green card) */}
+          <div className="bg-[#07352C] rounded-[28px] p-7 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all text-white border border-emerald-900/50">
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold text-emerald-400 mb-8">
+                <span className="text-sm">03</span>
+                <LockKeyhole className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">Stay in control</h3>
+              <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
+                See what is connected, manage your data permissions, and keep your public records together.
+              </p>
+            </div>
+            <div className="mt-8 pt-4 border-t border-white/10 text-[10px] uppercase font-bold tracking-widest text-emerald-400/80">
+              KADIRS / SSO
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Quote Section ── */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center border-t border-[var(--line)]">
+        <span className="font-serif text-5xl sm:text-6xl text-[#1AA260] leading-none block">
+          “
+        </span>
+        <blockquote className="font-serif text-2xl sm:text-3xl lg:text-4xl text-[var(--ink)] leading-snug tracking-tight max-w-2xl mx-auto my-6 font-normal">
+          When identity is simple, public service can feel like it belongs to everyone.
+        </blockquote>
+        <div className="flex items-center justify-center gap-2 text-[10.5px] uppercase font-bold tracking-widest text-[var(--gray-500)]">
+          <span>Kaduna State Internal Revenue Service</span>
+          <span>&bull;</span>
+          <span>Central Identity Initiative</span>
+        </div>
+      </section>
+
+      {/* ── Need a Hand? / Support Section ── */}
+      <section id="support" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="bg-[#07352C] rounded-[32px] p-8 sm:p-12 lg:p-14 text-white relative overflow-hidden shadow-2xl border border-emerald-900/40">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            {/* Left */}
+            <div className="lg:col-span-7 space-y-4">
+              <div className="inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-widest text-emerald-400">
+                <span className="w-6 h-[1.5px] bg-emerald-400" />
+                <span>Need a hand?</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                We’re here to help you <em>get through.</em>
               </h2>
-
-              <p className="text-[15px] text-[var(--gray-700)] leading-relaxed">
-                In the past, Kaduna citizens managed disconnected logins for PayKaduna, road vehicle licensing, and personal tax filing. Different emails and minor name discrepancies led to missing receipts and frustration.
-              </p>
-
-              <div className="space-y-3 pt-2">
-                {[
-                  {
-                    title: 'Direct National ID Verification (NIMC)',
-                    desc: 'Your 11-digit NIN verifies your identity directly with NIMC. Name and birthdate are automatically confirmed without extra paperwork.'
-                  },
-                  {
-                    title: 'Automatic Past Record Matching',
-                    desc: 'The system links your previous vehicle registrations, tax receipts, and payment history to your account automatically.'
-                  },
-                  {
-                    title: 'Strict Privacy & Data Protection',
-                    desc: 'Protected under the Nigeria Data Protection Act 2023. Your personal data is encrypted, secure, and never shared without your permission.'
-                  }
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3.5 rounded-2xl bg-[var(--white)] border border-[var(--gray-200)] shadow-2xs">
-                    <div className="w-5 h-5 rounded-full bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0 mt-0.5">
-                      <Check className="w-3.5 h-3.5" />
-                    </div>
-                    <div>
-                      <strong className="text-xs font-bold text-[var(--ink)] block">{item.title}</strong>
-                      <span className="text-[12px] text-[var(--gray-700)] leading-normal">{item.desc}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-2">
-                <Link
-                  to="/auth/register"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-[#1AA260] hover:text-[#158A52] uppercase tracking-wider group"
-                >
-                  <span>Experience the 1-click citizen flow</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Card: Interactive Identity Portfolio Preview */}
-            <div className="lg:col-span-6">
-              <div className="rounded-[28px] bg-[var(--white)] p-7 sm:p-9 shadow-float relative overflow-hidden">
-                <div className="flex items-center justify-between border-b border-[var(--gray-200)] pb-5 mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-[#123D35] text-white flex items-center justify-center font-display font-bold text-sm">
-                      FA
-                    </div>
-                    <div>
-                      <h4 className="font-display font-bold text-sm text-[var(--ink)]">Fatima Abdullahi</h4>
-                      <span className="text-[11px] text-[var(--gray-500)]">CIT-KAD-2024-00847 &middot; Verified Citizen</span>
-                    </div>
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-semibold flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>NIMC Linked</span>
-                  </span>
-                </div>
-
-                <div className="space-y-3.5 text-xs">
-                  <div className="p-3.5 rounded-xl bg-[var(--gray-100)] flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Wallet className="w-4 h-4 text-[#1AA260]" />
-                      <div>
-                        <span className="font-bold text-[var(--ink)] block">PayKaduna Revenue</span>
-                        <span className="text-[11px] text-[var(--gray-500)]">State Taxpayer ID &amp; Payment Invoices</span>
-                      </div>
-                    </div>
-                    <span className="font-semibold text-emerald-600">Active</span>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[var(--gray-100)] flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Car className="w-4 h-4 text-[#1AA260]" />
-                      <div>
-                        <span className="font-bold text-[var(--ink)] block">KADVREG Vehicle Licensing</span>
-                        <span className="text-[11px] text-[var(--gray-500)]">Plate No: KAF-582-AA &middot; Honda Accord</span>
-                      </div>
-                    </div>
-                    <span className="font-semibold text-emerald-600">Auto-Linked</span>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[var(--gray-100)] flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-4 h-4 text-[#1AA260]" />
-                      <div>
-                        <span className="font-bold text-[var(--ink)] block">Personal Income Tax (PIT)</span>
-                        <span className="text-[11px] text-[var(--gray-500)]">Assessment &amp; Tax Clearance Certificate</span>
-                      </div>
-                    </div>
-                    <span className="font-semibold text-emerald-600">Unified</span>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-5 border-t border-[var(--gray-200)] flex items-center justify-between text-xs text-[var(--gray-500)]">
-                  <span>Kaduna State Internal Revenue Service</span>
-                  <span className="text-[11px] font-medium text-emerald-600">State Certified Portal</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* PLATFORM PILLARS                                                          */}
-        {/* ========================================================================= */}
-        <section id="services" className="py-16 sm:py-20 border-t border-[var(--gray-200)]/70">
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#1AA260]">
-              Built For Kaduna Citizens
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight">
-              Built for Speed, Trust, and Inclusion
-            </h2>
-            <p className="text-sm text-[var(--gray-700)] leading-relaxed">
-              Simplifying public services, eliminating queues, and giving you fast, transparent access to your tax and vehicle records.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            {/* Card 1 */}
-            <div className="rounded-[24px] bg-[var(--white)] p-8 shadow-float hover:shadow-float-hover transition-all group">
-              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
-                <User className="w-6 h-6" />
-              </div>
-              <h3 className="font-display font-bold text-lg text-[var(--ink)] mb-2">
-                Zero Duplicate Logins
-              </h3>
-              <p className="text-xs text-[var(--gray-700)] leading-relaxed">
-                No more remembering three passwords for three different state websites. Your National Identity Number serves as your universal, secure key across all Kaduna public portals.
+              <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-lg">
+                Questions about your tax assessment, vehicle title, or NIN matching? Our taxpayer support team is ready.
               </p>
             </div>
 
-            {/* Card 2 */}
-            <div className="rounded-[24px] bg-[var(--white)] p-8 shadow-float hover:shadow-float-hover transition-all group">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
-                <Sparkles className="w-6 h-6" />
+            {/* Right: Support Card */}
+            <div className="lg:col-span-5 bg-[#0B5B4B] border border-emerald-400/30 rounded-[24px] p-6 sm:p-7 space-y-5 shadow-inner">
+              {/* General Enquiries */}
+              <div className="pb-4 border-b border-white/10 space-y-1">
+                <span className="text-[10px] uppercase font-extrabold tracking-wider text-emerald-300 block">
+                  General enquiries
+                </span>
+                <strong className="text-sm sm:text-base font-bold text-white block">
+                  taxpayer.support@kadirs.gov.ng
+                </strong>
               </div>
-              <h3 className="font-display font-bold text-lg text-[var(--ink)] mb-2">
-                1-Click Record Linking
-              </h3>
-              <p className="text-xs text-[var(--gray-700)] leading-relaxed">
-                The smart matching engine scans state databases. Previous tax payments and vehicle registrations registered under older emails are discovered and linked with one click.
-              </p>
-            </div>
 
-            {/* Card 3 */}
-            <div className="rounded-[24px] bg-[var(--white)] p-8 shadow-float hover:shadow-float-hover transition-all group">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#1AA260] flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
-                <ShieldCheck className="w-6 h-6" />
+              {/* Helpline */}
+              <div className="pb-4 border-b border-white/10 space-y-1">
+                <span className="text-[10px] uppercase font-extrabold tracking-wider text-emerald-300 block">
+                  Helpline
+                </span>
+                <strong className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                  <span>+234 800-KADIRS</span>
+                  <span className="text-xs font-normal text-white/70">(Toll free)</span>
+                </strong>
               </div>
-              <h3 className="font-display font-bold text-lg text-[var(--ink)] mb-2">
-                Total Data Privacy
-              </h3>
-              <p className="text-xs text-[var(--gray-700)] leading-relaxed">
-                Full statutory compliance with the Nigeria Data Protection Act 2023. You have complete transparency over authorized services, with one-click data export and account privacy controls.
-              </p>
-            </div>
-          </div>
-        </section>
 
-        {/* ========================================================================= */}
-        {/* CITIZEN VOICES / TESTIMONIALS                                             */}
-        {/* ========================================================================= */}
-        <section id="reviews" className="py-16 sm:py-20 border-t border-[var(--gray-200)]/70">
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#1AA260]">
-              Citizen Feedback
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight">
-              Trusted by Citizens &amp; Enterprises
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Testimonial 1 */}
-            <div className="rounded-[20px] bg-[var(--white)] p-6 shadow-float hover:shadow-float-hover transition-all flex flex-col justify-between">
-              <div>
-                <span className="text-[11px] text-[var(--gray-500)] block mb-3">September 18</span>
-                <p className="text-xs text-[var(--gray-700)] leading-relaxed mb-4">
-                  &ldquo;I had an old vehicle registered under my Kaduna North civil service email, and PayKaduna under my personal Gmail. The portal linked both records to my NIN in under 30 seconds. Outstanding!&rdquo;
-                </p>
-                <div className="flex items-center gap-1 text-amber-400 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center gap-3 pt-3 border-t border-[var(--gray-200)]">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 text-[#1AA260] font-bold text-xs flex items-center justify-center">
-                  FA
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-[var(--ink)]">Fatima Abdullahi</h4>
-                  <span className="text-[10.5px] text-[var(--gray-500)]">Civil Servant &middot; Kaduna North</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial 2 */}
-            <div className="rounded-[20px] bg-[var(--white)] p-6 shadow-float hover:shadow-float-hover transition-all flex flex-col justify-between">
-              <div>
-                <span className="text-[11px] text-[var(--gray-500)] block mb-3">August 29</span>
-                <p className="text-xs text-[var(--gray-700)] leading-relaxed mb-4">
-                  &ldquo;As a business director in Kaduna South, linking my CAC company profile and managing our corporate TIN without queuing at the tax office was effortless. The new system is clean and fast.&rdquo;
-                </p>
-                <div className="flex items-center gap-1 text-amber-400 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center gap-3 pt-3 border-t border-[var(--gray-200)]">
-                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-xs flex items-center justify-center">
-                  AY
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-[var(--ink)]">Amina Yusuf</h4>
-                  <span className="text-[10.5px] text-[var(--gray-500)]">SME Director &middot; Kaduna South</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial 3 */}
-            <div className="rounded-[20px] bg-[var(--white)] p-6 shadow-float hover:shadow-float-hover transition-all flex flex-col justify-between">
-              <div>
-                <span className="text-[11px] text-[var(--gray-500)] block mb-3">August 14</span>
-                <p className="text-xs text-[var(--gray-700)] leading-relaxed mb-4">
-                  &ldquo;Moving between PayKaduna and KADVREG without having to sign in repeatedly saves our transport logistics business hours every week. The digital receipts are generated instantly.&rdquo;
-                </p>
-                <div className="flex items-center gap-1 text-amber-400 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center gap-3 pt-3 border-t border-[var(--gray-200)]">
-                <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 font-bold text-xs flex items-center justify-center">
-                  EO
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-[var(--ink)]">Emeka Obi</h4>
-                  <span className="text-[10.5px] text-[var(--gray-500)]">Logistics Operator &middot; Zaria</span>
-                </div>
-              </div>
+              {/* Visit Support Centre */}
+              <Link
+                to="/paykaduna/services"
+                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#C1F2D9] hover:bg-emerald-200 text-[#07352C] text-xs font-bold transition-all shadow-sm cursor-pointer"
+              >
+                <span>Visit the support centre</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ========================================================================= */}
-        {/* SCHEDULE ASSISTANCE & TAX OFFICES                                         */}
-        {/* ========================================================================= */}
-        <section id="contact" className="py-16 sm:py-20 border-t border-[var(--gray-200)]/70">
-          <div className="mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#1AA260]">
-              Get In Touch &amp; Tax Offices
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight mt-1">
-              Taxpayer Support &amp; Zonal Centers
-            </h2>
-            <p className="text-sm text-[var(--gray-700)] mt-1">
-              Have questions about your tax assessment, vehicle title, or NIN matching? Our taxpayer support team is ready to help.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Card: Offices & Hotline */}
-            <div className="lg:col-span-5 rounded-[24px] bg-[var(--white)] p-7 sm:p-8 space-y-6 shadow-float">
-              <div>
-                <h4 className="font-display font-bold text-sm text-[var(--ink)] mb-1 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-[#1AA260]" />
-                  <span>Central Headquarters</span>
-                </h4>
-                <p className="text-xs text-[var(--gray-700)] leading-relaxed pl-6">
-                  Revenue House, Muhammadu Buhari Way, <br />
-                  Central Business District, Kaduna State, Nigeria
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-[var(--gray-200)]">
-                <h4 className="font-display font-bold text-xs text-[var(--ink)] uppercase tracking-wider mb-2.5">
-                  Zonal Tax Offices
-                </h4>
-                <div className="grid grid-cols-2 gap-2 text-[11.5px] text-[var(--gray-700)]">
-                  <span>&bull; Kawo Tax Office</span>
-                  <span>&bull; Barnawa Tax Office</span>
-                  <span>&bull; Zaria Central Tax Office</span>
-                  <span>&bull; Kafanchan Tax Office</span>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-[var(--gray-200)] space-y-2.5">
-                <div className="flex items-center gap-2 text-xs text-[var(--gray-700)]">
-                  <Mail className="w-4 h-4 text-[#1AA260]" />
-                  <span>taxpayer.support@kadirs.gov.ng</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-[var(--gray-700)]">
-                  <Phone className="w-4 h-4 text-[#1AA260]" />
-                  <span>+234 800-KADIRS (Toll Free)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Card: Contact Form */}
-            <div className="lg:col-span-7 rounded-[24px] bg-[var(--white)] p-7 sm:p-8 shadow-float">
-              <form onSubmit={handleContactSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
-                      First Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="e.g. Fatima"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      placeholder="e.g. Abdullahi"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                      placeholder="citizen@kaduna.gov.ng"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      value={contactPhone}
-                      onChange={(e) => setContactPhone(e.target.value)}
-                      placeholder="+234 803 123 4567"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5">
-                    How can we help you? *
-                  </label>
-                  <textarea
-                    required
-                    rows={3}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Describe your tax inquiry or record linking question..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-xs text-[var(--ink)] focus:outline-none focus:border-[#1AA260] transition-colors resize-none"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-7 py-3 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-50"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
-                </button>
-              </form>
-            </div>
-          </div>
-        </section>
-
-      </div>
-
-      {/* ========================================================================= */}
-      {/* EXPANDED EXECUTIVE FOOTER                                                 */}
-      {/* ========================================================================= */}
-      <footer className="bg-[var(--black)] text-white/90 rounded-t-[28px] sm:rounded-t-[36px] pt-16 pb-12 px-6 sm:px-12 border-t border-white/10">
-        <div className="max-w-7xl mx-auto space-y-12">
-          
-          {/* Main Footer Links Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
-            {/* Column 1: KADIRS Brand & Summary (Spans 2 on lg) */}
-            <div className="lg:col-span-2 space-y-4">
+      {/* ── Site Footer ── */}
+      <footer className="bg-[#051C17] text-white pt-16 pb-12 border-t border-emerald-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          {/* Top Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
+            {/* Brand */}
+            <div className="md:col-span-6 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#1AA260]/20 border border-[#1AA260]/40 flex items-center justify-center text-[#1AA260]">
-                  <Scale className="w-5 h-5" />
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400">
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
-                <div>
-                  <div className="font-display font-extrabold text-base tracking-tight text-white">
-                    Kaduna State Internal Revenue Service
-                  </div>
-                  <span className="text-[11px] text-white/60">
-                    Central Identity &amp; Revenue Gateway
-                  </span>
-                </div>
+                <span className="font-extrabold text-base tracking-tight text-white">KADIRS</span>
               </div>
-              <p className="text-xs text-white/70 leading-relaxed max-w-sm">
-                Empowering citizens and businesses in Kaduna State with unified digital tax assessments, vehicle registration, and verified public revenue services.
+              <p className="text-xs text-white/60 leading-relaxed max-w-sm">
+                Central Identity & Revenue Gateway.<br />
+                Serving Kaduna State with clarity.
               </p>
-              <div className="pt-2 text-xs text-white/60 space-y-1">
-                <div>Revenue House, Muhammadu Buhari Way, Kaduna</div>
-                <div>Helpline: <span className="text-white font-medium">+234 800-KADIRS</span> (Toll Free)</div>
-                <div>Email: <span className="text-white font-medium">taxpayer.support@kadirs.gov.ng</span></div>
-              </div>
             </div>
 
-            {/* Column 2: State Services */}
-            <div className="space-y-3">
-              <h5 className="font-display font-bold text-xs uppercase tracking-wider text-emerald-400">
-                Citizen Portals
-              </h5>
+            {/* Citizen Portals */}
+            <div className="md:col-span-3 space-y-3">
+              <span className="text-[11px] uppercase font-bold tracking-wider text-emerald-400 block">
+                Citizen portals
+              </span>
               <ul className="space-y-2 text-xs text-white/70">
                 <li>
-                  <Link to="/paykaduna" className="hover:text-white transition-colors flex items-center gap-1.5">
-                    <ChevronRight className="w-3 h-3 text-emerald-400" />
-                    <span>PayKaduna Revenue</span>
+                  <Link to="/paykaduna" className="hover:text-white transition-colors">
+                    PayKaduna Revenue
                   </Link>
                 </li>
                 <li>
-                  <Link to="/kadvreg" className="hover:text-white transition-colors flex items-center gap-1.5">
-                    <ChevronRight className="w-3 h-3 text-emerald-400" />
-                    <span>Vehicle Licensing (KADVREG)</span>
+                  <Link to="/kadvreg" className="hover:text-white transition-colors">
+                    Vehicle licensing
                   </Link>
                 </li>
                 <li>
-                  <Link to="/pit" className="hover:text-white transition-colors flex items-center gap-1.5">
-                    <ChevronRight className="w-3 h-3 text-emerald-400" />
-                    <span>Personal Income Tax (PIT)</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/paykaduna/services" className="hover:text-white transition-colors flex items-center gap-1.5">
-                    <ChevronRight className="w-3 h-3 text-emerald-400" />
-                    <span>Connected State MDAs</span>
+                  <Link to="/pit" className="hover:text-white transition-colors">
+                    Personal income tax
                   </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Column 3: Zonal Centers */}
-            <div className="space-y-3">
-              <h5 className="font-display font-bold text-xs uppercase tracking-wider text-emerald-400">
-                Zonal Tax Offices
-              </h5>
-              <ul className="space-y-2 text-xs text-white/70">
-                <li>Kawo Zonal Center (Kaduna North)</li>
-                <li>Barnawa Zonal Center (Kaduna South)</li>
-                <li>Zaria Central Tax Office</li>
-                <li>Kafanchan Zonal Office</li>
-                <li>Mando Integrated Revenue Station</li>
-              </ul>
-            </div>
-
-            {/* Column 4: Privacy & Governance */}
-            <div className="space-y-3">
-              <h5 className="font-display font-bold text-xs uppercase tracking-wider text-emerald-400">
-                Privacy &amp; Compliance
-              </h5>
+            {/* Company */}
+            <div className="md:col-span-3 space-y-3">
+              <span className="text-[11px] uppercase font-bold tracking-wider text-emerald-400 block">
+                Company
+              </span>
               <ul className="space-y-2 text-xs text-white/70">
                 <li>
-                  <Link to="/auth/profile" className="hover:text-white transition-colors flex items-center gap-1.5">
-                    <ChevronRight className="w-3 h-3 text-emerald-400" />
-                    <span>Citizen Privacy Center</span>
-                  </Link>
-                </li>
-                <li>
-                  <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')} className="hover:text-white transition-colors flex items-center gap-1.5">
-                    <ChevronRight className="w-3 h-3 text-emerald-400" />
-                    <span>NDPA 2023 Compliance</span>
+                  <a
+                    href="#how-it-works"
+                    onClick={(e) => scrollToSection(e, 'how-it-works')}
+                    className="hover:text-white transition-colors"
+                  >
+                    How it works
                   </a>
                 </li>
                 <li>
-                  <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')} className="hover:text-white transition-colors flex items-center gap-1.5">
-                    <ChevronRight className="w-3 h-3 text-emerald-400" />
-                    <span>NIMC Identity Safeguards</span>
+                  <a
+                    href="#trust"
+                    onClick={(e) => scrollToSection(e, 'trust')}
+                    className="hover:text-white transition-colors"
+                  >
+                    Privacy & compliance
                   </a>
                 </li>
                 <li>
-                  <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} className="hover:text-white transition-colors flex items-center gap-1.5">
-                    <ChevronRight className="w-3 h-3 text-emerald-400" />
-                    <span>Taxpayer Bill of Rights</span>
+                  <a
+                    href="#support"
+                    onClick={(e) => scrollToSection(e, 'support')}
+                    className="hover:text-white transition-colors"
+                  >
+                    Contact support
                   </a>
                 </li>
               </ul>
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* DEDICATED EVALUATOR, DEMO & ADMINISTRATIVE SUITE (Moved from Top & Overlay) */}
-          {/* ========================================================================= */}
-          <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5 sm:p-6 backdrop-blur-xs">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-              
-              {/* Left: Section Context & Active Session Badges */}
-              <div className="space-y-1.5 max-w-xl">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span className="font-display font-bold text-xs uppercase tracking-wider text-emerald-300">
-                    State Officers, Evaluators &amp; Architecture Suite
-                  </span>
-                </div>
-                <p className="text-xs text-white/60">
-                  Switch between citizen and officer personas, access the administrative console, or inspect live security tokens and system architecture.
-                </p>
-
-                {/* Active Session Indicator */}
-                <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                  {currentAdmin && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11.5px]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>Officer Session: <strong>{currentAdmin.name}</strong> ({currentAdmin.role.replace('_', ' ')})</span>
-                      <button
-                        onClick={() => {
-                          logoutAdmin()
-                          toast.info('Admin officer logged out')
-                        }}
-                        className="hover:text-white ml-1 underline cursor-pointer text-[10.5px]"
-                        title="Sign out officer"
-                      >
-                        Sign Out
-                      </button>
-                    </div>
-                  )}
-
-                  {currentUser && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-[11.5px]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                      <span>Citizen Session: <strong>{identity?.legalName || 'Active'}</strong></span>
-                      <button
-                        onClick={() => {
-                          logoutCitizen()
-                          toast.info('Citizen session ended')
-                        }}
-                        className="hover:text-white ml-1 underline cursor-pointer text-[10.5px]"
-                        title="Sign out citizen"
-                      >
-                        Sign Out
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Right: The 3 Moved Utility Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3">
-                {/* 1. Demo Quick Switcher Button */}
-                <button
-                  type="button"
-                  onClick={openPalette}
-                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs hover:border-emerald-400/50"
-                  title="Switch between Citizens, Directors, and Officers (Cmd+K)"
-                >
-                  <Search className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Demo Quick Switcher</span>
-                  <kbd className="px-1.5 py-0.5 rounded bg-black/40 text-[9.5px] font-mono text-emerald-300 border border-white/10">⌘K</kbd>
-                </button>
-
-                {/* 2. Admin Officer Gateway Button */}
-                <Link
-                  to={currentAdmin ? "/admin/dashboard" : "/admin"}
-                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-semibold transition-all flex items-center gap-2 shadow-xs hover:border-emerald-400/50"
-                  title="Open KADIRS Administrative & Maker/Checker Console"
-                >
-                  <Lock className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>{currentAdmin ? "Admin Console" : "Admin Gateway"}</span>
-                  <ArrowRight className="w-3 h-3 text-white/50" />
-                </Link>
-
-                {/* 3. Architecture Inspector Button (Moved from Floating Overlay) */}
-                <button
-                  type="button"
-                  onClick={() => openInspector()}
-                  className="px-4 py-2.5 rounded-xl bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:shadow-md"
-                  title="Inspect RS256 JWT Tokens, Event Streams & OAuth Flow (Alt+I)"
-                >
-                  <Code2 className="w-3.5 h-3.5" />
-                  <span>Inspect Architecture</span>
-                  <kbd className="px-1.5 py-0.5 rounded bg-black/20 text-[9.5px] font-mono text-white/90">Alt+I</kbd>
-                </button>
-              </div>
-
-            </div>
-          </div>
-
-          {/* Bottom Legal & Security Attributions */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-white/50 pt-2">
-            <span>&copy; 2026 Kaduna State Internal Revenue Service. All rights reserved.</span>
-            <div className="flex flex-wrap items-center gap-4">
-              <span>NDPA 2023 Statutory Protection</span>
+          {/* Bottom Bar with Evaluator Toolbar */}
+          <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
+            <div className="flex items-center gap-3">
+              <span>© 2026 Kaduna State Internal Revenue Service</span>
               <span>&bull;</span>
-              <span>NIMC Official Identity Partner</span>
-              <span>&bull;</span>
-              <span>State Certified Portal</span>
+              <span className="text-emerald-400/90 font-medium">NDPA 2023 protected • NIMC identity partner</span>
+            </div>
+
+            {/* Subtle Evaluator / Demo triggers */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => openInspector('topology')}
+                className="text-[11px] px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors cursor-pointer border border-white/10"
+              >
+                Architecture Inspector
+              </button>
+              <button
+                type="button"
+                onClick={openPalette}
+                className="text-[11px] px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors cursor-pointer border border-white/10"
+              >
+                Command Palette
+              </button>
             </div>
           </div>
-
         </div>
       </footer>
     </div>

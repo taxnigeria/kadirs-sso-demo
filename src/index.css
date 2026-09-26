@@ -9,7 +9,7 @@
   --green-deep: #123D35;
   --green-light: #4FAE80;
   --gold: #B98A2E;
-  --paper: #F6FAF8;
+  --paper: #FAFCFB;
   --paper-raised: #FFFFFF;
   --card-bg: #FFFFFF;
   --white: #FFFFFF;
@@ -157,13 +157,139 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-serif: "Newsreader", Georgia, serif;
-  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "DM Serif Display", "Newsreader", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   --radius-sm: calc(var(--radius) - 1px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
+}
+
+.font-serif-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+h1 em, h2 em, h3 em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Identity Diagram for Hero */
+.identity-diagram {
+  z-index: 1;
+  height: 322px;
+  position: relative;
+}
+.diagram-orbit {
+  border: 1px solid rgba(193, 242, 217, 0.15);
+  border-radius: 50%;
+  position: absolute;
+  top: 49%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.orbit-one {
+  width: 210px;
+  height: 210px;
+}
+.orbit-two {
+  border-color: rgba(193, 242, 217, 0.1);
+  width: 305px;
+  height: 305px;
+}
+.diagram-line {
+  transform-origin: 0;
+  background: linear-gradient(90deg, transparent, rgba(193, 242, 217, 0.5), transparent);
+  width: 130px;
+  height: 1px;
+  position: absolute;
+  top: 49%;
+  left: 50%;
+}
+.line-one { transform: rotate(-26deg); }
+.line-two { transform: rotate(153deg); }
+.line-three { transform: rotate(26deg); }
+.diagram-node {
+  color: rgba(255, 255, 255, 0.88);
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  font-weight: 800;
+  display: flex;
+  position: absolute;
+}
+.diagram-node span {
+  width: 30px;
+  height: 30px;
+  color: #C1F2D9;
+  background: rgba(193, 242, 217, 0.12);
+  border: 1px solid rgba(193, 242, 217, 0.4);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 800;
+  display: flex;
+}
+.diagram-node small {
+  letter-spacing: .04em;
+  font-size: 9px;
+  font-weight: 600;
+}
+.node-paykaduna { top: 34%; left: 8%; }
+.node-kadvreg { top: 34%; right: 2%; }
+.node-pit { bottom: 8%; left: 17%; }
+.identity-core {
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.core-ring {
+  background: #0B5B4B;
+  width: 98px;
+  height: 98px;
+  color: #C1F2D9;
+  border: 1px solid rgba(193, 242, 217, 0.65);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+  display: flex;
+  position: relative;
+  box-shadow: 0 0 0 9px rgba(193, 242, 217, 0.08), 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+.core-ring:before {
+  content: "";
+  border: 1px dashed rgba(193, 242, 217, 0.4);
+  border-radius: 50%;
+  position: absolute;
+  inset: 8px;
+}
+.core-dot {
+  background: #C1F2D9;
+  border-radius: 50%;
+  width: 5px;
+  height: 5px;
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translate(-50%);
+}
+.core-dot--two {
+  inset: auto 8px 20px auto;
+}
+.core-dot--three {
+  top: auto;
+  bottom: 20px;
+  left: 12px;
 }
 
 @layer base {

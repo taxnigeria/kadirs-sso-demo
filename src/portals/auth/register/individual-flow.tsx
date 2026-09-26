@@ -5,6 +5,7 @@ import {
   EyeOff,
   AlertTriangle,
   CheckCircle2,
+  Check,
   Send,
   ArrowRight,
   ShieldCheck,
@@ -387,10 +388,14 @@ export function IndividualFlow({
       {/* ================================================================ */}
       {step === 0 && (
         <form
-          className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float p-7 sm:p-9 rounded-[28px] space-y-6"
+          className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float p-6 sm:p-9 rounded-[24px] space-y-6 transition-all"
           onSubmit={handleVerifyNIN}
         >
           <div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#1AA260]/10 text-[#1AA260] text-[11px] font-semibold uppercase tracking-wider mb-2">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Step 2 &bull; Identity Proof</span>
+            </div>
             <h2 className="font-display text-xl sm:text-2xl font-bold text-[var(--ink)] tracking-tight mb-1">
               National Identity Verification
             </h2>
@@ -400,11 +405,11 @@ export function IndividualFlow({
           </div>
 
           {/* Identifier Method Selector (NIN vs vNIN) */}
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <label className="block text-xs font-semibold text-[var(--ink)]">
               Select Verification Method *
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {/* Option 1: NIN */}
               <button
                 type="button"
@@ -414,29 +419,42 @@ export function IndividualFlow({
                   setNinError(null)
                   setDuplicateNINBlocked(null)
                 }}
-                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-start gap-3.5 ${
+                className={`p-4 rounded-2xl text-left transition-all duration-200 cursor-pointer flex items-start gap-3.5 relative ${
                   idMethod === 'nin'
-                    ? 'border-[#1AA260] bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-[#1AA260]'
-                    : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--gray-700)]'
+                    ? 'bg-[#1AA260]/10 dark:bg-[#1AA260]/20 shadow-xs scale-[1.01] z-10'
+                    : 'bg-[var(--paper)]/60 hover:bg-[#1AA260]/[0.05] text-[var(--gray-700)] opacity-70 hover:opacity-100'
                 }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                     idMethod === 'nin'
-                      ? 'bg-[#1AA260] text-white'
-                      : 'bg-black/[0.04] dark:bg-white/[0.08] text-[var(--gray-700)]'
+                      ? 'bg-[#1AA260] text-white shadow-xs'
+                      : 'bg-black/[0.04] dark:bg-white/[0.06] text-[var(--gray-500)]'
                   }`}
                 >
-                  <Hash className="w-4 h-4" />
+                  <Hash className="w-5 h-5" />
                 </div>
-                <div>
-                  <div className="font-bold text-xs sm:text-sm text-[var(--ink)]">
+                <div className="flex-1 min-w-0 pr-6">
+                  <div
+                    className={`font-bold text-xs sm:text-sm ${
+                      idMethod === 'nin' ? 'text-[#123D35] dark:text-emerald-100' : 'text-[var(--ink)]'
+                    }`}
+                  >
                     11-Digit National ID (NIN)
                   </div>
-                  <div className="text-[11px] text-[var(--gray-500)] mt-0.5">
+                  <div
+                    className={`text-[11px] mt-0.5 leading-snug ${
+                      idMethod === 'nin' ? 'text-[#1F6F4A] dark:text-emerald-300' : 'text-[var(--gray-500)]'
+                    }`}
+                  >
                     Standard National Identification Number
                   </div>
                 </div>
+                {idMethod === 'nin' && (
+                  <div className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full bg-[#1AA260] text-white flex items-center justify-center shadow-xs">
+                    <Check className="w-3 h-3" />
+                  </div>
+                )}
               </button>
 
               {/* Option 2: vNIN */}
@@ -448,29 +466,42 @@ export function IndividualFlow({
                   setNinError(null)
                   setDuplicateNINBlocked(null)
                 }}
-                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-start gap-3.5 ${
+                className={`p-4 rounded-2xl text-left transition-all duration-200 cursor-pointer flex items-start gap-3.5 relative ${
                   idMethod === 'vnin'
-                    ? 'border-[#1AA260] bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-[#1AA260]'
-                    : 'border-[var(--gray-200)] bg-[var(--paper)] hover:bg-[var(--gray-100)] text-[var(--gray-700)]'
+                    ? 'bg-[#1AA260]/10 dark:bg-[#1AA260]/20 shadow-xs scale-[1.01] z-10'
+                    : 'bg-[var(--paper)]/60 hover:bg-[#1AA260]/[0.05] text-[var(--gray-700)] opacity-70 hover:opacity-100'
                 }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                     idMethod === 'vnin'
-                      ? 'bg-[#1AA260] text-white'
-                      : 'bg-black/[0.04] dark:bg-white/[0.08] text-[var(--gray-700)]'
+                      ? 'bg-[#1AA260] text-white shadow-xs'
+                      : 'bg-black/[0.04] dark:bg-white/[0.06] text-[var(--gray-500)]'
                   }`}
                 >
-                  <Smartphone className="w-4 h-4" />
+                  <Smartphone className="w-5 h-5" />
                 </div>
-                <div>
-                  <div className="font-bold text-xs sm:text-sm text-[var(--ink)]">
+                <div className="flex-1 min-w-0 pr-6">
+                  <div
+                    className={`font-bold text-xs sm:text-sm ${
+                      idMethod === 'vnin' ? 'text-[#123D35] dark:text-emerald-100' : 'text-[var(--ink)]'
+                    }`}
+                  >
                     Virtual NIN (vNIN)
                   </div>
-                  <div className="text-[11px] text-[var(--gray-500)] mt-0.5">
+                  <div
+                    className={`text-[11px] mt-0.5 leading-snug ${
+                      idMethod === 'vnin' ? 'text-[#1F6F4A] dark:text-emerald-300' : 'text-[var(--gray-500)]'
+                    }`}
+                  >
                     16-character secure token from NIMC MWS App
                   </div>
                 </div>
+                {idMethod === 'vnin' && (
+                  <div className="absolute top-3.5 right-3.5 w-5 h-5 rounded-full bg-[#1AA260] text-white flex items-center justify-center shadow-xs">
+                    <Check className="w-3 h-3" />
+                  </div>
+                )}
               </button>
             </div>
           </div>
@@ -522,7 +553,7 @@ export function IndividualFlow({
           {idMethod && (
             <div className="space-y-4 animate-in fade-in">
               <div>
-                <label className="block text-xs font-semibold text-[var(--ink)] mb-1.5 flex items-center justify-between">
+                <label className="block text-xs font-semibold text-[var(--ink)] mb-2 flex items-center justify-between">
                   <span>
                     {idMethod === 'nin'
                       ? '11-Digit National Identification Number (NIN) *'
@@ -544,13 +575,13 @@ export function IndividualFlow({
                     }}
                     placeholder={idMethod === 'nin' ? 'e.g. 23456789012' : 'e.g. 1029384756102938'}
                     maxLength={idMethod === 'nin' ? 11 : 16}
-                    className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] font-mono text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all pr-11"
+                    className="w-full px-4 py-3.5 border border-[var(--gray-200)] rounded-2xl bg-[var(--paper)]/50 focus:bg-white text-[var(--ink)] font-mono text-sm tracking-wide focus:outline-none focus:border-[#1AA260] focus:ring-4 focus:ring-[#1AA260]/10 transition-all pr-12 shadow-2xs"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowNIN(!showNIN)}
-                    className="absolute right-3.5 top-3.5 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
+                    className="absolute right-3.5 top-3.5 p-1 rounded-lg text-[var(--gray-500)] hover:text-[var(--ink)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors cursor-pointer"
                     title={showNIN ? 'Mask digits' : 'Show digits'}
                     tabIndex={-1}
                   >
@@ -559,10 +590,17 @@ export function IndividualFlow({
                 </div>
               </div>
 
-              {/* Subtle Strict Privacy & Protection card with NO border */}
-              <div className="bg-black/[0.03] dark:bg-white/[0.04] p-3.5 rounded-2xl text-xs text-[var(--gray-600)] dark:text-[var(--gray-400)] leading-relaxed">
-                <span className="font-semibold text-[var(--ink)] block mb-0.5">Strict Privacy &amp; Protection:</span>
-                Your National ID ({idMethod === 'vnin' ? 'vNIN' : 'NIN'}) is kept strictly confidential. Kaduna State services only receive your verified citizen profile, never your raw identification number.
+              {/* Subtle Strict Privacy & Protection card — borderless, soft green wash */}
+              <div className="bg-[#1AA260]/[0.08] dark:bg-[#1AA260]/15 p-4 rounded-2xl text-xs text-[#1F6F4A] dark:text-emerald-300 leading-relaxed flex items-start gap-3">
+                <div className="w-7 h-7 rounded-lg bg-[#1AA260]/15 dark:bg-[#1AA260]/25 text-[#1AA260] flex items-center justify-center shrink-0 mt-0.5">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="font-semibold text-[#123D35] dark:text-emerald-100 block mb-0.5">
+                    Strict Privacy &amp; Protection:
+                  </span>
+                  Your National ID ({idMethod === 'vnin' ? 'vNIN' : 'NIN'}) is kept strictly confidential. Kaduna State services only receive your verified citizen profile, never your raw identification number.
+                </div>
               </div>
             </div>
           )}
@@ -578,22 +616,25 @@ export function IndividualFlow({
             </button>
           </div>
 
-          <div className="flex justify-between items-center pt-2 border-t border-[var(--gray-200)]">
+          <div className="flex justify-between items-center pt-3 border-t border-[var(--gray-200)]/70">
             {onBackToSelection && (
               <button
                 type="button"
                 onClick={onBackToSelection}
-                className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
+                className="text-[var(--gray-700)] hover:text-[var(--ink)] text-xs sm:text-sm px-5 py-2.5 rounded-full border border-[var(--gray-200)] bg-[var(--paper)]/50 hover:bg-[var(--paper)] transition-all cursor-pointer font-medium"
               >
-                &larr; Back
+                &larr; Back to Selection
               </button>
             )}
             <button
               type="submit"
               disabled={!idMethod || !ninInput.trim() || isVerifyingNIN || Boolean(duplicateNINBlocked)}
-              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full font-semibold text-xs sm:text-sm transition-all ml-auto cursor-pointer disabled:opacity-50"
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-8 py-3.5 rounded-full font-semibold text-xs sm:text-sm transition-all ml-auto cursor-pointer disabled:opacity-50 flex items-center gap-2 group shadow-xs hover:shadow-md"
             >
-              {isVerifyingNIN ? 'Verifying with NIMC...' : 'Verify Identity \u00a0\u2192'}
+              <span>{isVerifyingNIN ? 'Verifying with NIMC...' : 'Verify Identity'}</span>
+              {!isVerifyingNIN && (
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              )}
             </button>
           </div>
         </form>
@@ -615,154 +656,141 @@ export function IndividualFlow({
             </p>
           </div>
 
-          {/* Phone Verification Challenge */}
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
-                  Mobile Phone Verification
-                </h3>
-                <p className="text-xs text-[var(--gray-700)] mt-0.5">
-                  Confirm possession of your registered mobile line to secure your account.
-                </p>
+          {/* Phone Verification Challenge — Hidden once OTP is verified */}
+          {!otpVerified && (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="font-display font-bold text-base text-[var(--ink)] tracking-tight">
+                    Mobile Phone Verification
+                  </h3>
+                  <p className="text-xs text-[var(--gray-700)] mt-0.5">
+                    Confirm possession of your registered mobile line to secure your account.
+                  </p>
+                </div>
+                <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800 shrink-0 self-start sm:self-auto">
+                  SMS Verification
+                </span>
               </div>
-              <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800 shrink-0 self-start sm:self-auto">
-                SMS Verification
-              </span>
-            </div>
 
-            {/* If NOT sent yet: Prominent Send Button with Masked Phone */}
-            {!otpSent && !otpVerified && (
-              <div className="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <p className="text-xs sm:text-sm text-[var(--gray-700)]">
-                  A 6-digit verification code will be sent to your registered phone:{' '}
-                  <strong className="font-mono font-semibold text-[var(--ink)] tracking-wider">
-                    {maskNIMCPhone(nimcRegisteredPhone || nimcData.registeredPhone)}
-                  </strong>
-                </p>
-                <button
-                  type="button"
-                  onClick={handleSendOTP}
-                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-6 py-2.5 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shrink-0"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Send Verification Code</span>
-                </button>
-              </div>
-            )}
-
-            {/* When Sent & Awaiting Code Entry */}
-            {otpSent && !otpVerified && !otpSuccessNotice && (
-              <div className="space-y-3.5 animate-in fade-in slide-in-from-top-2 duration-300">
-                <p className="text-xs sm:text-sm text-[var(--gray-700)]">
-                  Enter the 6-digit verification code sent to your phone{' '}
-                  <strong className="font-mono font-semibold text-[var(--ink)]">
-                    {maskNIMCPhone(nimcRegisteredPhone || nimcData.registeredPhone)}
-                  </strong>:
-                </p>
-
-                <div className="flex flex-wrap items-center gap-2.5">
-                  {/* 6-Digit Multi-Input Group */}
-                  <div className="flex items-center gap-1.5 sm:gap-2" onPaste={handleOtpPaste}>
-                    {otpDigits.map((digit, idx) => (
-                      <input
-                        key={idx}
-                        ref={(el) => { otpInputRefs.current[idx] = el }}
-                        type="text"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        maxLength={1}
-                        value={digit}
-                        disabled={isVerifyingOTP}
-                        onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
-                        onKeyDown={(e) => handleOtpDigitKeyDown(idx, e)}
-                        className="w-10 sm:w-11 h-11 text-center font-mono font-bold text-lg rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--ink)] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all disabled:opacity-50"
-                      />
-                    ))}
-                  </div>
-
-                  {/* Verify Code Button - exactly matching h-11 height */}
-                  <button
-                    type="button"
-                    onClick={handleVerifyOTP}
-                    disabled={otpDigits.join('').length < 6 || isVerifyingOTP}
-                    className="h-11 px-6 rounded-xl bg-[#1AA260] hover:bg-[#158A52] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer shrink-0"
-                  >
-                    {isVerifyingOTP ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin text-white" />
-                        <span>Verifying...</span>
-                      </>
-                    ) : (
-                      <span>Verify Code</span>
-                    )}
-                  </button>
-
-                  {/* Resend Code Button */}
+              {/* If NOT sent yet: Prominent Send Button with Masked Phone */}
+              {!otpSent && (
+                <div className="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <p className="text-xs sm:text-sm text-[var(--gray-700)]">
+                    A 6-digit verification code will be sent to your registered phone:{' '}
+                    <strong className="font-mono font-semibold text-[var(--ink)] tracking-wider">
+                      {maskNIMCPhone(nimcRegisteredPhone || nimcData.registeredPhone)}
+                    </strong>
+                  </p>
                   <button
                     type="button"
                     onClick={handleSendOTP}
-                    disabled={resendCooldown > 0 || isVerifyingOTP}
-                    className="h-11 px-3 text-xs text-[var(--gray-500)] hover:text-[var(--ink)] disabled:opacity-50 underline flex items-center cursor-pointer"
+                    className="bg-[#1AA260] hover:bg-[#158A52] text-white px-6 py-2.5 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shrink-0"
                   >
-                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend code'}
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Send Verification Code</span>
                   </button>
                 </div>
+              )}
 
-                {isVerifyingOTP && (
-                  <div className="flex items-center gap-2 text-xs text-[var(--gray-600)] dark:text-[var(--gray-400)] animate-in fade-in duration-200">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#1AA260]" />
-                    <span>Communicating with NIMC / Dojah verification gateway (approx. 3s)...</span>
-                  </div>
-                )}
-
-                {otpError && (
-                  <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
-                    <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
-                    <span>{otpError}</span>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-4 text-[11px] text-[var(--gray-500)]">
-                  <span>Validity: 5 minutes</span>
-                  <span>&bull;</span>
-                  <span>{otpAttemptsLeft} attempt(s) remaining</span>
-                </div>
-              </div>
-            )}
-
-            {/* Success Message Animation during transition */}
-            {otpSuccessNotice && (
-              <div
-                className={`p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs flex items-center gap-3 transition-all duration-300 ${
-                  isExitingNotice
-                    ? 'opacity-0 -translate-y-2'
-                    : 'opacity-100 translate-y-0 animate-in fade-in zoom-in-95'
-                }`}
-              >
-                <CheckCircle2 className="w-5 h-5 text-[#1AA260] shrink-0" />
-                <div>
-                  <span className="font-bold text-sm block">Identity Verification Successful</span>
-                  <span className="text-[var(--gray-700)] dark:text-[var(--gray-300)]">{otpSuccessNotice}</span>
-                </div>
-              </div>
-            )}
-
-            {/* Verification Confirmation Banner */}
-            {otpVerified && (
-              <div className="border border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 p-4 rounded-2xl text-xs text-[var(--ink)] flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                <CheckCircle2 className="w-5 h-5 text-[#1AA260] shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-bold text-[#1AA260] text-sm">
-                    Phone Verification Confirmed
-                  </div>
-                  <p className="text-[var(--gray-700)] mt-0.5 leading-relaxed">
-                    Identity ownership confirmed. Your verified national record has been unlocked below.
+              {/* When Sent & Awaiting Code Entry */}
+              {otpSent && !otpSuccessNotice && (
+                <div className="space-y-3.5 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <p className="text-xs sm:text-sm text-[var(--gray-700)]">
+                    Enter the 6-digit verification code sent to your phone{' '}
+                    <strong className="font-mono font-semibold text-[var(--ink)]">
+                      {maskNIMCPhone(nimcRegisteredPhone || nimcData.registeredPhone)}
+                    </strong>:
                   </p>
+
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {/* 6-Digit Multi-Input Group */}
+                    <div className="flex items-center gap-1.5 sm:gap-2" onPaste={handleOtpPaste}>
+                      {otpDigits.map((digit, idx) => (
+                        <input
+                          key={idx}
+                          ref={(el) => { otpInputRefs.current[idx] = el }}
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          maxLength={1}
+                          value={digit}
+                          disabled={isVerifyingOTP}
+                          onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
+                          onKeyDown={(e) => handleOtpDigitKeyDown(idx, e)}
+                          className="w-10 sm:w-11 h-11 text-center font-mono font-bold text-lg rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--ink)] focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 transition-all disabled:opacity-50"
+                        />
+                      ))}
+                    </div>
+
+                    {/* Verify Code Button - exactly matching h-11 height */}
+                    <button
+                      type="button"
+                      onClick={handleVerifyOTP}
+                      disabled={otpDigits.join('').length < 6 || isVerifyingOTP}
+                      className="h-11 px-6 rounded-xl bg-[#1AA260] hover:bg-[#158A52] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer shrink-0"
+                    >
+                      {isVerifyingOTP ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <span>Verifying...</span>
+                        </>
+                      ) : (
+                        <span>Verify Code</span>
+                      )}
+                    </button>
+
+                    {/* Resend Code Button */}
+                    <button
+                      type="button"
+                      onClick={handleSendOTP}
+                      disabled={resendCooldown > 0 || isVerifyingOTP}
+                      className="h-11 px-3 text-xs text-[var(--gray-500)] hover:text-[var(--ink)] disabled:opacity-50 underline flex items-center cursor-pointer"
+                    >
+                      {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend code'}
+                    </button>
+                  </div>
+
+                  {isVerifyingOTP && (
+                    <div className="flex items-center gap-2 text-xs text-[var(--gray-600)] dark:text-[var(--gray-400)] animate-in fade-in duration-200">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-[#1AA260]" />
+                      <span>Communicating with NIMC / Dojah verification gateway (approx. 3s)...</span>
+                    </div>
+                  )}
+
+                  {otpError && (
+                    <div className="p-3 border border-rose-300 bg-rose-50 text-rose-700 rounded-2xl text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
+                      <span>{otpError}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-4 text-[11px] text-[var(--gray-500)]">
+                    <span>Validity: 5 minutes</span>
+                    <span>&bull;</span>
+                    <span>{otpAttemptsLeft} attempt(s) remaining</span>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+
+              {/* Success Message Animation during transition */}
+              {otpSuccessNotice && (
+                <div
+                  className={`p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs flex items-center gap-3 transition-all duration-300 ${
+                    isExitingNotice
+                      ? 'opacity-0 -translate-y-2'
+                      : 'opacity-100 translate-y-0 animate-in fade-in zoom-in-95'
+                  }`}
+                >
+                  <CheckCircle2 className="w-5 h-5 text-[#1AA260] shrink-0" />
+                  <div>
+                    <span className="font-bold text-sm block">Identity Verification Successful</span>
+                    <span className="text-[var(--gray-700)] dark:text-[var(--gray-300)]">{otpSuccessNotice}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Revealed Verified Record & Contact Channels (SHOWN ONLY AFTER OTP IS VERIFIED) */}
           {otpVerified && (
@@ -795,7 +823,9 @@ export function IndividualFlow({
                     <span className="text-[var(--gray-500)] block text-[11px] font-semibold uppercase tracking-wider">
                       Date of Birth
                     </span>
-                    <span className="font-mono text-sm text-[var(--gray-500)] mt-0.5 block">••••-••-•• (Masked)</span>
+                    <span className="font-mono font-medium text-sm text-[var(--ink)] mt-0.5 block">
+                      {nimcData.dateOfBirth}
+                    </span>
                   </div>
                 </div>
               </div>
