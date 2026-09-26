@@ -4,421 +4,117 @@ import {
   ShieldCheck,
   ArrowRight,
   ArrowDownRight,
+  ArrowUpRight,
   Check,
   LockKeyhole,
   Sparkles,
-  Sun,
-  Moon,
   Menu,
-  X,
-  Cpu,
-  Wifi,
-  QrCode,
-  Eye,
-  EyeOff,
-  Zap,
-  CheckCircle2,
-  Lock,
-  Layers,
-  Car,
-  Wallet,
-  FileText
+  X
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
-import { useThemeStore } from '@/engine/theme-store'
-import { usePresentationStore } from '@/engine/presentation-store'
 import { useInspectorStore } from '@/engine/inspector-store'
+import { usePresentationStore } from '@/engine/presentation-store'
+import './home-landing.css'
 
-function DigitalIdentityVisual() {
-  const [activeTab, setActiveTab] = useState<'pass' | 'federation' | 'vault'>('pass')
-  const [ninRevealed, setNinRevealed] = useState(false)
-  const [simulatedService, setSimulatedService] = useState<'paykaduna' | 'kadvreg' | 'pit'>('kadvreg')
-  const [simulating, setSimulating] = useState(false)
-  const [handshakeDone, setHandshakeDone] = useState(true)
+const servicesData = [
+  { code: '01', name: 'PayKaduna', detail: 'Revenue & payments' },
+  { code: '02', name: 'KADVREG', detail: 'Vehicle licensing' },
+  { code: '03', name: 'PIT', detail: 'Personal income tax' }
+]
 
-  const handleSimulate = (svc: 'paykaduna' | 'kadvreg' | 'pit') => {
-    setSimulatedService(svc)
-    setSimulating(true)
-    setHandshakeDone(false)
-    setTimeout(() => {
-      setSimulating(false)
-      setHandshakeDone(true)
-    }, 450)
+const trustCardsData = [
+  {
+    index: '01',
+    title: 'Verify once',
+    body: 'Your National ID confirms who you are directly with NIMC—no repeated paperwork across portals.',
+    icon: ShieldCheck
+  },
+  {
+    index: '02',
+    title: 'Move freely',
+    body: 'Open every connected Kaduna service from one account, without starting a new login each time.',
+    icon: ArrowDownRight
+  },
+  {
+    index: '03',
+    title: 'Stay in control',
+    body: 'See what is connected, manage your data permissions, and keep your public records together.',
+    icon: LockKeyhole
   }
+]
 
+function LogoMark() {
   return (
-    <div className="space-y-3">
-      {/* Header Bar with 3 interactive mode pills */}
-      <div className="flex items-center justify-between text-[11px] font-bold tracking-wider px-1 text-[var(--gray-500)]">
-        <div className="flex items-center gap-1.5 uppercase tracking-widest text-[10px]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#1AA260] animate-pulse" />
-          <span>Interactive Digital Identity</span>
-        </div>
-        <div className="flex items-center gap-1 bg-[var(--paper-raised)] dark:bg-white/5 border border-[var(--line)] p-0.5 rounded-full text-[10px]">
-          {(['pass', 'federation', 'vault'] as const).map((tab, idx) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setActiveTab(tab)}
-              className={`px-2.5 py-0.5 rounded-full font-semibold transition-all cursor-pointer ${
-                activeTab === tab
-                  ? 'bg-[#1AA260] text-white shadow-2xs'
-                  : 'text-[var(--gray-500)] hover:text-[var(--ink)]'
-              }`}
-            >
-              0{idx + 1} {tab === 'pass' ? 'Smart Pass' : tab === 'federation' ? 'SSO Flow' : 'Data Vault'}
-            </button>
-          ))}
-        </div>
+    <span className="logo-mark" aria-hidden="true">
+      <span />
+      <span />
+      <span />
+      <span />
+    </span>
+  )
+}
+
+function ServiceBadge({ name, detail }: { name: string; detail: string }) {
+  return (
+    <div className="service-badge">
+      <div className="service-badge__dot" />
+      <div>
+        <p>{name}</p>
+        <span>{detail}</span>
       </div>
+      <Check size={14} strokeWidth={2.3} />
+    </div>
+  )
+}
 
-      {/* Main Visual Display Container */}
-      <div className="relative min-h-[420px] bg-gradient-to-br from-[#041E18] via-[#08352B] to-[#041E18] rounded-[28px] p-5 sm:p-6 text-white overflow-hidden shadow-[0_24px_55px_rgba(4,30,24,0.38)] border border-emerald-500/20 flex flex-col justify-between">
-        {/* Holographic Ambient Lights */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-emerald-400/10 blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full border border-emerald-400/5 pointer-events-none" />
-        </div>
-
-        {/* ── TAB 1: SMART CITIZEN PASS ── */}
-        {activeTab === 'pass' && (
-          <div className="relative z-10 flex flex-col justify-between h-full space-y-4 animate-in fade-in zoom-in-95 duration-200">
-            {/* Pass Topline */}
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 shadow-2xs">
-                  <ShieldCheck className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase font-extrabold tracking-widest text-emerald-300 block leading-tight">
-                    Kaduna Digital Pass
-                  </span>
-                  <span className="text-[9px] text-white/60 tracking-wider">
-                    Official Citizen Credential • KADIRS
-                  </span>
-                </div>
-              </div>
-
-              {/* Gold Smart Chip + Contactless Wave */}
-              <div className="flex items-center gap-2">
-                <Wifi className="w-4 h-4 text-emerald-300/80 rotate-90" />
-                <div className="w-9 h-6 rounded-md bg-gradient-to-br from-amber-200 via-amber-300 to-amber-500 border border-amber-400/80 flex items-center justify-center shadow-xs">
-                  <Cpu className="w-4 h-4 text-amber-950/80 stroke-[2]" />
-                </div>
-              </div>
-            </div>
-
-            {/* Citizen Data & Biometric Card Center */}
-            <div className="py-1 flex items-start gap-4">
-              {/* Biometric Hologram Avatar Frame */}
-              <div className="relative shrink-0">
-                <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl bg-emerald-950/80 border border-emerald-400/40 flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
-                  <div className="w-10 h-10 rounded-full bg-emerald-800/40 border border-emerald-400/30 flex items-center justify-center text-emerald-300 mb-1">
-                    <ShieldCheck className="w-6 h-6" />
-                  </div>
-                  <span className="text-[8px] font-mono uppercase tracking-widest text-emerald-200">
-                    AAL2
-                  </span>
-                </div>
-                {/* Verified Check Badge */}
-                <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#1AA260] border-2 border-[#07352C] flex items-center justify-center text-white shadow-xs">
-                  <Check className="w-3 h-3 stroke-[3]" />
-                </div>
-              </div>
-
-              {/* Citizen Details */}
-              <div className="space-y-1.5 flex-1 min-w-0">
-                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-[9px] font-bold uppercase tracking-wider text-emerald-300">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  NIMC Master Record
-                </div>
-
-                <h3 className="text-base sm:text-lg font-extrabold text-white tracking-tight truncate leading-tight">
-                  Bello Mohammed Danjuma
-                </h3>
-
-                <div className="space-y-1 text-xs">
-                  {/* NIN with reveal button */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-white/60 uppercase font-semibold">NIN:</span>
-                    <span className="font-mono font-bold text-white text-[11px] tracking-wider">
-                      {ninRevealed ? '5491 8021 3482' : '5491 •••• •••• 82'}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setNinRevealed(!ninRevealed)}
-                      className="text-white/60 hover:text-white p-0.5 cursor-pointer transition-colors"
-                      title={ninRevealed ? 'Mask NIN' : 'Reveal NIN (Demo)'}
-                    >
-                      {ninRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-
-                  {/* State TIN */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-white/60 uppercase font-semibold">State TIN:</span>
-                    <span className="font-mono text-emerald-300 font-bold text-[11px]">
-                      KD-2026-9041-A
-                    </span>
-                  </div>
-
-                  {/* Jurisdiction */}
-                  <div className="text-[10px] text-white/70">
-                    Tax Office: <span className="text-white font-medium">Kaduna North LGA</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Connected Portals Ribbon */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-2">
-              <div className="flex items-center justify-between text-[9px] uppercase font-bold tracking-widest text-emerald-300">
-                <span>Active Single Sign-On Tunnels</span>
-                <span className="text-white/60 font-mono">14 MDAs</span>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                <div className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-1.5 text-center">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                  <span className="text-[10px] font-bold text-white truncate">PayKaduna</span>
-                </div>
-                <div className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-1.5 text-center">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                  <span className="text-[10px] font-bold text-white truncate">KADVREG</span>
-                </div>
-                <div className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-1.5 text-center">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                  <span className="text-[10px] font-bold text-white truncate">PIT e-Tax</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Pass Footer */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2">
-                <QrCode className="w-5 h-5 text-emerald-300 shrink-0" />
-                <div className="text-[9px] text-white/60 leading-tight">
-                  <span className="block font-mono text-emerald-300">SEC-ID: KD-NIMC-2026</span>
-                  <span>Cryptographically Verified</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveTab('federation')}
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-400/20 hover:bg-emerald-400/30 text-emerald-300 text-[10px] font-bold border border-emerald-400/40 transition-colors cursor-pointer"
-              >
-                <span>Test SSO Flow</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ── TAB 2: LIVE SSO FEDERATION SIMULATOR ── */}
-        {activeTab === 'federation' && (
-          <div className="relative z-10 flex flex-col justify-between h-full space-y-4 animate-in fade-in zoom-in-95 duration-200">
-            {/* Topline */}
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-emerald-300 animate-pulse" />
-                <span className="text-xs font-bold text-white uppercase tracking-wider">
-                  Live SSO Handshake Simulator
-                </span>
-              </div>
-              <span className="text-[9px] font-mono text-emerald-300 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-400/30">
-                0 Passwords Required
-              </span>
-            </div>
-
-            {/* Interactive Service Selectors */}
-            <div className="space-y-2.5">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-white/70 block">
-                Select target portal to simulate 1-click token launch:
-              </span>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'paykaduna' as const, name: 'PayKaduna', icon: Wallet, desc: 'Revenue' },
-                  { id: 'kadvreg' as const, name: 'KADVREG', icon: Car, desc: 'Vehicles' },
-                  { id: 'pit' as const, name: 'PIT e-Tax', icon: FileText, desc: 'Assessments' }
-                ].map((s) => {
-                  const Icon = s.icon
-                  const isSelected = simulatedService === s.id
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => handleSimulate(s.id)}
-                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-emerald-500/20 border-emerald-400 shadow-sm'
-                          : 'bg-white/5 border-white/10 hover:bg-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-1.5">
-                        <Icon className={`w-4 h-4 ${isSelected ? 'text-emerald-300' : 'text-white/60'}`} />
-                        {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />}
-                      </div>
-                      <strong className="text-xs font-bold text-white block leading-tight">{s.name}</strong>
-                      <span className="text-[9px] text-white/50 block mt-0.5">{s.desc}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Simulated Live Token Exchange Box */}
-            <div className="bg-[#051C17] border border-emerald-500/30 rounded-2xl p-3.5 space-y-2">
-              <div className="flex items-center justify-between text-[10px] text-emerald-300 font-mono">
-                <span>Handshake Protocol: OAuth 2.0 PKCE</span>
-                <span>Latency: 0.28s</span>
-              </div>
-              <div className="flex items-center gap-3 py-1">
-                <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0 text-xs font-mono font-bold">
-                  NIN
-                </div>
-                <div className="flex-1 flex flex-col items-center">
-                  <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden relative">
-                    <div
-                      className={`h-full bg-gradient-to-r from-emerald-400 via-emerald-200 to-emerald-400 rounded-full transition-all duration-300 ${
-                        simulating ? 'w-1/2' : 'w-full'
-                      }`}
-                    />
-                  </div>
-                  <span className="text-[9px] text-emerald-400 mt-1 font-semibold flex items-center gap-1">
-                    {simulating ? 'Encrypting scoped token...' : 'Token audience verified ✓'}
-                  </span>
-                </div>
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/30 border border-emerald-400/50 flex items-center justify-center text-emerald-300 shrink-0 text-xs font-bold capitalize">
-                  {simulatedService === 'paykaduna' ? 'PK' : simulatedService === 'kadvreg' ? 'KV' : 'PIT'}
-                </div>
-              </div>
-
-              {handshakeDone && (
-                <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[10px] text-emerald-200">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Citizen authenticated automatically without login prompt.</span>
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Action */}
-            <div className="pt-2 flex items-center justify-between text-xs">
-              <button
-                type="button"
-                onClick={() => handleSimulate(simulatedService)}
-                className="px-4 py-2 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                <span>Re-trigger Handshake</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab('vault')}
-                className="text-white/60 hover:text-white text-[11px] underline cursor-pointer"
-              >
-                Inspect Data Vault →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ── TAB 3: NDPA CITIZEN PRIVACY VAULT ── */}
-        {activeTab === 'vault' && (
-          <div className="relative z-10 flex flex-col justify-between h-full space-y-4 animate-in fade-in zoom-in-95 duration-200">
-            {/* Topline */}
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-              <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-emerald-300" />
-                <span className="text-xs font-bold text-white uppercase tracking-wider">
-                  NDPA 2023 Citizen Privacy Vault
-                </span>
-              </div>
-              <span className="text-[9px] font-mono text-emerald-300 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-400/30">
-                Citizen Sovereign Control
-              </span>
-            </div>
-
-            {/* 3 Privacy Pillars */}
-            <div className="space-y-2">
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3">
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5">
-                  <ShieldCheck className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-white">NIMC Biometric Master Lock</h4>
-                  <p className="text-[10px] text-white/60 leading-relaxed mt-0.5">
-                    Your raw biometrics never touch commercial servers. Only verified cryptographic claims are validated.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3">
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5">
-                  <Layers className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-white">Data Minimization Enforced</h4>
-                  <p className="text-[10px] text-white/60 leading-relaxed mt-0.5">
-                    Vehicle portals only see vehicle records. Tax portals only see tax data. Ministries cannot cross-inspect.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3">
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5">
-                  <CheckCircle2 className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-white">Instant Consent Revocation</h4>
-                  <p className="text-[10px] text-white/60 leading-relaxed mt-0.5">
-                    Revoke access to any ministry or TSP in 1 click from your Citizen Profile at any time.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Vault Footer */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1.5 text-[10px] text-emerald-300 font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span>NDPA Statutory Compliance Active</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveTab('pass')}
-                className="text-white/60 hover:text-white text-[11px] underline cursor-pointer"
-              >
-                Back to Smart Pass →
-              </button>
-            </div>
-          </div>
-        )}
+function IdentityDiagram() {
+  return (
+    <div
+      className="identity-diagram"
+      aria-label="One verified identity connecting three Kaduna public services"
+    >
+      <div className="diagram-orbit orbit-one" />
+      <div className="diagram-orbit orbit-two" />
+      <div className="diagram-line line-one" />
+      <div className="diagram-line line-two" />
+      <div className="diagram-line line-three" />
+      <div className="diagram-node node-paykaduna">
+        <span>PK</span>
+        <small>PayKaduna</small>
       </div>
-
-      {/* Visual Card Caption */}
-      <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--gray-500)] pt-1">
-        <Sparkles className="w-3.5 h-3.5 text-[#1AA260]" />
-        <span>One secure sign-on across your Kaduna records.</span>
+      <div className="diagram-node node-kadvreg">
+        <span>KV</span>
+        <small>KADVREG</small>
+      </div>
+      <div className="diagram-node node-pit">
+        <span>PI</span>
+        <small>PIT</small>
+      </div>
+      <div className="identity-core">
+        <div className="core-ring">
+          <span className="core-dot" />
+          <span className="core-dot core-dot--two" />
+          <span className="core-dot core-dot--three" />
+          <ShieldCheck size={29} strokeWidth={1.7} />
+        </div>
+        <strong>NIN</strong>
+        <small>verified identity</small>
       </div>
     </div>
   )
 }
 
 export default function HomePage() {
-  const { theme, toggleTheme } = useThemeStore()
+  const [navOpen, setNavOpen] = useState(false)
+  const [activeStep, setActiveStep] = useState(1)
+
   const currentUser = useAuthEngine((s) => s.currentUser)
-  const openPalette = usePresentationStore((s) => s.openPalette)
   const openInspector = useInspectorStore((s) => s.openInspector)
+  const openPalette = usePresentationStore((s) => s.openPalette)
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  // Smooth scroll handler for anchor navigation
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault()
-    setMobileMenuOpen(false)
+    setNavOpen(false)
     const element = document.getElementById(id)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -426,641 +122,386 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] antialiased transition-colors selection:bg-[#1AA260]/20 selection:text-[var(--ink)]">
-      {/* ── Official Notice Bar ── */}
-      <div className="bg-[#0A2E24] text-white/90 text-xs py-2.5 px-4 border-b border-white/10">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-[#1AA260] animate-pulse shrink-0" />
-            <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-300 shrink-0">
-              Official notice
-            </span>
-            <span className="text-[11.5px] text-white/80 hidden sm:inline">
-              2026 unified tax assessments & vehicle licensing renewals are now open online.
-            </span>
-          </div>
-          <Link
-            to="/paykaduna/services"
-            className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-emerald-300 hover:text-white transition-colors shrink-0"
-          >
-            <span>Learn more</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+    <div className="site-shell">
+      {/* ── Notice Bar ── */}
+      <div className="notice-bar">
+        <div className="container notice-bar__inner">
+          <span className="notice-bar__pulse" />
+          <span>Official notice</span>
+          <p>2026 unified tax assessments &amp; vehicle licensing renewals are now open online.</p>
+          <Link to="/paykaduna/services">
+            Learn more <ArrowRight size={13} />
           </Link>
         </div>
       </div>
 
-      {/* ── Site Header / Navigation ── */}
-      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between border-b border-[var(--line)]">
-        {/* Brand */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 flex items-center justify-center text-[#1AA260] shadow-2xs group-hover:scale-105 transition-transform">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="font-display font-extrabold text-lg tracking-tight text-[var(--ink)] leading-none">
-              KADIRS
-            </div>
-            <span className="text-[9.5px] uppercase tracking-widest text-[var(--gray-500)] font-semibold block mt-1">
-              Unified Identity Gateway
-            </span>
-          </div>
-        </Link>
+      {/* ── Site Header ── */}
+      <header className="site-header container">
+        <a className="brand" href="#top" aria-label="KADIRS home">
+          <LogoMark />
+          <span className="brand__name">KADIRS</span>
+          <span className="brand__descriptor">
+            Unified Identity<br />Gateway
+          </span>
+        </a>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)]">
-          <a
-            href="#how-it-works"
-            onClick={(e) => scrollToSection(e, 'how-it-works')}
-            className="hover:text-[#1AA260] transition-colors"
-          >
+        <nav className={`main-nav ${navOpen ? 'main-nav--open' : ''}`} aria-label="Main navigation">
+          <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')}>
             How it works
           </a>
-          <a
-            href="#services"
-            onClick={(e) => scrollToSection(e, 'services')}
-            className="hover:text-[#1AA260] transition-colors"
-          >
+          <a href="#services" onClick={(e) => scrollToSection(e, 'services')}>
             Services
           </a>
-          <a
-            href="#trust"
-            onClick={(e) => scrollToSection(e, 'trust')}
-            className="hover:text-[#1AA260] transition-colors"
-          >
-            Trust & privacy
+          <a href="#trust" onClick={(e) => scrollToSection(e, 'trust')}>
+            Trust &amp; privacy
           </a>
-          <a
-            href="#support"
-            onClick={(e) => scrollToSection(e, 'support')}
-            className="hover:text-[#1AA260] transition-colors"
-          >
+          <a href="#support" onClick={(e) => scrollToSection(e, 'support')}>
             Support
           </a>
         </nav>
 
-        {/* Header Actions */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <a
-            href="#support"
-            onClick={(e) => scrollToSection(e, 'support')}
-            className="hidden sm:inline-block text-xs font-medium text-[var(--gray-500)] hover:text-[var(--ink)] transition-colors mr-1"
-          >
+        <div className="header-actions">
+          <a className="header-help" href="#support" onClick={(e) => scrollToSection(e, 'support')}>
             Need help?
           </a>
 
-          {/* Theme Toggle */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="p-2 rounded-full text-[var(--gray-500)] hover:text-[var(--ink)] hover:bg-[var(--gray-100)] dark:hover:bg-white/5 transition-colors cursor-pointer"
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400" />
-            ) : (
-              <Moon className="w-4 h-4" />
-            )}
-          </button>
-
-          {/* Sign In / Dashboard CTA */}
           {currentUser ? (
-            <Link
-              to="/paykaduna"
-              className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-            >
-              <span>Dashboard</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+            <Link className="button button--dark button--small" to="/paykaduna">
+              Dashboard <ArrowRight size={15} />
             </Link>
           ) : (
-            <Link
-              to="/auth/login"
-              className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-[#07352C] hover:bg-[#0B5B4B] dark:bg-[#1AA260] dark:hover:bg-[#158A52] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-            >
-              <span>Sign in</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+            <Link className="button button--dark button--small" to="/auth/login">
+              Sign in <ArrowRight size={15} />
             </Link>
           )}
 
-          {/* Mobile Menu Button */}
           <button
             type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-[var(--gray-500)] hover:text-[var(--ink)]"
-            aria-label="Toggle navigation"
+            className="menu-toggle"
+            onClick={() => setNavOpen((prev) => !prev)}
+            aria-label={navOpen ? 'Close navigation' : 'Open navigation'}
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {navOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </header>
 
-      {/* Mobile Nav Dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-[var(--paper-raised)] border-b border-[var(--line)] px-4 py-4 space-y-3 animate-in slide-in-from-top-2 duration-150">
-          <a
-            href="#how-it-works"
-            onClick={(e) => scrollToSection(e, 'how-it-works')}
-            className="block text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] py-1"
-          >
-            How it works
-          </a>
-          <a
-            href="#services"
-            onClick={(e) => scrollToSection(e, 'services')}
-            className="block text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] py-1"
-          >
-            Services
-          </a>
-          <a
-            href="#trust"
-            onClick={(e) => scrollToSection(e, 'trust')}
-            className="block text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] py-1"
-          >
-            Trust & privacy
-          </a>
-          <a
-            href="#support"
-            onClick={(e) => scrollToSection(e, 'support')}
-            className="block text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] py-1"
-          >
-            Support
-          </a>
-        </div>
-      )}
-
-      {/* ── Hero Section ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 lg:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
-          {/* Left Column: Copy */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Eyebrow */}
-            <div className="inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-widest text-[#1AA260]">
-              <span className="w-6 h-[1.5px] bg-[#1AA260]" />
-              <span>KADIRS CENTRAL IDENTITY GATEWAY</span>
+      {/* ── Main Content ── */}
+      <main id="top">
+        {/* Hero Section */}
+        <section className="hero container">
+          <div className="hero__copy">
+            <div className="eyebrow">
+              <span className="eyebrow__line" />
+              KADIRS central identity gateway
             </div>
 
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--ink)] leading-[1.08]">
+            <h1>
               One identity.<br />
               <em>Every</em> public service.
             </h1>
 
-            {/* Intro Copy */}
-            <p className="text-base sm:text-lg text-[var(--gray-500)] leading-relaxed max-w-xl font-normal">
+            <p className="hero__intro">
               A simpler way to access Kaduna State tax, revenue, and vehicle services.
               Verify your identity once, then move between connected portals without starting over.
             </p>
 
-            {/* Actions: Sign In placed directly beside Create Your Account */}
-            <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
-              <Link
-                to="/auth/register"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
-              >
-                <span>Create your account</span>
-                <ArrowRight className="w-4 h-4" />
+            <div className="hero__actions">
+              <Link className="button button--primary" to="/auth/register">
+                Create your account <ArrowRight size={16} />
               </Link>
-
-              <Link
-                to="/auth/login"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[var(--card-bg)] hover:bg-[var(--gray-100)] dark:hover:bg-white/10 text-[var(--ink)] text-sm font-bold border border-[var(--gray-200)] shadow-2xs hover:shadow-xs transition-all cursor-pointer"
-              >
-                <span>Sign in</span>
-                <ArrowRight className="w-4 h-4 text-[#1AA260]" />
-              </Link>
-
               <a
+                className="text-link"
                 href="#how-it-works"
                 onClick={(e) => scrollToSection(e, 'how-it-works')}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--gray-500)] hover:text-[#1AA260] transition-colors px-2 py-2 cursor-pointer"
               >
-                <span>See how it works</span>
-                <ArrowDownRight className="w-4 h-4" />
+                See how it works <ArrowDownRight size={16} />
               </a>
             </div>
 
-            {/* Verification Checks */}
-            <div className="pt-6 border-t border-[var(--line)] flex flex-wrap items-center gap-6 text-xs text-[var(--gray-700)] dark:text-[var(--gray-300)] font-medium">
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#1AA260] flex items-center justify-center text-[10px]">
-                  <Check className="w-3 h-3 stroke-[3]" />
+            <div className="hero__meta">
+              <span>
+                <span className="meta-check">
+                  <Check size={11} />
                 </span>
-                <span>NIMC verified</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#1AA260] flex items-center justify-center text-[10px]">
-                  <Check className="w-3 h-3 stroke-[3]" />
+                NIMC verified
+              </span>
+              <span>
+                <span className="meta-check">
+                  <Check size={11} />
                 </span>
-                <span>NDPA protected</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#1AA260] flex items-center justify-center text-[10px]">
-                  <Check className="w-3 h-3 stroke-[3]" />
+                NDPA protected
+              </span>
+              <span>
+                <span className="meta-check">
+                  <Check size={11} />
                 </span>
-                <span>14 connected MDAs</span>
-              </div>
+                14 connected MDAs
+              </span>
             </div>
           </div>
 
-          {/* Right Column: Creative Interactive Digital Identity Visual */}
-          <div className="lg:col-span-5">
-            <DigitalIdentityVisual />
+          <div className="hero__visual-wrap">
+            <div className="hero__visual-label">
+              Your digital identity <span>01 / 03</span>
+            </div>
+
+            <div className="hero__visual">
+              <div className="visual-topline">
+                <span>SSO / KADIRS</span>
+                <span>ACTIVE</span>
+              </div>
+
+              <IdentityDiagram />
+
+              <div className="visual-footer">
+                <div>
+                  <span className="status-dot" />
+                  <strong>Identity verified</strong>
+                  <small>Last checked just now</small>
+                </div>
+                <span className="visual-footer__arrow">
+                  <ArrowUpRight size={15} />
+                </span>
+              </div>
+            </div>
+
+            <div className="visual-note">
+              <Sparkles size={14} />
+              One secure sign-on across your Kaduna records.
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── One Gateway Strip ── */}
-      <section id="services" className="border-y border-[var(--line)] bg-[var(--paper-raised)] py-7">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <p className="text-xs uppercase font-extrabold tracking-widest text-[var(--gray-500)] shrink-0">
-              One gateway for
-            </p>
-            <div className="flex flex-wrap items-center gap-3 sm:gap-5">
-              {/* PayKaduna */}
-              <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-[var(--paper)] border border-[var(--line)] shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-[#1AA260]" />
-                <div>
-                  <p className="text-xs font-bold text-[var(--ink)]">PayKaduna</p>
-                  <span className="text-[10px] text-[var(--gray-500)]">Revenue & payments</span>
-                </div>
-                <Check className="w-3.5 h-3.5 text-[#1AA260] ml-1 stroke-[2.5]" />
+        {/* Service Strip */}
+        <section className="service-strip" id="services">
+          <div className="container service-strip__inner">
+            <p className="service-strip__label">One gateway for</p>
+            <div className="service-strip__items">
+              {servicesData.map((s) => (
+                <ServiceBadge key={s.code} name={s.name} detail={s.detail} />
+              ))}
+            </div>
+            <Link to="/paykaduna/services" className="service-strip__count">
+              + 11 more<br />connected services
+            </Link>
+          </div>
+        </section>
+
+        {/* The SSO Difference (Story Section) */}
+        <section className="section section--story" id="how-it-works">
+          <div className="container story-grid">
+            <div className="section-heading">
+              <div className="eyebrow">
+                <span className="eyebrow__line" />
+                The SSO difference
               </div>
-
-              {/* KADVREG */}
-              <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-[var(--paper)] border border-[var(--line)] shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-[#1AA260]" />
-                <div>
-                  <p className="text-xs font-bold text-[var(--ink)]">KADVREG</p>
-                  <span className="text-[10px] text-[var(--gray-500)]">Vehicle licensing</span>
-                </div>
-                <Check className="w-3.5 h-3.5 text-[#1AA260] ml-1 stroke-[2.5]" />
-              </div>
-
-              {/* PIT */}
-              <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-[var(--paper)] border border-[var(--line)] shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-[#1AA260]" />
-                <div>
-                  <p className="text-xs font-bold text-[var(--ink)]">PIT</p>
-                  <span className="text-[10px] text-[var(--gray-500)]">Personal income tax</span>
-                </div>
-                <Check className="w-3.5 h-3.5 text-[#1AA260] ml-1 stroke-[2.5]" />
-              </div>
-
-              {/* Link to all 14 services */}
-              <Link
-                to="/paykaduna/services"
-                className="text-[11px] font-bold uppercase tracking-wider text-[#1AA260] hover:text-[#158A52] flex items-center gap-1 px-3 py-2 rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
-              >
-                <span>+11 more connected services</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+              <h2>
+                SSO should feel like <em>one door,</em> not three queues.
+              </h2>
+              <p>
+                Public services work better when your identity follows you.
+                KADIRS brings your state records into one clear, secure starting point.
+              </p>
+              <Link className="text-link" to="/auth/login">
+                Experience the 1-click flow <ArrowRight size={16} />
               </Link>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ── The SSO Difference Section ── */}
-      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left Column */}
-          <div className="lg:col-span-5 space-y-5">
-            <div className="inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-widest text-[#1AA260]">
-              <span className="w-6 h-[1.5px] bg-[#1AA260]" />
-              <span>The SSO difference</span>
-            </div>
-
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[var(--ink)] leading-tight">
-              SSO should feel like <em>one door</em>, not three queues.
-            </h2>
-
-            <p className="text-sm sm:text-base text-[var(--gray-500)] leading-relaxed font-normal">
-              Public services work better when your identity follows you.
-              KADIRS brings your state records into one clear, secure starting point.
-            </p>
-
-            <div className="pt-2">
-              <Link
-                to="/auth/login"
-                className="inline-flex items-center gap-2 text-sm font-bold text-[#1AA260] hover:text-[#158A52] group"
+            <div className="step-list">
+              <div
+                className={`step-card ${activeStep === 1 ? 'step-card--active' : ''}`}
+                onClick={() => setActiveStep(1)}
+                role="button"
+                tabIndex={0}
               >
-                <span>Experience the 1-click flow</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Column: 3 Step Cards */}
-          <div className="lg:col-span-7 space-y-4">
-            {/* Step 1 */}
-            <div className="bg-[var(--card-bg)] border border-[var(--line)] rounded-[24px] p-6 sm:p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 dark:hover:border-emerald-800 transition-all flex items-center justify-between gap-5 group">
-              <div className="flex items-center gap-5 sm:gap-6">
-                <span className="text-2xl sm:text-3xl font-extrabold text-[var(--gray-400)] group-hover:text-[#1AA260] transition-colors">
-                  01
-                </span>
+                <span className="step-card__number">01</span>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-[var(--ink)] leading-snug">
-                    Sign in once
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-1 leading-relaxed">
-                    Your NIN becomes the secure key to your connected services.
-                  </p>
+                  <h3>Sign in once</h3>
+                  <p>Your NIN becomes the secure key to your connected services.</p>
                 </div>
-              </div>
-              <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] flex items-center justify-center shrink-0">
-                <LockKeyhole className="w-5 h-5" />
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="bg-[var(--card-bg)] border border-[var(--line)] rounded-[24px] p-6 sm:p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 dark:hover:border-emerald-800 transition-all flex items-center justify-between gap-5 group">
-              <div className="flex items-center gap-5 sm:gap-6">
-                <span className="text-2xl sm:text-3xl font-extrabold text-[var(--gray-400)] group-hover:text-[#1AA260] transition-colors">
-                  02
+                <span className="step-card__icon">
+                  <LockKeyhole size={18} />
                 </span>
-                <div>
-                  <h3 className="text-base sm:text-lg font-bold text-[var(--ink)] leading-snug">
-                    Records find you
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-1 leading-relaxed">
-                    Past payments, vehicle records, and tax profiles are matched automatically.
-                  </p>
-                </div>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] flex items-center justify-center shrink-0">
-                <ArrowDownRight className="w-5 h-5" />
-              </div>
-            </div>
 
-            {/* Step 3 */}
-            <div className="bg-[var(--card-bg)] border border-[var(--line)] rounded-[24px] p-6 sm:p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 dark:hover:border-emerald-800 transition-all flex items-center justify-between gap-5 group">
-              <div className="flex items-center gap-5 sm:gap-6">
-                <span className="text-2xl sm:text-3xl font-extrabold text-[var(--gray-400)] group-hover:text-[#1AA260] transition-colors">
-                  03
+              <div
+                className={`step-card ${activeStep === 2 ? 'step-card--active' : ''}`}
+                onClick={() => setActiveStep(2)}
+                role="button"
+                tabIndex={0}
+              >
+                <span className="step-card__number">02</span>
+                <div>
+                  <h3>Records find you</h3>
+                  <p>Past payments, vehicle records, and tax profiles are matched automatically.</p>
+                </div>
+                <span className="step-card__icon">
+                  <ArrowDownRight size={18} />
                 </span>
+              </div>
+
+              <div
+                className={`step-card ${activeStep === 3 ? 'step-card--active' : ''}`}
+                onClick={() => setActiveStep(3)}
+                role="button"
+                tabIndex={0}
+              >
+                <span className="step-card__number">03</span>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-[var(--ink)] leading-snug">
-                    Keep moving
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-1 leading-relaxed">
-                    Switch between services without duplicate accounts or repeated verification.
-                  </p>
+                  <h3>Keep moving</h3>
+                  <p>Switch between services without duplicate accounts or repeated verification.</p>
                 </div>
-              </div>
-              <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] flex items-center justify-center shrink-0">
-                <Check className="w-5 h-5 stroke-[2.5]" />
+                <span className="step-card__icon">
+                  <Check size={18} />
+                </span>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Built Around Trust Section ── */}
-      <section id="trust" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-[var(--line)]">
-        {/* Intro */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-12">
-          <div className="lg:col-span-7 space-y-4">
-            <div className="inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-widest text-[#1AA260]">
-              <span className="w-6 h-[1.5px] bg-[#1AA260]" />
-              <span>Built around trust</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[var(--ink)] leading-tight">
-              Less friction for you.<br />
-              <em>More clarity</em> in the system.
-            </h2>
-          </div>
-          <div className="lg:col-span-5">
-            <p className="text-sm sm:text-base text-[var(--gray-500)] leading-relaxed">
-              Every part of the gateway is designed to make public services easier to understand,
-              easier to reach, and safer to use.
-            </p>
-          </div>
-        </div>
-
-        {/* 3 Trust Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Verify once (White card) */}
-          <div className="bg-[var(--card-bg)] border border-[var(--line)] rounded-[28px] p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between hover:shadow-md transition-all">
-            <div>
-              <div className="flex items-center justify-between text-xs font-bold text-[#1AA260] mb-8">
-                <span className="text-sm">01</span>
-                <ShieldCheck className="w-5 h-5" />
+        {/* Built Around Trust Section */}
+        <section className="section section--trust" id="trust">
+          <div className="container">
+            <div className="trust-intro">
+              <div className="eyebrow">
+                <span className="eyebrow__line" />
+                Built around trust
               </div>
-              <h3 className="text-lg font-bold text-[var(--ink)] mb-2">Verify once</h3>
-              <p className="text-xs sm:text-sm text-[var(--gray-500)] leading-relaxed">
-                Your National ID confirms who you are directly with NIMC—no repeated paperwork across portals.
+              <h2>
+                Less friction for you.<br />
+                <em>More clarity</em> in the system.
+              </h2>
+              <p>
+                Every part of the gateway is designed to make public services easier to understand,
+                easier to reach, and safer to use.
               </p>
             </div>
-            <div className="mt-8 pt-4 border-t border-[var(--line)] text-[10px] uppercase font-bold tracking-widest text-[var(--gray-400)]">
-              KADIRS / SSO
+
+            <div className="trust-grid">
+              {trustCardsData.map(({ index, title, body, icon: Icon }) => (
+                <article key={index} className="trust-card">
+                  <div className="trust-card__top">
+                    <span>{index}</span>
+                    <Icon size={20} strokeWidth={1.6} />
+                  </div>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
+                  <div className="trust-card__rule" />
+                  <span className="trust-card__tag">KADIRS / SSO</span>
+                </article>
+              ))}
             </div>
           </div>
+        </section>
 
-          {/* Card 2: Move freely (Mint / Soft Emerald card) */}
-          <div className="bg-[#D8F3E5] dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800/60 rounded-[28px] p-7 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between hover:shadow-md transition-all text-[#0D3029] dark:text-emerald-100">
+        {/* Quote Section */}
+        <section className="quote-section container">
+          <div className="quote-section__mark">“</div>
+          <blockquote>
+            When identity is simple, public service can feel like it belongs to everyone.
+          </blockquote>
+          <div className="quote-section__source">
+            <span />
+            Kaduna State Internal Revenue Service
+            <span />
+            Central Identity Initiative
+          </div>
+        </section>
+
+        {/* Support Section */}
+        <section className="support-section" id="support">
+          <div className="container support-grid">
             <div>
-              <div className="flex items-center justify-between text-xs font-bold text-[#0B5B4B] dark:text-emerald-300 mb-8">
-                <span className="text-sm">02</span>
-                <ArrowDownRight className="w-5 h-5" />
+              <div className="eyebrow eyebrow--light">
+                <span className="eyebrow__line" />
+                Need a hand?
               </div>
-              <h3 className="text-lg font-bold text-[#0D3029] dark:text-white mb-2">Move freely</h3>
-              <p className="text-xs sm:text-sm text-[#28554A] dark:text-emerald-200/80 leading-relaxed">
-                Open every connected Kaduna service from one account, without starting a new login each time.
-              </p>
-            </div>
-            <div className="mt-8 pt-4 border-t border-emerald-200/80 dark:border-emerald-800/40 text-[10px] uppercase font-bold tracking-widest text-[#0B5B4B]/80 dark:text-emerald-300">
-              KADIRS / SSO
-            </div>
-          </div>
-
-          {/* Card 3: Stay in control (Deep forest green card) */}
-          <div className="bg-[#07352C] rounded-[28px] p-7 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all text-white border border-emerald-900/50">
-            <div>
-              <div className="flex items-center justify-between text-xs font-bold text-emerald-400 mb-8">
-                <span className="text-sm">03</span>
-                <LockKeyhole className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">Stay in control</h3>
-              <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
-                See what is connected, manage your data permissions, and keep your public records together.
-              </p>
-            </div>
-            <div className="mt-8 pt-4 border-t border-white/10 text-[10px] uppercase font-bold tracking-widest text-emerald-400/80">
-              KADIRS / SSO
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Quote Section ── */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center border-t border-[var(--line)]">
-        <span className="font-serif text-5xl sm:text-6xl text-[#1AA260] leading-none block">
-          “
-        </span>
-        <blockquote className="font-serif text-2xl sm:text-3xl lg:text-4xl text-[var(--ink)] leading-snug tracking-tight max-w-2xl mx-auto my-6 font-normal">
-          When identity is simple, public service can feel like it belongs to everyone.
-        </blockquote>
-        <div className="flex items-center justify-center gap-2 text-[10.5px] uppercase font-bold tracking-widest text-[var(--gray-500)]">
-          <span>Kaduna State Internal Revenue Service</span>
-          <span>&bull;</span>
-          <span>Central Identity Initiative</span>
-        </div>
-      </section>
-
-      {/* ── Need a Hand? / Support Section ── */}
-      <section id="support" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="bg-[#07352C] rounded-[32px] p-8 sm:p-12 lg:p-14 text-white relative overflow-hidden shadow-2xl border border-emerald-900/40">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            {/* Left */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-widest text-emerald-400">
-                <span className="w-6 h-[1.5px] bg-emerald-400" />
-                <span>Need a hand?</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+              <h2>
                 We’re here to help you <em>get through.</em>
               </h2>
-              <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-lg">
-                Questions about your tax assessment, vehicle title, or NIN matching? Our taxpayer support team is ready.
+              <p>
+                Questions about your tax assessment, vehicle title, or NIN matching?
+                Our taxpayer support team is ready.
               </p>
             </div>
 
-            {/* Right: Support Card */}
-            <div className="lg:col-span-5 bg-[#0B5B4B] border border-emerald-400/30 rounded-[24px] p-6 sm:p-7 space-y-5 shadow-inner">
-              {/* General Enquiries */}
-              <div className="pb-4 border-b border-white/10 space-y-1">
-                <span className="text-[10px] uppercase font-extrabold tracking-wider text-emerald-300 block">
-                  General enquiries
-                </span>
-                <strong className="text-sm sm:text-base font-bold text-white block">
-                  taxpayer.support@kadirs.gov.ng
+            <div className="support-card">
+              <div className="support-card__item">
+                <span>General enquiries</span>
+                <strong>taxpayer.support@kadirs.gov.ng</strong>
+              </div>
+
+              <div className="support-card__item">
+                <span>Helpline</span>
+                <strong>
+                  +234 800-KADIRS <small>(Toll free)</small>
                 </strong>
               </div>
 
-              {/* Helpline */}
-              <div className="pb-4 border-b border-white/10 space-y-1">
-                <span className="text-[10px] uppercase font-extrabold tracking-wider text-emerald-300 block">
-                  Helpline
-                </span>
-                <strong className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-                  <span>+234 800-KADIRS</span>
-                  <span className="text-xs font-normal text-white/70">(Toll free)</span>
-                </strong>
-              </div>
-
-              {/* Visit Support Centre */}
-              <Link
-                to="/paykaduna/services"
-                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#C1F2D9] hover:bg-emerald-200 text-[#07352C] text-xs font-bold transition-all shadow-sm cursor-pointer"
-              >
-                <span>Visit the support centre</span>
-                <ArrowRight className="w-4 h-4" />
+              <Link className="button button--mint" to="/paykaduna/services">
+                Visit the support centre <ArrowRight size={16} />
               </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       {/* ── Site Footer ── */}
-      <footer className="bg-[#051C17] text-white pt-16 pb-12 border-t border-emerald-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          {/* Top Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-            {/* Brand */}
-            <div className="md:col-span-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400">
-                  <ShieldCheck className="w-4 h-4" />
-                </div>
-                <span className="font-extrabold text-base tracking-tight text-white">KADIRS</span>
-              </div>
-              <p className="text-xs text-white/60 leading-relaxed max-w-sm">
-                Central Identity & Revenue Gateway.<br />
-                Serving Kaduna State with clarity.
-              </p>
-            </div>
-
-            {/* Citizen Portals */}
-            <div className="md:col-span-3 space-y-3">
-              <span className="text-[11px] uppercase font-bold tracking-wider text-emerald-400 block">
-                Citizen portals
-              </span>
-              <ul className="space-y-2 text-xs text-white/70">
-                <li>
-                  <Link to="/paykaduna" className="hover:text-white transition-colors">
-                    PayKaduna Revenue
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/kadvreg" className="hover:text-white transition-colors">
-                    Vehicle licensing
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/pit" className="hover:text-white transition-colors">
-                    Personal income tax
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Company */}
-            <div className="md:col-span-3 space-y-3">
-              <span className="text-[11px] uppercase font-bold tracking-wider text-emerald-400 block">
-                Company
-              </span>
-              <ul className="space-y-2 text-xs text-white/70">
-                <li>
-                  <a
-                    href="#how-it-works"
-                    onClick={(e) => scrollToSection(e, 'how-it-works')}
-                    className="hover:text-white transition-colors"
-                  >
-                    How it works
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#trust"
-                    onClick={(e) => scrollToSection(e, 'trust')}
-                    className="hover:text-white transition-colors"
-                  >
-                    Privacy & compliance
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#support"
-                    onClick={(e) => scrollToSection(e, 'support')}
-                    className="hover:text-white transition-colors"
-                  >
-                    Contact support
-                  </a>
-                </li>
-              </ul>
-            </div>
+      <footer className="site-footer">
+        <div className="container footer-grid">
+          <div className="footer-brand">
+            <a className="brand brand--footer" href="#top" aria-label="Back to top">
+              <LogoMark />
+              <span className="brand__name">KADIRS</span>
+            </a>
+            <p>
+              Central Identity &amp; Revenue Gateway.<br />
+              Serving Kaduna State with clarity.
+            </p>
           </div>
 
-          {/* Bottom Bar with Evaluator Toolbar */}
-          <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
-            <div className="flex items-center gap-3">
-              <span>© 2026 Kaduna State Internal Revenue Service</span>
-              <span>&bull;</span>
-              <span className="text-emerald-400/90 font-medium">NDPA 2023 protected • NIMC identity partner</span>
+          <div className="footer-links">
+            <div>
+              <span>Citizen portals</span>
+              <Link to="/paykaduna">PayKaduna Revenue</Link>
+              <Link to="/kadvreg">Vehicle licensing</Link>
+              <Link to="/pit">Personal income tax</Link>
             </div>
+            <div>
+              <span>Company</span>
+              <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')}>
+                How it works
+              </a>
+              <a href="#trust" onClick={(e) => scrollToSection(e, 'trust')}>
+                Privacy &amp; compliance
+              </a>
+              <a href="#support" onClick={(e) => scrollToSection(e, 'support')}>
+                Contact support
+              </a>
+            </div>
+          </div>
+        </div>
 
-            {/* Subtle Evaluator / Demo triggers */}
-            <div className="flex items-center gap-2">
+        <div className="container footer-bottom">
+          <span>© 2026 Kaduna State Internal Revenue Service</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <span>
+              NDPA 2023 protected <span className="footer-bottom__dot" /> NIMC identity partner
+            </span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', opacity: 0.65 }}>
               <button
                 type="button"
                 onClick={() => openInspector('topology')}
-                className="text-[11px] px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors cursor-pointer border border-white/10"
+                style={{ background: 'none', border: 'none', color: 'inherit', font: 'inherit', cursor: 'pointer', padding: 0 }}
               >
                 Architecture Inspector
               </button>
+              <span>•</span>
               <button
                 type="button"
                 onClick={openPalette}
-                className="text-[11px] px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors cursor-pointer border border-white/10"
+                style={{ background: 'none', border: 'none', color: 'inherit', font: 'inherit', cursor: 'pointer', padding: 0 }}
               >
                 Command Palette
               </button>
