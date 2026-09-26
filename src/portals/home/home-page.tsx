@@ -10,12 +10,402 @@ import {
   Sun,
   Moon,
   Menu,
-  X
+  X,
+  Cpu,
+  Wifi,
+  QrCode,
+  Eye,
+  EyeOff,
+  Zap,
+  CheckCircle2,
+  Lock,
+  Layers,
+  Car,
+  Wallet,
+  FileText
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useThemeStore } from '@/engine/theme-store'
 import { usePresentationStore } from '@/engine/presentation-store'
 import { useInspectorStore } from '@/engine/inspector-store'
+
+function DigitalIdentityVisual() {
+  const [activeTab, setActiveTab] = useState<'pass' | 'federation' | 'vault'>('pass')
+  const [ninRevealed, setNinRevealed] = useState(false)
+  const [simulatedService, setSimulatedService] = useState<'paykaduna' | 'kadvreg' | 'pit'>('kadvreg')
+  const [simulating, setSimulating] = useState(false)
+  const [handshakeDone, setHandshakeDone] = useState(true)
+
+  const handleSimulate = (svc: 'paykaduna' | 'kadvreg' | 'pit') => {
+    setSimulatedService(svc)
+    setSimulating(true)
+    setHandshakeDone(false)
+    setTimeout(() => {
+      setSimulating(false)
+      setHandshakeDone(true)
+    }, 450)
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Header Bar with 3 interactive mode pills */}
+      <div className="flex items-center justify-between text-[11px] font-bold tracking-wider px-1 text-[var(--gray-500)]">
+        <div className="flex items-center gap-1.5 uppercase tracking-widest text-[10px]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#1AA260] animate-pulse" />
+          <span>Interactive Digital Identity</span>
+        </div>
+        <div className="flex items-center gap-1 bg-[var(--paper-raised)] dark:bg-white/5 border border-[var(--line)] p-0.5 rounded-full text-[10px]">
+          {(['pass', 'federation', 'vault'] as const).map((tab, idx) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`px-2.5 py-0.5 rounded-full font-semibold transition-all cursor-pointer ${
+                activeTab === tab
+                  ? 'bg-[#1AA260] text-white shadow-2xs'
+                  : 'text-[var(--gray-500)] hover:text-[var(--ink)]'
+              }`}
+            >
+              0{idx + 1} {tab === 'pass' ? 'Smart Pass' : tab === 'federation' ? 'SSO Flow' : 'Data Vault'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Visual Display Container */}
+      <div className="relative min-h-[420px] bg-gradient-to-br from-[#041E18] via-[#08352B] to-[#041E18] rounded-[28px] p-5 sm:p-6 text-white overflow-hidden shadow-[0_24px_55px_rgba(4,30,24,0.38)] border border-emerald-500/20 flex flex-col justify-between">
+        {/* Holographic Ambient Lights */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-emerald-400/10 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full border border-emerald-400/5 pointer-events-none" />
+        </div>
+
+        {/* ── TAB 1: SMART CITIZEN PASS ── */}
+        {activeTab === 'pass' && (
+          <div className="relative z-10 flex flex-col justify-between h-full space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            {/* Pass Topline */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 shadow-2xs">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-extrabold tracking-widest text-emerald-300 block leading-tight">
+                    Kaduna Digital Pass
+                  </span>
+                  <span className="text-[9px] text-white/60 tracking-wider">
+                    Official Citizen Credential • KADIRS
+                  </span>
+                </div>
+              </div>
+
+              {/* Gold Smart Chip + Contactless Wave */}
+              <div className="flex items-center gap-2">
+                <Wifi className="w-4 h-4 text-emerald-300/80 rotate-90" />
+                <div className="w-9 h-6 rounded-md bg-gradient-to-br from-amber-200 via-amber-300 to-amber-500 border border-amber-400/80 flex items-center justify-center shadow-xs">
+                  <Cpu className="w-4 h-4 text-amber-950/80 stroke-[2]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Citizen Data & Biometric Card Center */}
+            <div className="py-1 flex items-start gap-4">
+              {/* Biometric Hologram Avatar Frame */}
+              <div className="relative shrink-0">
+                <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl bg-emerald-950/80 border border-emerald-400/40 flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
+                  <div className="w-10 h-10 rounded-full bg-emerald-800/40 border border-emerald-400/30 flex items-center justify-center text-emerald-300 mb-1">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <span className="text-[8px] font-mono uppercase tracking-widest text-emerald-200">
+                    AAL2
+                  </span>
+                </div>
+                {/* Verified Check Badge */}
+                <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#1AA260] border-2 border-[#07352C] flex items-center justify-center text-white shadow-xs">
+                  <Check className="w-3 h-3 stroke-[3]" />
+                </div>
+              </div>
+
+              {/* Citizen Details */}
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-[9px] font-bold uppercase tracking-wider text-emerald-300">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  NIMC Master Record
+                </div>
+
+                <h3 className="text-base sm:text-lg font-extrabold text-white tracking-tight truncate leading-tight">
+                  Bello Mohammed Danjuma
+                </h3>
+
+                <div className="space-y-1 text-xs">
+                  {/* NIN with reveal button */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-white/60 uppercase font-semibold">NIN:</span>
+                    <span className="font-mono font-bold text-white text-[11px] tracking-wider">
+                      {ninRevealed ? '5491 8021 3482' : '5491 •••• •••• 82'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setNinRevealed(!ninRevealed)}
+                      className="text-white/60 hover:text-white p-0.5 cursor-pointer transition-colors"
+                      title={ninRevealed ? 'Mask NIN' : 'Reveal NIN (Demo)'}
+                    >
+                      {ninRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+
+                  {/* State TIN */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-white/60 uppercase font-semibold">State TIN:</span>
+                    <span className="font-mono text-emerald-300 font-bold text-[11px]">
+                      KD-2026-9041-A
+                    </span>
+                  </div>
+
+                  {/* Jurisdiction */}
+                  <div className="text-[10px] text-white/70">
+                    Tax Office: <span className="text-white font-medium">Kaduna North LGA</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Connected Portals Ribbon */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-2">
+              <div className="flex items-center justify-between text-[9px] uppercase font-bold tracking-widest text-emerald-300">
+                <span>Active Single Sign-On Tunnels</span>
+                <span className="text-white/60 font-mono">14 MDAs</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-1.5 text-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  <span className="text-[10px] font-bold text-white truncate">PayKaduna</span>
+                </div>
+                <div className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-1.5 text-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  <span className="text-[10px] font-bold text-white truncate">KADVREG</span>
+                </div>
+                <div className="p-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-1.5 text-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  <span className="text-[10px] font-bold text-white truncate">PIT e-Tax</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Pass Footer */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <QrCode className="w-5 h-5 text-emerald-300 shrink-0" />
+                <div className="text-[9px] text-white/60 leading-tight">
+                  <span className="block font-mono text-emerald-300">SEC-ID: KD-NIMC-2026</span>
+                  <span>Cryptographically Verified</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveTab('federation')}
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-400/20 hover:bg-emerald-400/30 text-emerald-300 text-[10px] font-bold border border-emerald-400/40 transition-colors cursor-pointer"
+              >
+                <span>Test SSO Flow</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 2: LIVE SSO FEDERATION SIMULATOR ── */}
+        {activeTab === 'federation' && (
+          <div className="relative z-10 flex flex-col justify-between h-full space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            {/* Topline */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-emerald-300 animate-pulse" />
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  Live SSO Handshake Simulator
+                </span>
+              </div>
+              <span className="text-[9px] font-mono text-emerald-300 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-400/30">
+                0 Passwords Required
+              </span>
+            </div>
+
+            {/* Interactive Service Selectors */}
+            <div className="space-y-2.5">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-white/70 block">
+                Select target portal to simulate 1-click token launch:
+              </span>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'paykaduna' as const, name: 'PayKaduna', icon: Wallet, desc: 'Revenue' },
+                  { id: 'kadvreg' as const, name: 'KADVREG', icon: Car, desc: 'Vehicles' },
+                  { id: 'pit' as const, name: 'PIT e-Tax', icon: FileText, desc: 'Assessments' }
+                ].map((s) => {
+                  const Icon = s.icon
+                  const isSelected = simulatedService === s.id
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => handleSimulate(s.id)}
+                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-emerald-500/20 border-emerald-400 shadow-sm'
+                          : 'bg-white/5 border-white/10 hover:bg-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1.5">
+                        <Icon className={`w-4 h-4 ${isSelected ? 'text-emerald-300' : 'text-white/60'}`} />
+                        {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />}
+                      </div>
+                      <strong className="text-xs font-bold text-white block leading-tight">{s.name}</strong>
+                      <span className="text-[9px] text-white/50 block mt-0.5">{s.desc}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Simulated Live Token Exchange Box */}
+            <div className="bg-[#051C17] border border-emerald-500/30 rounded-2xl p-3.5 space-y-2">
+              <div className="flex items-center justify-between text-[10px] text-emerald-300 font-mono">
+                <span>Handshake Protocol: OAuth 2.0 PKCE</span>
+                <span>Latency: 0.28s</span>
+              </div>
+              <div className="flex items-center gap-3 py-1">
+                <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0 text-xs font-mono font-bold">
+                  NIN
+                </div>
+                <div className="flex-1 flex flex-col items-center">
+                  <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden relative">
+                    <div
+                      className={`h-full bg-gradient-to-r from-emerald-400 via-emerald-200 to-emerald-400 rounded-full transition-all duration-300 ${
+                        simulating ? 'w-1/2' : 'w-full'
+                      }`}
+                    />
+                  </div>
+                  <span className="text-[9px] text-emerald-400 mt-1 font-semibold flex items-center gap-1">
+                    {simulating ? 'Encrypting scoped token...' : 'Token audience verified ✓'}
+                  </span>
+                </div>
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/30 border border-emerald-400/50 flex items-center justify-center text-emerald-300 shrink-0 text-xs font-bold capitalize">
+                  {simulatedService === 'paykaduna' ? 'PK' : simulatedService === 'kadvreg' ? 'KV' : 'PIT'}
+                </div>
+              </div>
+
+              {handshakeDone && (
+                <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[10px] text-emerald-200">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Citizen authenticated automatically without login prompt.</span>
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Action */}
+            <div className="pt-2 flex items-center justify-between text-xs">
+              <button
+                type="button"
+                onClick={() => handleSimulate(simulatedService)}
+                className="px-4 py-2 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>Re-trigger Handshake</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('vault')}
+                className="text-white/60 hover:text-white text-[11px] underline cursor-pointer"
+              >
+                Inspect Data Vault →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 3: NDPA CITIZEN PRIVACY VAULT ── */}
+        {activeTab === 'vault' && (
+          <div className="relative z-10 flex flex-col justify-between h-full space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            {/* Topline */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <Lock className="w-4 h-4 text-emerald-300" />
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  NDPA 2023 Citizen Privacy Vault
+                </span>
+              </div>
+              <span className="text-[9px] font-mono text-emerald-300 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-400/30">
+                Citizen Sovereign Control
+              </span>
+            </div>
+
+            {/* 3 Privacy Pillars */}
+            <div className="space-y-2">
+              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">NIMC Biometric Master Lock</h4>
+                  <p className="text-[10px] text-white/60 leading-relaxed mt-0.5">
+                    Your raw biometrics never touch commercial servers. Only verified cryptographic claims are validated.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Data Minimization Enforced</h4>
+                  <p className="text-[10px] text-white/60 leading-relaxed mt-0.5">
+                    Vehicle portals only see vehicle records. Tax portals only see tax data. Ministries cannot cross-inspect.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5">
+                  <CheckCircle2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Instant Consent Revocation</h4>
+                  <p className="text-[10px] text-white/60 leading-relaxed mt-0.5">
+                    Revoke access to any ministry or TSP in 1 click from your Citizen Profile at any time.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Vault Footer */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-1.5 text-[10px] text-emerald-300 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span>NDPA Statutory Compliance Active</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveTab('pass')}
+                className="text-white/60 hover:text-white text-[11px] underline cursor-pointer"
+              >
+                Back to Smart Pass →
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Visual Card Caption */}
+      <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--gray-500)] pt-1">
+        <Sparkles className="w-3.5 h-3.5 text-[#1AA260]" />
+        <span>One secure sign-on across your Kaduna records.</span>
+      </div>
+    </div>
+  )
+}
 
 export default function HomePage() {
   const { theme, toggleTheme } = useThemeStore()
@@ -220,8 +610,8 @@ export default function HomePage() {
               Verify your identity once, then move between connected portals without starting over.
             </p>
 
-            {/* Actions */}
-            <div className="pt-2 flex flex-wrap items-center gap-4">
+            {/* Actions: Sign In placed directly beside Create Your Account */}
+            <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
               <Link
                 to="/auth/register"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
@@ -229,10 +619,19 @@ export default function HomePage() {
                 <span>Create your account</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
+
+              <Link
+                to="/auth/login"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[var(--card-bg)] hover:bg-[var(--gray-100)] dark:hover:bg-white/10 text-[var(--ink)] text-sm font-bold border border-[var(--gray-200)] shadow-2xs hover:shadow-xs transition-all cursor-pointer"
+              >
+                <span>Sign in</span>
+                <ArrowRight className="w-4 h-4 text-[#1AA260]" />
+              </Link>
+
               <a
                 href="#how-it-works"
                 onClick={(e) => scrollToSection(e, 'how-it-works')}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] hover:text-[#1AA260] transition-colors px-3 py-2 cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--gray-500)] hover:text-[#1AA260] transition-colors px-2 py-2 cursor-pointer"
               >
                 <span>See how it works</span>
                 <ArrowDownRight className="w-4 h-4" />
@@ -262,99 +661,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right Column: Digital Identity Visual Card */}
+          {/* Right Column: Creative Interactive Digital Identity Visual */}
           <div className="lg:col-span-5">
-            <div className="space-y-3">
-              {/* Card Label */}
-              <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-widest px-2 text-[var(--gray-500)]">
-                <span>Your digital identity</span>
-                <span className="text-[#1AA260]">01 / 03</span>
-              </div>
-
-              {/* The Radar / Identity Diagram Card */}
-              <div className="bg-[#07352C] rounded-[28px] p-5 sm:p-6 text-white relative overflow-hidden shadow-[0_24px_55px_rgba(7,53,44,0.35)] border border-emerald-900/40">
-                {/* Background Concentric Radar Rings */}
-                <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440px] h-[440px] rounded-full border border-emerald-400/10" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] rounded-full border border-emerald-400/5" />
-                </div>
-
-                {/* Card Topline */}
-                <div className="relative z-10 flex items-center justify-between text-[9px] uppercase font-extrabold tracking-widest text-white/60 mb-2">
-                  <span>SSO / KADIRS</span>
-                  <span className="text-emerald-400 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    ACTIVE
-                  </span>
-                </div>
-
-                {/* Identity Diagram */}
-                <div
-                  className="identity-diagram my-2"
-                  aria-label="One verified identity connecting three Kaduna public services"
-                >
-                  <div className="diagram-orbit orbit-one" />
-                  <div className="diagram-orbit orbit-two" />
-                  <div className="diagram-line line-one" />
-                  <div className="diagram-line line-two" />
-                  <div className="diagram-line line-three" />
-
-                  {/* Connected Node 1: PayKaduna */}
-                  <div className="diagram-node node-paykaduna">
-                    <span>PK</span>
-                    <small>PayKaduna</small>
-                  </div>
-
-                  {/* Connected Node 2: KADVREG */}
-                  <div className="diagram-node node-kadvreg">
-                    <span>KV</span>
-                    <small>KADVREG</small>
-                  </div>
-
-                  {/* Connected Node 3: PIT */}
-                  <div className="diagram-node node-pit">
-                    <span>PI</span>
-                    <small>PIT</small>
-                  </div>
-
-                  {/* Central Core: NIN */}
-                  <div className="identity-core">
-                    <div className="core-ring">
-                      <span className="core-dot" />
-                      <span className="core-dot core-dot--two" />
-                      <span className="core-dot core-dot--three" />
-                      <ShieldCheck className="w-7 h-7 text-[#C1F2D9]" />
-                    </div>
-                    <strong className="text-white text-base tracking-wider font-extrabold">NIN</strong>
-                    <small className="text-white/60 text-[8px] uppercase tracking-widest font-semibold mt-0.5">
-                      verified identity
-                    </small>
-                  </div>
-                </div>
-
-                {/* Visual Card Footer */}
-                <div className="relative z-10 pt-3 border-t border-white/10 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(193,242,217,0.15)]" />
-                    <div>
-                      <strong className="block text-xs font-bold text-white leading-tight">
-                        Identity verified
-                      </strong>
-                      <span className="text-[9px] text-white/50 block">Last checked just now</span>
-                    </div>
-                  </div>
-                  <div className="w-7 h-7 rounded-full border border-emerald-400/30 flex items-center justify-center text-emerald-300">
-                    <ArrowDownRight className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Visual Card Note */}
-              <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--gray-500)] pt-1">
-                <Sparkles className="w-3.5 h-3.5 text-[#1AA260]" />
-                <span>One secure sign-on across your Kaduna records.</span>
-              </div>
-            </div>
+            <DigitalIdentityVisual />
           </div>
         </div>
       </section>
