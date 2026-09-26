@@ -7,13 +7,11 @@ import {
   ArrowUpRight,
   Check,
   LockKeyhole,
-  Sparkles,
-  Menu,
-  X
+  Sparkles
 } from 'lucide-react'
-import { useAuthEngine } from '@/engine/auth-engine'
 import { useInspectorStore } from '@/engine/inspector-store'
 import { usePresentationStore } from '@/engine/presentation-store'
+import { UniversalNavbar, LogoMark } from '@/components/layout/universal-navbar'
 import './home-landing.css'
 
 const servicesData = [
@@ -43,16 +41,6 @@ const trustCardsData = [
   }
 ]
 
-function LogoMark() {
-  return (
-    <span className="logo-mark" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-      <span />
-    </span>
-  )
-}
 
 function ServiceBadge({ name, detail }: { name: string; detail: string }) {
   return (
@@ -105,16 +93,13 @@ function IdentityDiagram() {
 }
 
 export default function HomePage() {
-  const [navOpen, setNavOpen] = useState(false)
   const [activeStep, setActiveStep] = useState(1)
 
-  const currentUser = useAuthEngine((s) => s.currentUser)
   const openInspector = useInspectorStore((s) => s.openInspector)
   const openPalette = usePresentationStore((s) => s.openPalette)
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault()
-    setNavOpen(false)
     const element = document.getElementById(id)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -123,70 +108,8 @@ export default function HomePage() {
 
   return (
     <div className="site-shell">
-      {/* ── Notice Bar ── */}
-      <div className="notice-bar">
-        <div className="container notice-bar__inner">
-          <span className="notice-bar__pulse" />
-          <span>Official notice</span>
-          <p>2026 unified tax assessments &amp; vehicle licensing renewals are now open online.</p>
-          <Link to="/paykaduna/services">
-            Learn more <ArrowRight size={13} />
-          </Link>
-        </div>
-      </div>
-
-      {/* ── Site Header (Sticky Translucent) ── */}
-      <header className="site-header-sticky">
-        <div className="container site-header">
-          <a className="brand" href="#top" aria-label="KADIRS home">
-            <LogoMark />
-            <span className="brand__name">KADIRS</span>
-            <span className="brand__descriptor">
-              Unified Identity<br />Gateway
-            </span>
-          </a>
-
-          <nav className={`main-nav ${navOpen ? 'main-nav--open' : ''}`} aria-label="Main navigation">
-            <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')}>
-              How it works
-            </a>
-            <a href="#services" onClick={(e) => scrollToSection(e, 'services')}>
-              Services
-            </a>
-            <a href="#trust" onClick={(e) => scrollToSection(e, 'trust')}>
-              Trust &amp; privacy
-            </a>
-            <a href="#support" onClick={(e) => scrollToSection(e, 'support')}>
-              Support
-            </a>
-          </nav>
-
-          <div className="header-actions">
-            <a className="header-help" href="#support" onClick={(e) => scrollToSection(e, 'support')}>
-              Need help?
-            </a>
-
-            {currentUser ? (
-              <Link className="button button--dark button--small" to="/paykaduna">
-                Dashboard <ArrowRight size={15} />
-              </Link>
-            ) : (
-              <Link className="button button--dark button--small" to="/auth/login">
-                Sign in <ArrowRight size={15} />
-              </Link>
-            )}
-
-            <button
-              type="button"
-              className="menu-toggle"
-              onClick={() => setNavOpen((prev) => !prev)}
-              aria-label={navOpen ? 'Close navigation' : 'Open navigation'}
-            >
-              {navOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* ── Universal Translucent Sticky Navbar ── */}
+      <UniversalNavbar />
 
       {/* ── Main Content ── */}
       <main id="top">

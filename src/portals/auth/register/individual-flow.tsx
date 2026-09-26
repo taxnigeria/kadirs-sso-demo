@@ -93,6 +93,7 @@ export function IndividualFlow({
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [twoFactorMethod, setTwoFactorMethod] = useState<'sms' | 'totp'>('sms')
+  const [passwordStage, setPasswordStage] = useState<'password' | 'two_factor'>('password')
 
   // ==========================================
   // Step 4: Statutory NDPA 2023 Consent
@@ -1007,16 +1008,18 @@ export function IndividualFlow({
       )}
 
       {/* ================================================================ */}
-      {/* STEP 3: Security & 2-Step Verification                             */}
+      {/* STEP 3: Security & 2-Step Verification (Staged: Password -> 2FA)  */}
       {/* ================================================================ */}
       {step === 3 && (
         <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
-              Account Password &amp; 2-Step Verification
+              {passwordStage === 'password' ? 'Create Account Password' : 'Secondary Verification (2FA)'}
             </h2>
             <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
-              Create a strong password and choose how you would like to receive 2-step verification codes for sensitive state transactions.
+              {passwordStage === 'password'
+                ? 'Create a strong password to secure your single sign-on access across all Kaduna State services.'
+                : 'Choose how you would like to receive 2-step verification codes for sensitive state transactions.'}
             </p>
           </div>
 
@@ -1050,138 +1053,193 @@ export function IndividualFlow({
               </div>
             </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold text-[var(--ink)]">
-                  Account Password <span className="text-rose-500">*</span>
-                </label>
-                <span className="text-[11px] text-[var(--gray-500)]">
-                  Secures sign-in for <strong className="text-[var(--ink)] font-medium">{email || 'your account'}</strong>
-                </span>
-              </div>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Create a secure password"
-                  className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-
-              {/* Validation Checklist */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
-                <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
-                  isPasswordLongEnough
-                    ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
-                    : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
-                }`}>
-                  <span className="text-xs">{isPasswordLongEnough ? '✓' : '○'}</span>
-                  <span>8+ characters</span>
-                </div>
-                <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
-                  hasUpper
-                    ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
-                    : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
-                }`}>
-                  <span className="text-xs">{hasUpper ? '✓' : '○'}</span>
-                  <span>Uppercase</span>
-                </div>
-                <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
-                  hasLower
-                    ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
-                    : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
-                }`}>
-                  <span className="text-xs">{hasLower ? '✓' : '○'}</span>
-                  <span>Lowercase</span>
-                </div>
-                <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
-                  hasNumber
-                    ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
-                    : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
-                }`}>
-                  <span className="text-xs">{hasNumber ? '✓' : '○'}</span>
-                  <span>Number</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-[var(--ink)] mb-2">
-                Secondary Verification Method (2FA) <span className="text-rose-500">*</span>
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setTwoFactorMethod('sms')}
-                  className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
-                    twoFactorMethod === 'sms'
-                      ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
-                      : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02] dark:hover:bg-white/[0.03]'
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                    twoFactorMethod === 'sms' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] dark:bg-white/[0.08] text-[var(--gray-500)]'
-                  }`}>
-                    <Smartphone className="w-4 h-4" />
+            {/* Stage 1: Password Input and Live Requirements (2FA is hidden) */}
+            {passwordStage === 'password' ? (
+              <div className="space-y-4 animate-in fade-in duration-200">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-[var(--ink)]">
+                      Account Password <span className="text-rose-500">*</span>
+                    </label>
+                    <span className="text-[11px] text-[var(--gray-500)]">
+                      Secures sign-in for <strong className="text-[var(--ink)] font-medium">{email || 'your account'}</strong>
+                    </span>
                   </div>
-                  <div>
-                    <div className="text-sm font-semibold text-[var(--ink)]">SMS Verification Code</div>
-                    <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
-                      Instant one-time codes sent to your verified mobile number ({phone || nimcRegisteredPhone || 'NIMC Phone'}).
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Create a secure password"
+                      className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3.5 top-3 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  {/* Validation Checklist */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+                    <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                      isPasswordLongEnough
+                        ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                        : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
+                    }`}>
+                      <span className="text-xs">{isPasswordLongEnough ? '✓' : '○'}</span>
+                      <span>8+ characters</span>
+                    </div>
+                    <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                      hasUpper
+                        ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                        : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
+                    }`}>
+                      <span className="text-xs">{hasUpper ? '✓' : '○'}</span>
+                      <span>Uppercase</span>
+                    </div>
+                    <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                      hasLower
+                        ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                        : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
+                    }`}>
+                      <span className="text-xs">{hasLower ? '✓' : '○'}</span>
+                      <span>Lowercase</span>
+                    </div>
+                    <div className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                      hasNumber
+                        ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                        : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
+                    }`}>
+                      <span className="text-xs">{hasNumber ? '✓' : '○'}</span>
+                      <span>Number</span>
                     </div>
                   </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setTwoFactorMethod('totp')}
-                  className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
-                    twoFactorMethod === 'totp'
-                      ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
-                      : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02] dark:hover:bg-white/[0.03]'
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                    twoFactorMethod === 'totp' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] dark:bg-white/[0.08] text-[var(--gray-500)]'
-                  }`}>
-                    <KeyRound className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-[var(--ink)]">Authenticator App</div>
-                    <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
-                      Works offline with Google Authenticator, Microsoft Authenticator, or Apple Keychain.
+                </div>
+              </div>
+            ) : (
+              /* Stage 2: Password Confirmed Badge + 2FA Selection (Password input is hidden) */
+              <div className="space-y-5 animate-in fade-in duration-200">
+                {/* Confirmed Password Card */}
+                <div className="p-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] border border-[var(--gray-200)] flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-500)] block">
+                        Account Password Established
+                      </span>
+                      <span className="font-mono text-sm tracking-widest text-[var(--ink)] block mt-0.5">
+                        ••••••••••••
+                      </span>
                     </div>
                   </div>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setPasswordStage('password')}
+                    className="text-xs font-semibold text-[#1AA260] hover:text-[#158A52] hover:underline cursor-pointer shrink-0"
+                  >
+                    Change password &rarr;
+                  </button>
+                </div>
+
+                {/* Secondary Verification (2FA) Method Cards */}
+                <div>
+                  <label className="block text-xs font-semibold text-[var(--ink)] mb-2">
+                    Secondary Verification Method (2FA) <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setTwoFactorMethod('sms')}
+                      className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
+                        twoFactorMethod === 'sms'
+                          ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02] dark:hover:bg-white/[0.03]'
+                      }`}
+                    >
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                        twoFactorMethod === 'sms' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] dark:bg-white/[0.08] text-[var(--gray-500)]'
+                      }`}>
+                        <Smartphone className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-[var(--ink)]">SMS Verification Code</div>
+                        <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                          Instant one-time codes sent to your verified mobile number ({phone || nimcRegisteredPhone || 'NIMC Phone'}).
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setTwoFactorMethod('totp')}
+                      className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
+                        twoFactorMethod === 'totp'
+                          ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02] dark:hover:bg-white/[0.03]'
+                      }`}
+                    >
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                        twoFactorMethod === 'totp' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] dark:bg-white/[0.08] text-[var(--gray-500)]'
+                      }`}>
+                        <KeyRound className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-[var(--ink)]">Authenticator App</div>
+                        <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                          Works offline with Google Authenticator, Microsoft Authenticator, or Apple Keychain.
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="flex justify-between items-center pt-2 border-t border-[var(--gray-200)]">
-            <button
-              type="button"
-              onClick={() => changeStep(2)}
-              className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
-            >
-              &larr; Back
-            </button>
-            <button
-              type="button"
-              disabled={!isPasswordValid}
-              onClick={() => changeStep(4)}
-              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
-            >
-              Continue to Privacy Agreement &nbsp;&rarr;
-            </button>
+            {passwordStage === 'password' ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => changeStep(2)}
+                  className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
+                >
+                  &larr; Back
+                </button>
+                <button
+                  type="button"
+                  disabled={!isPasswordValid}
+                  onClick={() => setPasswordStage('two_factor')}
+                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
+                >
+                  Set Password &amp; Continue &nbsp;&rarr;
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setPasswordStage('password')}
+                  className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
+                >
+                  &larr; Back
+                </button>
+                <button
+                  type="button"
+                  onClick={() => changeStep(4)}
+                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                >
+                  Continue to Privacy Agreement &nbsp;&rarr;
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

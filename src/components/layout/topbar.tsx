@@ -5,6 +5,7 @@ import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
 import { useInspectorStore } from '@/engine/inspector-store'
 import { usePresentationStore } from '@/engine/presentation-store'
+import { LogoMark } from './universal-navbar'
 import { type PortalConfig } from './portal-branding'
 
 interface TopbarProps {
@@ -37,9 +38,7 @@ export function Topbar({ portal, hasSidebar, onToggleMobileNav }: TopbarProps) {
         )}
 
         <Link to="/" className="flex items-center gap-2 sm:gap-3 group min-w-0">
-          <div className="w-[30px] h-[30px] rounded-full border-[1.5px] border-[var(--green)] flex items-center justify-center text-[var(--green)] font-sans font-semibold text-xs tracking-tight shrink-0">
-            KD
-          </div>
+          <LogoMark />
           <div className="min-w-0">
             <div className="font-sans font-semibold text-sm sm:text-[16px] leading-tight text-[var(--ink)] tracking-tight truncate">
               Kaduna State Revenue Service

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { Topbar } from './topbar'
 import { Sidebar } from './sidebar'
+import { UniversalNavbar } from './universal-navbar'
 import { type PortalConfig } from './portal-branding'
 import { useAuthEngine } from '@/engine/auth-engine'
 
@@ -38,6 +39,19 @@ export function PortalShell({ portal, noSidebar, children }: PortalShellProps) {
 
   const hasSidebar = !noSidebar && portal.navItems.length > 0
 
+  // Public / Auth Standalone Layout: Use UniversalNavbar
+  if (noSidebar || portal.id === 'auth') {
+    return (
+      <div className="min-h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)] transition-colors w-full max-w-full">
+        <UniversalNavbar />
+        <main className="flex-1 w-full max-w-full">
+          {children ?? <Outlet />}
+        </main>
+      </div>
+    )
+  }
+
+  // Authenticated Portal Layout: Standard topbar + sidebar
   return (
     <div className="h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)] transition-colors overflow-hidden w-full max-w-full">
       <Topbar
@@ -60,3 +74,4 @@ export function PortalShell({ portal, noSidebar, children }: PortalShellProps) {
     </div>
   )
 }
+
