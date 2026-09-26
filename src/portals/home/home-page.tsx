@@ -135,54 +135,56 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── Site Header ── */}
-      <header className="site-header container">
-        <a className="brand" href="#top" aria-label="KADIRS home">
-          <LogoMark />
-          <span className="brand__name">KADIRS</span>
-          <span className="brand__descriptor">
-            Unified Identity<br />Gateway
-          </span>
-        </a>
-
-        <nav className={`main-nav ${navOpen ? 'main-nav--open' : ''}`} aria-label="Main navigation">
-          <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')}>
-            How it works
-          </a>
-          <a href="#services" onClick={(e) => scrollToSection(e, 'services')}>
-            Services
-          </a>
-          <a href="#trust" onClick={(e) => scrollToSection(e, 'trust')}>
-            Trust &amp; privacy
-          </a>
-          <a href="#support" onClick={(e) => scrollToSection(e, 'support')}>
-            Support
-          </a>
-        </nav>
-
-        <div className="header-actions">
-          <a className="header-help" href="#support" onClick={(e) => scrollToSection(e, 'support')}>
-            Need help?
+      {/* ── Site Header (Sticky Translucent) ── */}
+      <header className="site-header-sticky">
+        <div className="container site-header">
+          <a className="brand" href="#top" aria-label="KADIRS home">
+            <LogoMark />
+            <span className="brand__name">KADIRS</span>
+            <span className="brand__descriptor">
+              Unified Identity<br />Gateway
+            </span>
           </a>
 
-          {currentUser ? (
-            <Link className="button button--dark button--small" to="/paykaduna">
-              Dashboard <ArrowRight size={15} />
-            </Link>
-          ) : (
-            <Link className="button button--dark button--small" to="/auth/login">
-              Sign in <ArrowRight size={15} />
-            </Link>
-          )}
+          <nav className={`main-nav ${navOpen ? 'main-nav--open' : ''}`} aria-label="Main navigation">
+            <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')}>
+              How it works
+            </a>
+            <a href="#services" onClick={(e) => scrollToSection(e, 'services')}>
+              Services
+            </a>
+            <a href="#trust" onClick={(e) => scrollToSection(e, 'trust')}>
+              Trust &amp; privacy
+            </a>
+            <a href="#support" onClick={(e) => scrollToSection(e, 'support')}>
+              Support
+            </a>
+          </nav>
 
-          <button
-            type="button"
-            className="menu-toggle"
-            onClick={() => setNavOpen((prev) => !prev)}
-            aria-label={navOpen ? 'Close navigation' : 'Open navigation'}
-          >
-            {navOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          <div className="header-actions">
+            <a className="header-help" href="#support" onClick={(e) => scrollToSection(e, 'support')}>
+              Need help?
+            </a>
+
+            {currentUser ? (
+              <Link className="button button--dark button--small" to="/paykaduna">
+                Dashboard <ArrowRight size={15} />
+              </Link>
+            ) : (
+              <Link className="button button--dark button--small" to="/auth/login">
+                Sign in <ArrowRight size={15} />
+              </Link>
+            )}
+
+            <button
+              type="button"
+              className="menu-toggle"
+              onClick={() => setNavOpen((prev) => !prev)}
+              aria-label={navOpen ? 'Close navigation' : 'Open navigation'}
+            >
+              {navOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -395,19 +397,21 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Quote Section */}
-        <section className="quote-section container">
-          <div className="quote-section__mark">“</div>
-          <blockquote>
-            When identity is simple, public service can feel like it belongs to everyone.
-          </blockquote>
-          <div className="quote-section__source">
-            <span />
-            Kaduna State Internal Revenue Service
-            <span />
-            Central Identity Initiative
-          </div>
-        </section>
+        {/* Quote Section (Full-Bleed Editorial White) */}
+        <div className="quote-section-wrap">
+          <section className="quote-section container">
+            <div className="quote-section__mark">“</div>
+            <blockquote>
+              When identity is simple, public service can feel like it belongs to everyone.
+            </blockquote>
+            <div className="quote-section__source">
+              <span />
+              Kaduna State Internal Revenue Service
+              <span />
+              Central Identity Initiative
+            </div>
+          </section>
+        </div>
 
         {/* Support Section */}
         <section className="support-section" id="support">
