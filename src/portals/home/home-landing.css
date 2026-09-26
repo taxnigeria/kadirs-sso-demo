@@ -48,7 +48,6 @@ html {
   -webkit-font-smoothing: antialiased;
   margin: 0;
   font-family: 'Manrope', 'Plus Jakarta Sans', sans-serif;
-  overflow-x: clip;
   min-height: 100vh;
 }
 
@@ -135,6 +134,7 @@ html {
 
 /* ── Sticky Translucent Header ── */
 .site-header-sticky {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   z-index: 100;

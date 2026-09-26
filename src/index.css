@@ -299,9 +299,9 @@ h1 em, h2 em, h3 em {
   }
   html, body, #root {
     max-width: 100%;
-    overflow-x: hidden;
   }
   body {
+    overflow-x: clip;
     background: var(--paper);
     color: var(--ink);
     font-family: var(--font-sans);
