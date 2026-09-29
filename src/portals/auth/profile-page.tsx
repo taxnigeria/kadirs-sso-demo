@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import {
   ShieldCheck,
   CheckCircle2,
@@ -27,6 +27,9 @@ import { LGA_TAX_OFFICES, KADUNA_LGAS } from '@/data/lga-tax-offices'
 type ProfileTab = 'identity' | 'contact' | 'address' | 'sharing' | 'security' | 'danger'
 
 export default function ProfilePage() {
+  const [searchParams] = useSearchParams()
+  const returnUrl = searchParams.get('return_url')
+
   const currentUser = useAuthEngine((s) => s.currentUser)
   const identity = useAuthEngine((s) => s.identity)
   const updateProfile = useAuthEngine((s) => s.updateProfile)
@@ -210,7 +213,31 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
-      
+      {/* ── Partner Return Banner (e.g. from Kad Tax on Rent) ── */}
+      {returnUrl && (
+        <div className="p-4 bg-[#1AA260]/10 border border-[#1AA260]/30 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#1AA260] text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+              <Building2 className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-[var(--ink)] block">
+                Managing Profile from Connected Partner Portal
+              </span>
+              <span className="text-[11px] text-[var(--gray-600)]">
+                You navigated here from an authorized Kaduna State TSP. Updates made to your golden identity record will synchronize across all services.
+              </span>
+            </div>
+          </div>
+          <a
+            href={decodeURIComponent(returnUrl)}
+            className="px-4 py-2 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all self-start sm:self-auto cursor-pointer shadow-xs"
+          >
+            <span>&larr; Return to Application</span>
+          </a>
+        </div>
+      )}
+
       {/* ── Breadcrumb Navigation ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--gray-200)] pb-4">
         <div className="flex items-center gap-2 text-xs">
