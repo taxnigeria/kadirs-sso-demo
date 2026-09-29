@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { useInspectorStore } from '@/engine/inspector-store'
 import { usePresentationStore } from '@/engine/presentation-store'
-import { LogoMark } from '@/components/layout/universal-navbar'
+import { PayKadunaLogo } from '@/components/layout/paykaduna-logo'
 import { PayKadunaHero } from './paykaduna-hero'
 import ibsLogoImg from '@/assets/ibs-logo.png'
 import ndpcLogoImg from '@/assets/ndpc-logo.png'
@@ -225,9 +225,12 @@ export default function HomePage() {
       <footer className="site-footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <a className="brand brand--footer" href="#top" aria-label="Back to top">
-              <LogoMark />
-              <span className="brand__name">KADIRS</span>
+            <a className="brand brand--footer flex items-center gap-2" href="#top" aria-label="Back to top">
+              <PayKadunaLogo
+                markSize="md"
+                textClassName="text-[var(--ink)] dark:text-white font-black tracking-wider text-base"
+                subtitle="Central Identity & Revenue Gateway"
+              />
             </a>
             <p>
               Central Identity &amp; Revenue Gateway.<br />

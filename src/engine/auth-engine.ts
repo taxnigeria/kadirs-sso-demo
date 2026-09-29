@@ -173,6 +173,58 @@ export function checkAgencyTINRegistered(
 
 const STORAGE_KEY_AUTH = 'kadirs_sso_auth_v2'
 
+interface PersistedAuthData {
+  currentUser: CitizenProfile | null
+  identity: IdentityRecord | null
+  activePersona: PersonaType
+  isAuthenticated: boolean
+  currentToken: TokenPayload | null
+  rawTokenString: string | null
+  currentTspContext: string
+  connectedTsps: string[]
+  reconciledRecordIds: string[]
+  corporateEntities?: CorporateEntity[]
+  branches?: CorporateBranch[]
+  entityBindings?: EntityBinding[]
+  accessRequests?: BranchAccessRequest[]
+}
+
+function loadPersistedAuth(): Partial<PersistedAuthData> | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_AUTH)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function savePersistedAuth(state: Partial<AuthState>): void {
+  try {
+    const payload: PersistedAuthData = {
+      currentUser: state.currentUser ?? null,
+      identity: state.identity ?? null,
+      activePersona: state.activePersona ?? 'individual',
+      isAuthenticated: state.isAuthenticated ?? false,
+      currentToken: state.currentToken ?? null,
+      rawTokenString: state.rawTokenString ?? null,
+      currentTspContext: state.currentTspContext ?? 'paykaduna',
+      connectedTsps: state.connectedTsps ?? ['paykaduna', 'kadvreg'],
+      reconciledRecordIds: state.reconciledRecordIds ?? [],
+      corporateEntities: state.corporateEntities,
+      branches: state.branches,
+      entityBindings: state.entityBindings,
+      accessRequests: state.accessRequests
+    }
+    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(payload))
+  } catch {
+    // Ignore quota issues in demo
+  }
+}
+
+function persist(): void {
+  savePersistedAuth(useAuthEngine.getState())
+}
+
 function getInitialState() {
   const aliyu = DEMO_PERSONAS.find((p) => p.id === 'aliyu')!
   const amara = DEMO_PERSONAS.find((p) => p.id === 'amara')!
@@ -225,22 +277,24 @@ function getInitialState() {
     bindings: [initialAmaraBinding]
   }
 
+  const persisted = loadPersistedAuth()
+
   return {
-    currentUser: null as CitizenProfile | null,
-    identity: null as IdentityRecord | null,
-    activePersona: 'individual' as PersonaType,
-    isAuthenticated: false,
-    currentToken: null as TokenPayload | null,
-    rawTokenString: null as string | null,
-    currentTspContext: 'paykaduna',
-    corporateEntities: [amaraCorporate],
-    branches: amaraBranches,
-    entityBindings: [initialAmaraBinding],
-    accessRequests: [] as BranchAccessRequest[],
+    currentUser: persisted?.currentUser ?? null,
+    identity: persisted?.identity ?? null,
+    activePersona: (persisted?.activePersona as PersonaType) ?? 'individual',
+    isAuthenticated: persisted?.isAuthenticated ?? false,
+    currentToken: persisted?.currentToken ?? null,
+    rawTokenString: persisted?.rawTokenString ?? null,
+    currentTspContext: persisted?.currentTspContext ?? 'paykaduna',
+    corporateEntities: persisted?.corporateEntities ?? [amaraCorporate],
+    branches: persisted?.branches ?? amaraBranches,
+    entityBindings: persisted?.entityBindings ?? [initialAmaraBinding],
+    accessRequests: persisted?.accessRequests ?? ([] as BranchAccessRequest[]),
     activeCorporateContext: { entityId: amara.corporate!.rcNumber, branchId: 'br-amara-hq' },
     agencies: [aliyu.agency!],
-    connectedTsps: ['paykaduna', 'kadvreg'],
-    reconciledRecordIds: [] as string[],
+    connectedTsps: persisted?.connectedTsps ?? ['paykaduna', 'kadvreg'],
+    reconciledRecordIds: persisted?.reconciledRecordIds ?? ([] as string[]),
     pendingContactChange: null as PendingContactChange | null,
     pendingDeletion: null as PendingDeletion | null
   }
@@ -318,6 +372,7 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
       currentToken: tokenResult.payload,
       rawTokenString: tokenResult.raw
     })
+    persist()
 
     return {
       success: true,
@@ -332,6 +387,7 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
         ? state.reconciledRecordIds
         : [...state.reconciledRecordIds, recordId]
     }))
+    persist()
   },
 
   loginAsPersona: (personaId: string) => {
@@ -370,6 +426,7 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
       rawTokenString: tokenResult.raw,
       ...(corpContext ? { activeCorporateContext: corpContext } : {})
     })
+    persist()
   },
 
   logout: () => {
@@ -381,6 +438,12 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
         actor: user.citizenId,
         details: { sessionTerminated: true }
       })
+    }
+
+    try {
+      localStorage.removeItem(STORAGE_KEY_AUTH)
+    } catch {
+      // ignore
     }
 
     set({
@@ -440,6 +503,7 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
       rawTokenString: tokenResult.raw,
       connectedTsps: updatedConnected
     })
+    persist()
 
     return tokenResult.payload
   },
@@ -484,6 +548,7 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
       currentToken: tokenResult.payload,
       rawTokenString: tokenResult.raw
     })
+    persist()
 
     return tokenResult.payload
   },
@@ -513,6 +578,7 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
       currentToken: tokenResult.payload,
       rawTokenString: tokenResult.raw
     })
+    persist()
   },
 
   updateProfile: (updates: Partial<CitizenProfile>) => {
@@ -537,6 +603,7 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
     })
 
     set({ currentUser: updated })
+    persist()
   },
 
   registerCitizen: (identity, profileData) => {
@@ -576,6 +643,7 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
       rawTokenString: tokenResult.raw,
       connectedTsps: ['paykaduna']
     })
+    persist()
 
     return newProfile
   },

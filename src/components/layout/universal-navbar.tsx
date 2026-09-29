@@ -2,16 +2,17 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { ArrowRight, Menu, X } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
+import { PayKadunaLogo } from './paykaduna-logo'
+import paykadunaMarkImg from '@/assets/paykaduna-mark.png'
 import '@/portals/home/home-landing.css'
 
-export function LogoMark() {
+export function LogoMark({ className = '' }: { className?: string }) {
   return (
-    <span className="logo-mark" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-      <span />
-    </span>
+    <img
+      src={paykadunaMarkImg}
+      alt="PayKaduna Seal"
+      className={`h-7 w-auto object-contain shrink-0 ${className}`}
+    />
   )
 }
 
@@ -65,12 +66,12 @@ export function UniversalNavbar({ showNotice = true }: { showNotice?: boolean })
       {/* ── Sticky Translucent Header ── */}
       <header className="site-header-sticky">
         <div className="container site-header">
-          <Link className="brand" to="/" aria-label="KADIRS home">
-            <LogoMark />
-            <span className="brand__name">KADIRS</span>
-            <span className="brand__descriptor">
-              Unified Identity<br />Gateway
-            </span>
+          <Link className="brand flex items-center gap-2 group" to="/" aria-label="PayKaduna Home">
+            <PayKadunaLogo
+              markSize="md"
+              textClassName="text-[var(--ink)] dark:text-white font-black tracking-wider text-base sm:text-lg"
+              subtitle="Kaduna State Unified Platform"
+            />
           </Link>
 
           <nav className={`main-nav ${navOpen ? 'main-nav--open' : ''}`} aria-label="Main navigation">

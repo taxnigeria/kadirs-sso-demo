@@ -3,6 +3,8 @@ import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
 import { type PortalConfig } from './portal-branding'
 import { ChevronRight, X } from 'lucide-react'
+import { SidebarUserFooter } from './sidebar-user-footer'
+import { TspInvoicesModal } from '@/components/billing/tsp-invoices-modal'
 
 interface SidebarProps {
   portal: PortalConfig
@@ -58,9 +60,12 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
 
   return (
     <>
-      {/* Desktop Persistent Sidebar (No duplicate header, no connected services block) */}
-      <aside className="hidden md:flex w-60 shrink-0 h-full border-r border-[var(--gray-200)] bg-[var(--paper)] flex-col transition-colors overflow-hidden">
-        {navContent()}
+      {/* Desktop Persistent Sidebar with Fixed User Avatar Footer */}
+      <aside className="hidden md:flex w-60 shrink-0 h-full border-r border-[var(--gray-200)] bg-[var(--paper)] flex-col justify-between transition-colors overflow-hidden">
+        <div className="flex-1 overflow-y-auto min-h-0">
+          {navContent()}
+        </div>
+        <SidebarUserFooter />
       </aside>
 
       {/* Mobile Collapsible Slide-Over Drawer */}
@@ -71,7 +76,7 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
           aria-label="Navigation Menu"
           className="fixed inset-0 z-50 md:hidden bg-black/60 backdrop-blur-xs flex animate-in fade-in duration-150"
         >
-          <aside className="w-64 max-w-[80vw] h-full bg-[var(--paper)] border-r border-[var(--gray-200)] flex flex-col shadow-2xl animate-in slide-in-from-left duration-200">
+          <aside className="w-64 max-w-[80vw] h-full bg-[var(--paper)] border-r border-[var(--gray-200)] flex flex-col justify-between shadow-2xl animate-in slide-in-from-left duration-200">
             {/* Header with Close Button */}
             <div className="p-3.5 border-b border-[var(--gray-200)] flex items-center justify-between shrink-0">
               <span className="text-xs font-semibold text-[var(--ink)] uppercase tracking-wider">
@@ -88,15 +93,21 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
             </div>
 
             {/* Nav list with auto-close on selection */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto min-h-0">
               {navContent(onCloseMobile)}
             </div>
+
+            {/* User Footer */}
+            <SidebarUserFooter />
           </aside>
 
           {/* Backdrop dismiss click area */}
           <div className="flex-1" onClick={onCloseMobile} />
         </div>
       )}
+
+      {/* ── Global TSP Invoices & Revenue Assessments Modal ── */}
+      <TspInvoicesModal />
     </>
   )
 }

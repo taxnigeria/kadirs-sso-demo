@@ -23,7 +23,7 @@ import {
   AlertTriangle
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
-import paykadunaLogoImg from '@/assets/paykaduna-logo.png'
+import { PayKadunaLogo } from '@/components/layout/paykaduna-logo'
 import paykadunaHeroBg from '@/assets/paykaduna-hero-bg.jpg'
 import ibsLogoImg from '@/assets/ibs-logo.png'
 import ndpcLogoImg from '@/assets/ndpc-logo.png'
@@ -166,16 +166,15 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
       {/* ── Header / Top Navigation (Compact navbar: h-12 sm:h-14) ── */}
       <header className="relative z-20 w-full shrink-0 border-b border-white/10 backdrop-blur-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 sm:h-14 flex items-center justify-between">
-          {/* Left: Official Uploaded PayKaduna Logo */}
+          {/* Left: Official PayKaduna Emblem with Theme-Adaptive Typography */}
           <Link
             to="/"
             className="flex items-center gap-2 group transition-transform active:scale-95 shrink-0"
             aria-label="PayKaduna Home"
           >
-            <img
-              src={paykadunaLogoImg}
-              alt="PAYKADUNA"
-              className="h-6 sm:h-7 w-auto object-contain"
+            <PayKadunaLogo
+              markSize="md"
+              textClassName="text-white font-black tracking-wider text-base sm:text-lg drop-shadow-xs"
             />
           </Link>
 
@@ -296,10 +295,10 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
       <div className="relative z-40 w-full max-w-5xl mx-auto px-4 sm:px-6 text-center shrink-0 min-h-0 flex-1 flex flex-col items-center justify-center py-1 sm:py-2">
         {/* Roosevelt Quote — refined, compact & readable */}
         <div className="max-w-2xl mx-auto space-y-1 mb-2 sm:mb-3 animate-in fade-in duration-500">
-          <blockquote className="text-xs sm:text-sm md:text-base font-normal tracking-normal text-white/95 leading-snug font-sans drop-shadow-xs">
+          <blockquote className="text-xs sm:text-sm md:text-base font-normal tracking-normal text-white/95 dark:text-white leading-snug font-sans drop-shadow-xs">
             “Taxes, after all, are dues that we pay for the privileges of membership in an organized society”
           </blockquote>
-          <p className="text-[11px] sm:text-xs text-white/70 font-normal tracking-wide">
+          <p className="text-[11px] sm:text-xs text-white/70 dark:text-white/80 font-normal tracking-wide">
             -Franklin D. Roosevelt
           </p>
         </div>
@@ -308,21 +307,21 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
         <div ref={searchBoxRef} className="relative z-50 w-full max-w-lg mx-auto">
           <form
             onSubmit={handleVerifySubmit}
-            className="w-full bg-white rounded-full p-1 sm:p-1.5 shadow-xl flex items-center border border-white/40 backdrop-blur-md transition-all focus-within:ring-2 focus-within:ring-emerald-400/40"
+            className="w-full bg-white dark:bg-[#0B1E1A]/95 rounded-full p-1 sm:p-1.5 shadow-xl dark:shadow-[0_10px_35px_rgba(0,0,0,0.6)] flex items-center border border-white/40 dark:border-white/20 backdrop-blur-md transition-all focus-within:ring-2 focus-within:ring-emerald-400/40"
           >
-            <Search className="w-4 h-4 text-slate-400 ml-3 mr-1.5 shrink-0" />
+            <Search className="w-4 h-4 text-slate-400 dark:text-emerald-300/80 ml-3 mr-1.5 shrink-0" />
             <input
               type="text"
               value={verifyQuery}
               onFocus={() => setIsInputFocused(true)}
               onChange={(e) => setVerifyQuery(e.target.value)}
               placeholder="Verify Invoice, eTCC and Receipt"
-              className="w-full bg-transparent py-1 px-1.5 text-slate-900 placeholder:text-slate-400 focus:outline-none text-xs sm:text-sm font-normal"
+              className="w-full bg-transparent py-1 px-1.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none text-xs sm:text-sm font-normal"
             />
             <button
               type="submit"
               disabled={isVerifying}
-              className="bg-[#1C3A33] hover:bg-[#142A25] text-white px-5 sm:px-6 py-1.5 sm:py-2 rounded-full font-bold text-[10.5px] sm:text-xs tracking-wider uppercase transition-all shrink-0 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 disabled:opacity-75"
+              className="bg-[#1C3A33] hover:bg-[#142A25] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white px-5 sm:px-6 py-1.5 sm:py-2 rounded-full font-bold text-[10.5px] sm:text-xs tracking-wider uppercase transition-all shrink-0 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 disabled:opacity-75"
             >
               {isVerifying ? (
                 <>
@@ -337,16 +336,16 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
 
           {/* ── Autofill Popover (Appears automatically when input is active) ── */}
           {isInputFocused && (
-            <div className="absolute top-full left-0 right-0 mt-2.5 z-50 bg-white text-slate-900 rounded-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7),0_10px_25px_-5px_rgba(0,0,0,0.35),0_0_0_1px_rgba(0,0,0,0.08)] border border-slate-200 overflow-hidden text-left animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="px-3.5 py-2 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-[10.5px] font-bold text-slate-500 uppercase tracking-wider">
-                <span className="flex items-center gap-1.5 text-emerald-800">
-                  <Sparkles size={13} className="text-emerald-600" />
+            <div className="absolute top-full left-0 right-0 mt-2.5 z-50 bg-white dark:bg-[#0E2420] text-slate-900 dark:text-white rounded-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7),0_10px_25px_-5px_rgba(0,0,0,0.35),0_0_0_1px_rgba(0,0,0,0.08)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] border border-slate-200 dark:border-white/15 overflow-hidden text-left animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="px-3.5 py-2 bg-slate-50 dark:bg-black/30 border-b border-slate-100 dark:border-white/10 flex items-center justify-between text-[10.5px] font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider">
+                <span className="flex items-center gap-1.5 text-emerald-800 dark:text-emerald-400">
+                  <Sparkles size={13} className="text-emerald-600 dark:text-emerald-400" />
                   Autofill Demo Records
                 </span>
-                <span className="text-[10px] text-slate-400 font-normal">Click to fill &amp; verify</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-400 font-normal">Click to fill &amp; verify</span>
               </div>
 
-              <div className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+              <div className="divide-y divide-slate-100 dark:divide-white/10 max-h-64 overflow-y-auto">
                 {/* 1. eTCC Fatima */}
                 <button
                   type="button"
@@ -354,22 +353,22 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
                     e.preventDefault()
                     handleVerify('ETCC-2026-KAD-00847')
                   }}
-                  className="w-full px-3.5 py-2.5 flex items-center justify-between hover:bg-emerald-50/80 transition-colors text-left group cursor-pointer"
+                  className="w-full px-3.5 py-2.5 flex items-center justify-between hover:bg-emerald-50/80 dark:hover:bg-white/5 transition-colors text-left group cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
                       <FileCheck size={15} />
                     </div>
                     <div>
-                      <span className="font-mono font-bold text-xs text-slate-900 group-hover:text-emerald-700 block">
+                      <span className="font-mono font-bold text-xs text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 block">
                         ETCC-2026-KAD-00847
                       </span>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
                         Fatima Abdullahi · 3-Year Tax Clearance (eTCC)
                       </p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 shrink-0">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 shrink-0">
                     eTCC
                   </span>
                 </button>
@@ -381,22 +380,22 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
                     e.preventDefault()
                     handleVerify('RCP-2026-KV-3910')
                   }}
-                  className="w-full px-3.5 py-2.5 flex items-center justify-between hover:bg-cyan-50/80 transition-colors text-left group cursor-pointer"
+                  className="w-full px-3.5 py-2.5 flex items-center justify-between hover:bg-cyan-50/80 dark:hover:bg-white/5 transition-colors text-left group cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-cyan-100 text-cyan-700 flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-cyan-100 dark:bg-cyan-950/70 text-cyan-700 dark:text-cyan-300 flex items-center justify-center shrink-0">
                       <Car size={15} />
                     </div>
                     <div>
-                      <span className="font-mono font-bold text-xs text-slate-900 group-hover:text-cyan-700 block">
+                      <span className="font-mono font-bold text-xs text-slate-900 dark:text-white group-hover:text-cyan-700 dark:group-hover:text-cyan-400 block">
                         RCP-2026-KV-3910
                       </span>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
                         Emeka Obi · Vehicle Registration (KAD-582-AA)
                       </p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-800 shrink-0">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-300 shrink-0">
                     Receipt
                   </span>
                 </button>
@@ -408,22 +407,22 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
                     e.preventDefault()
                     handleVerify('INV-2026-KDSME-991')
                   }}
-                  className="w-full px-3.5 py-2.5 flex items-center justify-between hover:bg-amber-50/80 transition-colors text-left group cursor-pointer"
+                  className="w-full px-3.5 py-2.5 flex items-center justify-between hover:bg-amber-50/80 dark:hover:bg-white/5 transition-colors text-left group cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
                       <Building2 size={15} />
                     </div>
                     <div>
-                      <span className="font-mono font-bold text-xs text-slate-900 group-hover:text-amber-700 block">
+                      <span className="font-mono font-bold text-xs text-slate-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 block">
                         INV-2026-KDSME-991
                       </span>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
                         Yusuf Agro-Allied SME · Environmental Assessment
                       </p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 shrink-0">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 shrink-0">
                     Invoice
                   </span>
                 </button>
@@ -435,22 +434,22 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
                     e.preventDefault()
                     handleVerify('INV-FLAGGED-004')
                   }}
-                  className="w-full px-3.5 py-2.5 flex items-center justify-between hover:bg-rose-50/80 transition-colors text-left group cursor-pointer"
+                  className="w-full px-3.5 py-2.5 flex items-center justify-between hover:bg-rose-50/80 dark:hover:bg-white/5 transition-colors text-left group cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 flex items-center justify-center shrink-0">
                       <AlertTriangle size={15} />
                     </div>
                     <div>
-                      <span className="font-mono font-bold text-xs text-slate-900 group-hover:text-rose-700 block">
+                      <span className="font-mono font-bold text-xs text-slate-900 dark:text-white group-hover:text-rose-700 dark:group-hover:text-rose-400 block">
                         INV-FLAGGED-004
                       </span>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
                         Revoked Reference · Anti-Fraud Telemetry Alert
                       </p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 shrink-0">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 shrink-0">
                     Flagged
                   </span>
                 </button>
@@ -469,12 +468,12 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Col 1: Motor Vehicle Administration (White Card) */}
           <Link
             to="/kadvreg"
-            className="bg-white rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-center min-h-[96px] sm:min-h-[105px] group border border-white/80 cursor-pointer"
+            className="bg-white dark:bg-[#0B1E1A]/95 rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-center min-h-[96px] sm:min-h-[105px] group border border-white/80 dark:border-white/15 dark:hover:bg-[#0F2823] cursor-pointer"
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-300 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <Car className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <h3 className="font-bold text-[11px] sm:text-xs text-slate-800 leading-tight">
+            <h3 className="font-bold text-[11px] sm:text-xs text-slate-800 dark:text-white leading-tight">
               Motor Vehicle<br />Administration
             </h3>
           </Link>
@@ -482,7 +481,7 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Col 2: Tertiary Education (White outline icon over background) */}
           <Link
             to="/paykaduna/services"
-            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
+            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 dark:hover:bg-white/15 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
           >
             <GraduationCap className="w-6 h-6 mb-2 text-white/90 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] sm:text-xs font-normal text-white/90 leading-tight">
@@ -493,7 +492,7 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Col 3: Stamp Duty (White outline icon over background) */}
           <Link
             to="/paykaduna/services"
-            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
+            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 dark:hover:bg-white/15 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
           >
             <Stamp className="w-6 h-6 mb-2 text-white/90 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] sm:text-xs font-normal text-white/90 leading-tight">
@@ -504,7 +503,7 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Col 4: Transport (White outline icon over background) */}
           <Link
             to="/paykaduna/services"
-            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
+            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 dark:hover:bg-white/15 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
           >
             <Bus className="w-6 h-6 mb-2 text-white/90 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] sm:text-xs font-normal text-white/90 leading-tight">
@@ -515,7 +514,7 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Col 5: LGA Collections (White outline icon over background) */}
           <Link
             to="/paykaduna/services"
-            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
+            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 dark:hover:bg-white/15 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
           >
             <Landmark className="w-6 h-6 mb-2 text-white/90 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] sm:text-xs font-normal text-white/90 leading-tight">
@@ -526,7 +525,7 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Col 6: Forestry Collections (White outline icon over background) */}
           <Link
             to="/paykaduna/services"
-            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
+            className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white/10 dark:hover:bg-white/15 transition-all text-white group cursor-pointer min-h-[96px] sm:min-h-[105px]"
           >
             <Trees className="w-6 h-6 mb-2 text-white/90 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] sm:text-xs font-normal text-white/90 leading-tight">
@@ -537,12 +536,12 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Col 7: Lands & Geographic Fees (White Card) */}
           <Link
             to="/paykaduna/services"
-            className="bg-white rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-center min-h-[96px] sm:min-h-[105px] group border border-white/80 cursor-pointer"
+            className="bg-white dark:bg-[#0B1E1A]/95 rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-center min-h-[96px] sm:min-h-[105px] group border border-white/80 dark:border-white/15 dark:hover:bg-[#0F2823] cursor-pointer"
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-300 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <h3 className="font-bold text-[11px] sm:text-xs text-slate-800 leading-tight">
+            <h3 className="font-bold text-[11px] sm:text-xs text-slate-800 dark:text-white leading-tight">
               Lands &amp; Geographic<br />Fees
             </h3>
           </Link>
@@ -554,12 +553,12 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Card 1: Personal Income Tax & Direct Assessment (Col 1) */}
           <Link
             to="/pit"
-            className="bg-white rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 cursor-pointer"
+            className="bg-white dark:bg-[#0B1E1A]/95 rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 dark:border-white/15 dark:hover:bg-[#0F2823] cursor-pointer"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#C026D3] group-hover:scale-110 transition-transform shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#C026D3] dark:text-fuchsia-400 group-hover:scale-110 transition-transform shrink-0">
               <UserCheck className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
             </div>
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight line-clamp-2">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 dark:text-white leading-tight line-clamp-2">
               Personal Income Tax &amp; Direct Assessment
             </span>
           </Link>
@@ -567,12 +566,12 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Card 2: Betting, Pools & Lottery (Col 2) */}
           <Link
             to="/paykaduna/services"
-            className="bg-white rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 cursor-pointer"
+            className="bg-white dark:bg-[#0B1E1A]/95 rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 dark:border-white/15 dark:hover:bg-[#0F2823] cursor-pointer"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#EF4444] group-hover:scale-110 transition-transform shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#EF4444] dark:text-rose-400 group-hover:scale-110 transition-transform shrink-0">
               <Dices className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
             </div>
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight line-clamp-2">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 dark:text-white leading-tight line-clamp-2">
               Betting, Pools &amp; Lottery
             </span>
           </Link>
@@ -580,12 +579,12 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Card 3: Environment & Natural resources (Col 3) */}
           <Link
             to="/paykaduna/services"
-            className="bg-white rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 cursor-pointer"
+            className="bg-white dark:bg-[#0B1E1A]/95 rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 dark:border-white/15 dark:hover:bg-[#0F2823] cursor-pointer"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#06B6D4] group-hover:scale-110 transition-transform shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#06B6D4] dark:text-cyan-400 group-hover:scale-110 transition-transform shrink-0">
               <Pickaxe className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
             </div>
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight line-clamp-2">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 dark:text-white leading-tight line-clamp-2">
               Environment &amp; Natural resources
             </span>
           </Link>
@@ -593,12 +592,12 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Card 4: MDA Collection (Col 4) */}
           <Link
             to="/paykaduna/services"
-            className="bg-white rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 cursor-pointer"
+            className="bg-white dark:bg-[#0B1E1A]/95 rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 dark:border-white/15 dark:hover:bg-[#0F2823] cursor-pointer"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#8B5CF6] group-hover:scale-110 transition-transform shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#8B5CF6] dark:text-violet-400 group-hover:scale-110 transition-transform shrink-0">
               <ClipboardList className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
             </div>
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight line-clamp-2">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 dark:text-white leading-tight line-clamp-2">
               MDA Collection
             </span>
           </Link>
@@ -606,12 +605,12 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Card 5: Development Levies, Fees & Others (Col 5) */}
           <Link
             to="/paykaduna/services"
-            className="bg-white rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 cursor-pointer"
+            className="bg-white dark:bg-[#0B1E1A]/95 rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 dark:border-white/15 dark:hover:bg-[#0F2823] cursor-pointer"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#D97706] group-hover:scale-110 transition-transform shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#D97706] dark:text-amber-400 group-hover:scale-110 transition-transform shrink-0">
               <HandCoins className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
             </div>
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight line-clamp-2">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 dark:text-white leading-tight line-clamp-2">
               Development Levies, Fees &amp; Others
             </span>
           </Link>
@@ -619,12 +618,12 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Card 6: Education (Fees and licensing) (Col 6) */}
           <Link
             to="/paykaduna/services"
-            className="bg-white rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 cursor-pointer"
+            className="bg-white dark:bg-[#0B1E1A]/95 rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 dark:border-white/15 dark:hover:bg-[#0F2823] cursor-pointer"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#2563EB] group-hover:scale-110 transition-transform shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#2563EB] dark:text-blue-400 group-hover:scale-110 transition-transform shrink-0">
               <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
             </div>
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight line-clamp-2">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 dark:text-white leading-tight line-clamp-2">
               Education (Fees and licensing)
             </span>
           </Link>
@@ -632,12 +631,12 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           {/* Card 7: Withholding Tax (Col 7) */}
           <Link
             to="/paykaduna/services"
-            className="bg-white rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 cursor-pointer"
+            className="bg-white dark:bg-[#0B1E1A]/95 rounded-2xl p-3 sm:p-3.5 text-center shadow-md hover:shadow-xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-150 hover:-translate-y-0.5 flex flex-col items-center justify-between min-h-[96px] sm:min-h-[105px] group border border-white/80 dark:border-white/15 dark:hover:bg-[#0F2823] cursor-pointer"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#10B981] group-hover:scale-110 transition-transform shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#10B981] dark:text-emerald-400 group-hover:scale-110 transition-transform shrink-0">
               <Banknote className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
             </div>
-            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight line-clamp-2">
+            <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 dark:text-white leading-tight line-clamp-2">
               Withholding Tax
             </span>
           </Link>

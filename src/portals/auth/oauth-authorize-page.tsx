@@ -9,7 +9,11 @@ import {
   ArrowRight,
   ExternalLink,
   Copy,
-  Check
+  Check,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  LogIn
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
@@ -25,15 +29,28 @@ export default function OAuthAuthorizePage() {
   const clientId = searchParams.get('client_id') || 'kadtaxonrent'
   const redirectUri = searchParams.get('redirect_uri') || 'http://localhost:5174/auth/callback'
   const state = searchParams.get('state') || 'demo_state_123'
+  const requestedPersonaParam = searchParams.get('persona') || searchParams.get('persona_id')
 
   const currentUser = useAuthEngine((s) => s.currentUser)
   const identity = useAuthEngine((s) => s.identity)
+  const isAuthenticated = useAuthEngine((s) => s.isAuthenticated)
+  const login = useAuthEngine((s) => s.login)
   const loginAsPersona = useAuthEngine((s) => s.loginAsPersona)
   const tspClients = useAdminEngine((s) => s.tspClients)
   const logConsent = useEventLogger((s) => s.logConsent)
 
-  // Step state: 'confirm' (App Card & Account) | 'scopes' (Data Scopes Disclosure) | 'completed' (Demo feedback)
-  const [ceremonyStep, setCeremonyStep] = useState<'confirm' | 'scopes' | 'completed'>('confirm')
+  // Step state: 'login' (Credentials when not authenticated) | 'confirm' (App Card & Account) | 'scopes' (Data Scopes Disclosure) | 'completed' (Demo feedback)
+  const [ceremonyStep, setCeremonyStep] = useState<'login' | 'confirm' | 'scopes' | 'completed'>(() => {
+    return isAuthenticated && currentUser ? 'confirm' : 'login'
+  })
+
+  // Sign-in inputs for unauthenticated state
+  const [loginIdentifier, setLoginIdentifier] = useState('amina.yusuf@outlook.com')
+  const [loginPassword, setLoginPassword] = useState('Kaduna2024!')
+  const [showPassword, setShowPassword] = useState(false)
+  const [loginError, setLoginError] = useState<string | null>(null)
+  const [isSubmittingLogin, setIsSubmittingLogin] = useState(false)
+
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false)
   const [copiedToken, setCopiedToken] = useState(false)
   const [generatedCallbackUrl, setGeneratedCallbackUrl] = useState<string | null>(null)
@@ -51,10 +68,11 @@ export default function OAuthAuthorizePage() {
   const tspPrimaryName = nameMatch ? nameMatch[1].trim() : matchedClient.name
   const tspSubtitle = nameMatch && nameMatch[2] ? nameMatch[2].trim() : null
 
-  // Active persona resolution (Defaults to Courage Okaka for KadTaxOnRent if not logged in)
+  // Active persona resolution (Honors requested param, active currentUser, or defaults to Amina for demo)
   const activePersona =
+    (requestedPersonaParam ? DEMO_PERSONAS.find((p) => p.id === requestedPersonaParam) : null) ||
     DEMO_PERSONAS.find((p) => p.profile.email === currentUser?.email) ||
-    DEMO_PERSONAS.find((p) => p.id === 'courage') ||
+    DEMO_PERSONAS.find((p) => p.id === 'amina') ||
     DEMO_PERSONAS[0]
 
   const activeName = identity?.legalName || activePersona.identity.legalName
@@ -62,6 +80,34 @@ export default function OAuthAuthorizePage() {
   const activeCitizenId = currentUser?.citizenId || activePersona.profile.citizenId
   const activeTaxOffice = currentUser?.taxOffice || activePersona.profile.taxOffice
   const activeTin = 'KAD-TIN-8829104'
+
+  // Handle credentials login submit inside OAuth flow
+  const handlePerformLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoginError(null)
+
+    if (!loginIdentifier.trim()) {
+      setLoginError('Please enter your email, phone, or 11-digit NIN.')
+      return
+    }
+
+    setIsSubmittingLogin(true)
+    setTimeout(() => {
+      setIsSubmittingLogin(false)
+      const res = login(loginIdentifier, loginPassword)
+      if (res.success) {
+        setCeremonyStep('confirm')
+      } else {
+        setLoginError('Invalid credentials. Check your details or select a demo account below.')
+      }
+    }, 400)
+  }
+
+  // Quick 1-click Demo Taxpayer selection
+  const handleQuickDemoLogin = (personaId: string) => {
+    loginAsPersona(personaId)
+    setCeremonyStep('confirm')
+  }
 
   // Handle switching persona inside account dropdown
   const handleSelectPersona = (personaId: string) => {
@@ -81,7 +127,10 @@ export default function OAuthAuthorizePage() {
 
   // Final Authorize & Token Grant Handler
   const handleAuthorizeAndProceed = () => {
-    // 1. Build signed RS256 token scoped strictly to this TSP audience
+    // 1. Actively log in and persist this persona in the SSO session store
+    loginAsPersona(activePersona.id)
+
+    // 2. Build signed RS256 token scoped strictly to this TSP audience
     const token = buildToken({
       citizenId: activeCitizenId,
       tspId: matchedClient.id,
@@ -91,7 +140,7 @@ export default function OAuthAuthorizePage() {
       assuranceLevel: '2'
     })
 
-    // 2. Log statutory consent in central NDPA audit trail
+    // 3. Log statutory consent in central NDPA audit trail
     const consentRef = `CNS-${Date.now().toString(36).toUpperCase()}`
     logConsent({
       citizenId: activeCitizenId,
@@ -103,7 +152,7 @@ export default function OAuthAuthorizePage() {
       consentedFields: ['legalName', 'email', 'citizenId', 'stateTin', 'taxOffice']
     })
 
-    // 3. Construct OAuth callback URL with verified claims
+    // 4. Construct OAuth callback URL with verified claims
     const params = new URLSearchParams({
       code: `AUTH_CODE_KD_${Math.floor(10000 + Math.random() * 90000)}`,
       state,
@@ -113,6 +162,7 @@ export default function OAuthAuthorizePage() {
       email: activeEmail,
       tin: activeTin,
       taxOffice: activeTaxOffice,
+      personaId: activePersona.id,
       consentRef,
       verified: 'true'
     })
@@ -155,6 +205,136 @@ export default function OAuthAuthorizePage() {
             OAuth 2.0 PKCE
           </span>
         </div>
+
+        {/* ================================================================ */}
+        {/* STAGE 0: Sign In to Kaduna State SSO (When Unauthenticated)        */}
+        {/* ================================================================ */}
+        {ceremonyStep === 'login' && (
+          <div className="space-y-5 animate-in fade-in duration-200">
+            {/* Header info */}
+            <div className="flex flex-col items-center text-center pt-1 pb-1">
+              <div className="w-14 h-14 rounded-2xl bg-[#123D35] text-emerald-400 flex items-center justify-center shadow-lg ring-4 ring-emerald-500/15 mb-3">
+                <Building2 className="w-7 h-7 stroke-[2.2]" />
+              </div>
+              
+              <p className="text-xs sm:text-[13px] font-medium text-[var(--gray-500)] tracking-tight">
+                Sign in to continue to
+              </p>
+              <h1 className="font-display font-black text-2xl sm:text-[26px] text-[#0A5C36] dark:text-emerald-400 tracking-tight leading-tight mt-0.5">
+                {tspPrimaryName}
+              </h1>
+              {tspSubtitle && (
+                <div className="mt-1">
+                  <span className="inline-flex items-center text-[11px] font-semibold text-[var(--gray-600)] dark:text-[var(--gray-300)] bg-black/[0.04] dark:bg-white/[0.06] border border-[var(--input-border)] px-2.5 py-0.5 rounded-full">
+                    {tspSubtitle}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Login Form */}
+            <form onSubmit={handlePerformLogin} className="space-y-3.5 pt-1">
+              {loginError && (
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{loginError}</span>
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-600)]">
+                  Email, Phone, or NIN
+                </label>
+                <input
+                  type="text"
+                  value={loginIdentifier}
+                  onChange={(e) => setLoginIdentifier(e.target.value)}
+                  placeholder="e.g. amina.yusuf@outlook.com or 77788899900"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--input-border)] bg-black/[0.02] dark:bg-white/[0.04] text-xs text-[var(--ink)] placeholder:text-[var(--gray-400)] focus:outline-none focus:ring-2 focus:ring-[#1AA260]"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-600)]">
+                    Password
+                  </label>
+                  <span className="text-[10.5px] text-[var(--gray-400)] font-mono">Demo: Kaduna2024!</span>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="Enter password"
+                    className="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-[var(--input-border)] bg-black/[0.02] dark:bg-white/[0.04] text-xs text-[var(--ink)] placeholder:text-[var(--gray-400)] focus:outline-none focus:ring-2 focus:ring-[#1AA260]"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--gray-400)] hover:text-[var(--ink)] cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isSubmittingLogin}
+                  className="w-full py-3 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-bold transition-all cursor-pointer shadow-sm flex items-center justify-center gap-2"
+                >
+                  {isSubmittingLogin ? (
+                    <span>Authenticating...</span>
+                  ) : (
+                    <>
+                      <span>Sign In &amp; Continue</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            {/* Quick Demo Sign-In Picker (One-Click) */}
+            <div className="pt-2 border-t border-[var(--gray-200)] space-y-2">
+              <div className="flex items-center justify-between text-[11px] text-[var(--gray-500)] font-semibold uppercase tracking-wider">
+                <span>Or Select Demo Taxpayer:</span>
+                <span className="text-[#1AA260] text-[10px] font-bold">1-Click Demo</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 max-h-44 overflow-y-auto pr-0.5">
+                {DEMO_PERSONAS.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => handleQuickDemoLogin(p.id)}
+                    className="p-2 rounded-xl border border-[var(--input-border)] bg-black/[0.02] dark:bg-white/[0.04] hover:bg-[#1AA260]/10 hover:border-[#1AA260]/40 text-left transition-all group cursor-pointer"
+                  >
+                    <div className="text-xs font-bold text-[var(--ink)] group-hover:text-[#1AA260] truncate">
+                      {p.name}
+                    </div>
+                    <div className="text-[10px] text-[var(--gray-500)] truncate">
+                      {p.profile.email}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="text-xs text-[var(--gray-500)] hover:text-[var(--ink)] hover:underline cursor-pointer"
+              >
+                Cancel and return to {tspPrimaryName}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ================================================================ */}
         {/* STAGE 1: Confirm TSP & Select Account (Google Sign-In Style)       */}
@@ -229,16 +409,16 @@ export default function OAuthAuthorizePage() {
 
               {/* Persona Switcher Dropdown */}
               {isAccountDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--card-bg)] border border-[var(--input-border)] rounded-2xl shadow-xl p-2 z-50 space-y-1 animate-in fade-in duration-150">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--card-bg)] border border-[var(--input-border)] rounded-2xl shadow-xl p-2 z-50 space-y-1 animate-in fade-in duration-150 max-h-64 overflow-y-auto">
                   <div className="px-3 py-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-[var(--gray-500)]">
                     Switch Demo Taxpayer Account
                   </div>
-                  {DEMO_PERSONAS.slice(0, 4).map((p) => (
+                  {DEMO_PERSONAS.map((p) => (
                     <button
                       key={p.id}
                       type="button"
                       onClick={() => handleSelectPersona(p.id)}
-                      className={`w-full p-2.5 rounded-xl text-left transition-colors flex items-center justify-between gap-2 text-xs ${
+                      className={`w-full p-2.5 rounded-xl text-left transition-colors flex items-center justify-between gap-2 text-xs cursor-pointer ${
                         p.profile.email === activeEmail
                           ? 'bg-[#1AA260]/10 text-[#1AA260] font-semibold'
                           : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)]'
@@ -253,6 +433,19 @@ export default function OAuthAuthorizePage() {
                       {p.profile.email === activeEmail && <Check className="w-4 h-4 shrink-0" />}
                     </button>
                   ))}
+
+                  {/* Switch to login form */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAccountDropdownOpen(false)
+                      setCeremonyStep('login')
+                    }}
+                    className="w-full p-2.5 rounded-xl text-left border-t border-[var(--input-border)] text-xs text-[#1AA260] font-semibold hover:bg-black/[0.04] dark:hover:bg-white/[0.06] flex items-center gap-2 cursor-pointer mt-1"
+                  >
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>Use another account / Sign in with credentials &rarr;</span>
+                  </button>
                 </div>
               )}
             </div>

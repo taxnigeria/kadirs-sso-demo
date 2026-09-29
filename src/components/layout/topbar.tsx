@@ -5,7 +5,7 @@ import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
 import { useInspectorStore } from '@/engine/inspector-store'
 import { usePresentationStore } from '@/engine/presentation-store'
-import { LogoMark } from './universal-navbar'
+import { PayKadunaLogo } from './paykaduna-logo'
 import { BranchSwitcher } from '@/components/corporate/branch-switcher'
 import { type PortalConfig } from './portal-branding'
 
@@ -38,16 +38,12 @@ export function Topbar({ portal, hasSidebar, onToggleMobileNav }: TopbarProps) {
           </button>
         )}
 
-        <Link to="/" className="flex items-center gap-2 sm:gap-3 group min-w-0">
-          <LogoMark />
-          <div className="min-w-0">
-            <div className="font-sans font-semibold text-sm sm:text-[16px] leading-tight text-[var(--ink)] tracking-tight truncate">
-              Kaduna State Revenue Service
-            </div>
-            <span className="hidden sm:block font-sans font-normal text-[11.5px] text-[var(--ink-soft)] mt-0.5 truncate">
-              Unified Identity &amp; Access Platform &mdash; Auth 2.0
-            </span>
-          </div>
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 group min-w-0" aria-label="PayKaduna Home">
+          <PayKadunaLogo
+            markSize="md"
+            textClassName="text-[var(--ink)] dark:text-white font-black tracking-wider text-sm sm:text-[15px]"
+            subtitle="Kaduna State Revenue Service · Auth 2.0"
+          />
         </Link>
 
         {/* Portal Breadcrumb / Identifier */}
