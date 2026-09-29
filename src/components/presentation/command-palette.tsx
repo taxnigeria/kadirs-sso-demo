@@ -18,12 +18,14 @@ import {
   ShieldAlert,
   Layers,
   Sliders,
-  Check
+  Check,
+  LogOut
 } from 'lucide-react'
 import { usePresentationStore } from '@/engine/presentation-store'
 import { useInspectorStore } from '@/engine/inspector-store'
 import { useThemeStore } from '@/engine/theme-store'
 import { useAdminEngine } from '@/engine/admin-engine'
+import { useAuthEngine } from '@/engine/auth-engine'
 import { DEMO_PERSONAS } from '@/data/personas'
 import { DEMO_ADMIN_STAFF } from '@/engine/admin-engine'
 import { toast } from 'sonner'
@@ -50,10 +52,14 @@ export function CommandPalette() {
   const switchCitizenPersona = usePresentationStore((s) => s.switchCitizenPersona)
   const switchAdminStaff = usePresentationStore((s) => s.switchAdminStaff)
   const resetAllDemoData = usePresentationStore((s) => s.resetAllDemoData)
+  const clearActiveSession = usePresentationStore((s) => s.clearActiveSession)
 
   const theme = useThemeStore((s) => s.theme)
   const toggleTheme = useThemeStore((s) => s.toggleTheme)
   const currentAdmin = useAdminEngine((s) => s.currentAdmin)
+  const currentUser = useAuthEngine((s) => s.currentUser)
+  const identity = useAuthEngine((s) => s.identity)
+  const isAuthenticated = useAuthEngine((s) => s.isAuthenticated)
 
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<CategoryFilter>('all')
@@ -228,6 +234,41 @@ export function CommandPalette() {
     })
 
     // 4. System & Diagnostic Actions
+    const hasActiveSession = Boolean(currentUser || isAuthenticated || currentAdmin)
+    const activeUserName = identity?.legalName || currentUser?.email || currentAdmin?.name || null
+
+    items.push({
+      id: 'action-clear-session',
+      category: 'actions',
+      title: hasActiveSession
+        ? `Sign Out / Clear Active Session (${activeUserName})`
+        : 'Clear Logged-in Session & Auth Cache',
+      subtitle: hasActiveSession
+        ? `Terminate active session for ${activeUserName}, revoke local tokens, and return to guest state`
+        : 'Purge all active citizen and admin session tokens, local storage, and cached auth credentials',
+      badge: hasActiveSession ? 'Active Session' : 'Auth Action',
+      badgeColor: hasActiveSession
+        ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+        : 'bg-[var(--line-soft)] text-[var(--ink-soft)] border-[var(--line)]',
+      icon: LogOut,
+      action: () => clearActiveSession(navigate),
+      keywords: [
+        'logout',
+        'signout',
+        'sign out',
+        'log out',
+        'clear',
+        'clear session',
+        'session',
+        'exit',
+        'disconnect',
+        'leave',
+        'unauth',
+        'purge',
+        'guest'
+      ]
+    })
+
     items.push({
       id: 'action-inspector',
       category: 'actions',
@@ -283,7 +324,20 @@ export function CommandPalette() {
     })
 
     return items
-  }, [navigate, switchCitizenPersona, switchAdminStaff, resetAllDemoData, closePalette, currentAdmin, theme, toggleTheme])
+  }, [
+    navigate,
+    switchCitizenPersona,
+    switchAdminStaff,
+    resetAllDemoData,
+    clearActiveSession,
+    closePalette,
+    currentAdmin,
+    currentUser,
+    isAuthenticated,
+    identity,
+    theme,
+    toggleTheme
+  ])
 
   // Filter items by search query and category tab
   const filteredItems = useMemo(() => {
@@ -376,29 +430,43 @@ export function CommandPalette() {
           )}
         </div>
 
-        {/* Filter Category Pills */}
-        <div className="flex items-center gap-1.5 px-4 py-2 border-b border-[var(--line)] bg-[var(--paper)] overflow-x-auto text-xs shrink-0">
-          {(
-            [
-              { id: 'all', label: 'All Items' },
-              { id: 'citizens', label: 'Citizens & Entities' },
-              { id: 'admins', label: 'Admin Officers' },
-              { id: 'portals', label: 'Portals' },
-              { id: 'actions', label: 'Actions' }
-            ] as const
-          ).map((t) => (
+        {/* Filter Category Pills & Quick Session State */}
+        <div className="flex items-center justify-between gap-1.5 px-4 py-2 border-b border-[var(--line)] bg-[var(--paper)] overflow-x-auto text-xs shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
+            {(
+              [
+                { id: 'all', label: 'All Items' },
+                { id: 'citizens', label: 'Citizens & Entities' },
+                { id: 'admins', label: 'Admin Officers' },
+                { id: 'portals', label: 'Portals' },
+                { id: 'actions', label: 'Actions' }
+              ] as const
+            ).map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setFilter(t.id)}
+                className={`px-2.5 py-1 rounded-full font-medium transition-colors cursor-pointer shrink-0 ${
+                  filter === t.id
+                    ? 'bg-[var(--green)] text-white'
+                    : 'bg-[var(--line-soft)] text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--line)]'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {(currentUser || isAuthenticated || currentAdmin) && (
             <button
-              key={t.id}
-              onClick={() => setFilter(t.id)}
-              className={`px-2.5 py-1 rounded-full font-medium transition-colors cursor-pointer shrink-0 ${
-                filter === t.id
-                  ? 'bg-[var(--green)] text-white'
-                  : 'bg-[var(--line-soft)] text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--line)]'
-              }`}
+              type="button"
+              onClick={() => clearActiveSession(navigate)}
+              title="Terminate active session and return to guest state"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all cursor-pointer shrink-0 ml-auto"
             >
-              {t.label}
+              <LogOut className="w-3 h-3" />
+              <span>Sign Out ({currentUser?.email?.split('@')[0] || currentAdmin?.name?.split(' ')[0] || 'User'})</span>
             </button>
-          ))}
+          )}
         </div>
 
         {/* Items List */}

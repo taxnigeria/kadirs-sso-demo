@@ -15,6 +15,9 @@ interface PresentationState {
   // Orchestrated reset
   resetAllDemoData: (navigate?: (path: string) => void) => void
 
+  // Session management
+  clearActiveSession: (navigate?: (path: string) => void) => void
+
   // Persona switching actions
   switchCitizenPersona: (personaId: string, navigate: (path: string) => void) => void
   switchAdminStaff: (staffId: string, navigate: (path: string) => void) => Promise<void>
@@ -55,6 +58,57 @@ export const usePresentationStore = create<PresentationState>((set, get) => ({
     })
 
     // 5. Clean redirect if navigate callback is provided
+    if (navigate) {
+      navigate('/')
+    }
+  },
+
+  clearActiveSession: (navigate) => {
+    const currentCitizen = useAuthEngine.getState().currentUser
+    const currentAdmin = useAdminEngine.getState().currentAdmin
+
+    // 1. Terminate citizen session
+    if (useAuthEngine.getState().isAuthenticated || currentCitizen) {
+      useAuthEngine.getState().logout()
+    }
+
+    // 2. Terminate admin session
+    if (currentAdmin) {
+      useAdminEngine.getState().logoutAdmin()
+    }
+
+    // 3. Purge storage keys
+    try {
+      localStorage.removeItem('kadirs_sso_auth_v2')
+      localStorage.removeItem('kadtax_session')
+      sessionStorage.clear()
+    } catch {
+      // Storage access safety
+    }
+
+    // 4. Close palette
+    get().closePalette()
+
+    // 5. User feedback
+    const userLabel = currentCitizen
+      ? (currentCitizen.email || 'Citizen')
+      : currentAdmin
+      ? currentAdmin.name
+      : null
+
+    if (userLabel) {
+      toast.success('Session Cleared', {
+        description: `Successfully signed out and cleared active session for ${userLabel}.`,
+        duration: 3500
+      })
+    } else {
+      toast.info('Session Cleared', {
+        description: 'All local tokens and session caches have been purged. You are now in guest mode.',
+        duration: 3500
+      })
+    }
+
+    // 6. Navigate to root/landing
     if (navigate) {
       navigate('/')
     }
