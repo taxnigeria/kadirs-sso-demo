@@ -38,11 +38,13 @@ export default function App() {
         {/* Modern Editorial Landing Page */}
         <Route index element={<HomePage />} />
 
+        {/* OAuth / OIDC Standalone Authorization Ceremony — completely independent of portal navbars */}
+        <Route path="auth/authorize" element={<OAuthAuthorizePage />} />
+
         {/* Auth Standalone Pages — no sidebar */}
         <Route path="auth" element={<PortalShell portal={PORTALS.auth} noSidebar />}>
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="authorize" element={<OAuthAuthorizePage />} />
           <Route path="discovery" element={<RequireAuth><DiscoveryPage /></RequireAuth>} />
           <Route path="reconciliation" element={<RequireAuth><ReconciliationPage /></RequireAuth>} />
         </Route>

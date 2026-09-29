@@ -25,6 +25,10 @@ import {
 import { useAuthEngine } from '@/engine/auth-engine'
 import paykadunaLogoImg from '@/assets/paykaduna-logo.png'
 import paykadunaHeroBg from '@/assets/paykaduna-hero-bg.jpg'
+import ibsLogoImg from '@/assets/ibs-logo.png'
+import ndpcLogoImg from '@/assets/ndpc-logo.png'
+import pcidssLogoImg from '@/assets/pcidss-logo.png'
+import isoLogoImg from '@/assets/information-security-logo.png'
 import {
   VerificationModal,
   DEMO_VERIFICATION_PRESETS,
@@ -217,13 +221,13 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
               <>
                 <Link
                   to="/auth/login"
-                  className="px-3.5 py-1.5 rounded-md bg-[#385B60]/70 hover:bg-[#385B60] text-white border border-white/20 text-xs font-medium transition-all backdrop-blur-xs active:scale-95"
+                  className="px-4 py-1.5 rounded-md bg-white/20 hover:bg-white/30 text-white text-xs sm:text-[13px] font-medium transition-all backdrop-blur-xs border border-white/15 active:scale-95"
                 >
                   Sign in
                 </Link>
                 <Link
                   to="/auth/register"
-                  className="px-4 py-1.5 rounded-md bg-[#E2E8F0] hover:bg-[#CBD5E1] text-white text-xs font-bold transition-all shadow-xs active:scale-95 tracking-wide"
+                  className="px-4 py-1.5 rounded-md bg-white/20 hover:bg-white/30 text-white text-xs sm:text-[13px] font-medium transition-all backdrop-blur-xs border border-white/15 active:scale-95"
                 >
                   Register
                 </Link>
@@ -272,14 +276,14 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
               <Link
                 to="/auth/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 py-1.5 text-center rounded-md bg-[#385B60]/70 text-white text-xs font-medium border border-white/20"
+                className="flex-1 py-2 text-center rounded-md bg-white/20 hover:bg-white/30 text-white text-xs font-medium border border-white/15 transition-colors"
               >
                 Sign in
               </Link>
               <Link
                 to="/auth/register"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 py-1.5 text-center rounded-md bg-[#E2E8F0] hover:bg-[#CBD5E1] text-white text-xs font-bold tracking-wide"
+                className="flex-1 py-2 text-center rounded-md bg-white/20 hover:bg-white/30 text-white text-xs font-medium border border-white/15 transition-colors"
               >
                 Register
               </Link>
@@ -639,8 +643,37 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
           </Link>
         </div>
 
+        {/* ── Official PayKaduna Compliance Logos & Copyright Strip (Matches PayKaduna.com) ── */}
+        <div className="w-full flex flex-wrap text-white/90 justify-center items-center gap-3 sm:gap-6 mt-3 sm:mt-4 mb-1">
+          <p className="w-full sm:w-auto text-center text-xs sm:text-[13px] font-normal text-white/80 tracking-wide">
+            &copy; copyright 2026
+          </p>
+          <div className="flex items-center justify-center gap-3 sm:gap-4 bg-white/95 px-3.5 sm:px-4 py-1.5 rounded-full shadow-md">
+            <img
+              src={ibsLogoImg}
+              alt="Intelligent Billing System (IBS)"
+              className="h-6 sm:h-7 w-auto object-contain"
+            />
+            <img
+              src={ndpcLogoImg}
+              alt="Nigeria Data Protection Commission (NDPC)"
+              className="h-6 sm:h-7 w-auto object-contain"
+            />
+            <img
+              src={pcidssLogoImg}
+              alt="PCI DSS Compliant"
+              className="h-6 sm:h-7 w-auto object-contain"
+            />
+            <img
+              src={isoLogoImg}
+              alt="ISO 27001 Certified Information Security Management"
+              className="h-6 sm:h-7 w-auto object-contain"
+            />
+          </div>
+        </div>
+
         {/* Subtle scroll hint to indicate continuity with the page */}
-        <div className="flex justify-center mt-2.5 opacity-60 hover:opacity-100 transition-opacity">
+        <div className="flex justify-center mt-1.5 opacity-60 hover:opacity-100 transition-opacity">
           <a
             href="#how-it-works"
             onClick={(e) => scrollToSection(e, 'how-it-works')}

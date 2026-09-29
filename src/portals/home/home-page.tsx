@@ -11,6 +11,10 @@ import { useInspectorStore } from '@/engine/inspector-store'
 import { usePresentationStore } from '@/engine/presentation-store'
 import { LogoMark } from '@/components/layout/universal-navbar'
 import { PayKadunaHero } from './paykaduna-hero'
+import ibsLogoImg from '@/assets/ibs-logo.png'
+import ndpcLogoImg from '@/assets/ndpc-logo.png'
+import pcidssLogoImg from '@/assets/pcidss-logo.png'
+import isoLogoImg from '@/assets/information-security-logo.png'
 import './home-landing.css'
 
 const trustCardsData = [
@@ -254,7 +258,15 @@ export default function HomePage() {
         </div>
 
         <div className="container footer-bottom">
-          <span>© 2026 Kaduna State Internal Revenue Service</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <span>© 2026 Kaduna State Internal Revenue Service</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.92)', padding: '3px 10px', borderRadius: '9999px' }}>
+              <img src={ibsLogoImg} alt="IBS" style={{ height: '18px', width: 'auto' }} />
+              <img src={ndpcLogoImg} alt="NDPC" style={{ height: '18px', width: 'auto' }} />
+              <img src={pcidssLogoImg} alt="PCI DSS" style={{ height: '18px', width: 'auto' }} />
+              <img src={isoLogoImg} alt="ISO 27001" style={{ height: '18px', width: 'auto' }} />
+            </div>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <span>
               NDPA 2023 protected <span className="footer-bottom__dot" /> NIMC identity partner

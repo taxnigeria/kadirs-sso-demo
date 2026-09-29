@@ -41,10 +41,15 @@ export default function OAuthAuthorizePage() {
   // Resolve TSP details
   const matchedClient = tspClients.find((c) => c.id === clientId) || {
     id: clientId,
-    name: clientId === 'kadtaxonrent' ? 'Kad Tax on Rent' : 'Kaduna State Partner TSP',
+    name: clientId === 'kadtaxonrent' ? 'Kad Tax on Rent (WHT Property Platform)' : 'Kaduna State Partner TSP',
     audience: clientId,
     activeScopes: ['profile:read', 'tax:read', 'rent:manage']
   }
+
+  // Split name and descriptor if parentheses are present (e.g. "Kad Tax on Rent (WHT Property Platform)")
+  const nameMatch = matchedClient.name.match(/^([^(]+)(?:\((.*)\))?$/)
+  const tspPrimaryName = nameMatch ? nameMatch[1].trim() : matchedClient.name
+  const tspSubtitle = nameMatch && nameMatch[2] ? nameMatch[2].trim() : null
 
   // Active persona resolution (Defaults to Courage Okaka for KadTaxOnRent if not logged in)
   const activePersona =
@@ -156,15 +161,32 @@ export default function OAuthAuthorizePage() {
         {/* ================================================================ */}
         {ceremonyStep === 'confirm' && (
           <div className="space-y-6">
-            {/* Target TSP Application Emblem */}
-            <div className="flex flex-col items-center text-center space-y-2 pt-2">
-              <div className="w-16 h-16 rounded-2xl bg-[#1C3A33] text-emerald-400 flex items-center justify-center shadow-md ring-4 ring-emerald-500/10 mb-1">
-                <Building2 className="w-8 h-8" />
+            {/* Target TSP Application Emblem & Title Hierarchy */}
+            <div className="flex flex-col items-center text-center pt-1 pb-1">
+              <div className="w-16 h-16 rounded-2xl bg-[#123D35] text-emerald-400 flex items-center justify-center shadow-lg ring-4 ring-emerald-500/15 mb-3">
+                <Building2 className="w-8 h-8 stroke-[2.2]" />
               </div>
-              <h1 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
-                You're signing in to {matchedClient.name}
+
+              {/* Smaller pre-heading */}
+              <p className="text-xs sm:text-[13px] font-medium text-[var(--gray-500)] tracking-tight">
+                You&apos;re signing in to
+              </p>
+
+              {/* Eye-bold TSP name with distinct contrast / font color */}
+              <h1 className="font-display font-black text-2xl sm:text-[28px] text-[#0A5C36] dark:text-emerald-400 tracking-tight leading-tight mt-0.5">
+                {tspPrimaryName}
               </h1>
-              <p className="text-xs text-[var(--gray-600)] max-w-xs">
+
+              {/* Secondary badge for platform descriptor (e.g. WHT Property Platform) */}
+              {tspSubtitle && (
+                <div className="mt-1.5">
+                  <span className="inline-flex items-center text-[11px] font-semibold text-[var(--gray-600)] dark:text-[var(--gray-300)] bg-black/[0.04] dark:bg-white/[0.06] border border-[var(--input-border)] px-2.5 py-0.5 rounded-full">
+                    {tspSubtitle}
+                  </span>
+                </div>
+              )}
+
+              <p className="text-xs text-[var(--gray-500)] max-w-xs mt-2 leading-relaxed">
                 Kaduna State Internal Revenue Service authorized tax compliance partner.
               </p>
             </div>
@@ -238,7 +260,7 @@ export default function OAuthAuthorizePage() {
             {/* Privacy & Terms Text */}
             <div className="space-y-2 text-xs text-[var(--gray-600)] leading-relaxed pt-1">
               <p>
-                Review {matchedClient.name}&apos;s{' '}
+                Review <strong className="text-[var(--ink)] font-semibold">{tspPrimaryName}</strong>&apos;s{' '}
                 <a href="#privacy" className="text-[#1AA260] hover:underline font-medium">
                   privacy policy
                 </a>{' '}
@@ -288,8 +310,8 @@ export default function OAuthAuthorizePage() {
               <h2 className="font-display font-bold text-xl text-[var(--ink)] tracking-tight">
                 Review Shared Information
               </h2>
-              <p className="text-xs text-[var(--gray-600)] mt-0.5 leading-relaxed">
-                {matchedClient.name} requests the following verified attributes from your Kaduna State identity:
+              <p className="text-xs text-[var(--gray-600)] mt-1 leading-relaxed">
+                <strong className="text-[#0A5C36] dark:text-emerald-400 font-bold">{tspPrimaryName}</strong> requests the following verified attributes from your Kaduna State identity:
               </p>
             </div>
 
@@ -344,7 +366,7 @@ export default function OAuthAuthorizePage() {
                   <span>NDPA 2023 Statutory Shield</span>
                 </div>
                 <p className="text-[11px] leading-relaxed">
-                  Your raw 11-digit National Identity Number (NIN) is <strong>NEVER</strong> shared with {matchedClient.name}. Only your anonymous Citizen ID is transmitted.
+                  Your raw 11-digit National Identity Number (NIN) is <strong>NEVER</strong> shared with <span className="font-semibold">{tspPrimaryName}</span>. Only your anonymous Citizen ID is transmitted.
                 </p>
               </div>
             </div>
@@ -384,7 +406,7 @@ export default function OAuthAuthorizePage() {
                 Authorization Successful!
               </h2>
               <p className="text-xs text-[var(--gray-600)] mt-1">
-                Audience-locked token generated for <strong>{matchedClient.name}</strong>.
+                Audience-locked token generated for <strong className="text-[#0A5C36] dark:text-emerald-400 font-bold">{tspPrimaryName}</strong>.
               </p>
             </div>
 
@@ -413,7 +435,7 @@ export default function OAuthAuthorizePage() {
                   href={generatedCallbackUrl}
                   className="w-full py-3 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Simulate Open Kad Tax on Rent</span>
+                  <span>Simulate Open {tspPrimaryName}</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               )}
