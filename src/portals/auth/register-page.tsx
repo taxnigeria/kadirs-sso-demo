@@ -22,9 +22,9 @@ export default function RegisterPage() {
 
   // Steps for each path
   const steps = selectedPath === 'individual'
-    ? ['Choose Path', 'National ID (NIN)', 'Phone & Contact', 'Tax Office', 'Security & 2FA', 'Consent']
+    ? ['Choose Path', 'National ID (NIN)', 'Phone & Contact', 'Tax Office', 'Consent', 'Security & 2FA']
     : selectedPath === 'corporate'
-    ? ['Choose Path', 'CAC RC Lookup', 'Company Profile', 'Representative', 'Secure & Confirm']
+    ? ['Choose Path', 'CAC RC Lookup', 'Company Profile', 'Representative', 'Consent', 'Security & 2FA']
     : ['Choose Path', 'Agency Details', 'Official Mandate', 'Review & Submit']
 
   // Master active step index (0 when choosing path, 1+ when inside flow)

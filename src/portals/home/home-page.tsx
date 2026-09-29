@@ -4,21 +4,14 @@ import {
   ShieldCheck,
   ArrowRight,
   ArrowDownRight,
-  ArrowUpRight,
   Check,
-  LockKeyhole,
-  Sparkles
+  LockKeyhole
 } from 'lucide-react'
 import { useInspectorStore } from '@/engine/inspector-store'
 import { usePresentationStore } from '@/engine/presentation-store'
-import { UniversalNavbar, LogoMark } from '@/components/layout/universal-navbar'
+import { LogoMark } from '@/components/layout/universal-navbar'
+import { PayKadunaHero } from './paykaduna-hero'
 import './home-landing.css'
-
-const servicesData = [
-  { code: '01', name: 'PayKaduna', detail: 'Revenue & payments' },
-  { code: '02', name: 'KADVREG', detail: 'Vehicle licensing' },
-  { code: '03', name: 'PIT', detail: 'Personal income tax' }
-]
 
 const trustCardsData = [
   {
@@ -41,57 +34,6 @@ const trustCardsData = [
   }
 ]
 
-
-function ServiceBadge({ name, detail }: { name: string; detail: string }) {
-  return (
-    <div className="service-badge">
-      <div className="service-badge__dot" />
-      <div>
-        <p>{name}</p>
-        <span>{detail}</span>
-      </div>
-      <Check size={14} strokeWidth={2.3} />
-    </div>
-  )
-}
-
-function IdentityDiagram() {
-  return (
-    <div
-      className="identity-diagram"
-      aria-label="One verified identity connecting three Kaduna public services"
-    >
-      <div className="diagram-orbit orbit-one" />
-      <div className="diagram-orbit orbit-two" />
-      <div className="diagram-line line-one" />
-      <div className="diagram-line line-two" />
-      <div className="diagram-line line-three" />
-      <div className="diagram-node node-paykaduna">
-        <span>PK</span>
-        <small>PayKaduna</small>
-      </div>
-      <div className="diagram-node node-kadvreg">
-        <span>KV</span>
-        <small>KADVREG</small>
-      </div>
-      <div className="diagram-node node-pit">
-        <span>PI</span>
-        <small>PIT</small>
-      </div>
-      <div className="identity-core">
-        <div className="core-ring">
-          <span className="core-dot" />
-          <span className="core-dot core-dot--two" />
-          <span className="core-dot core-dot--three" />
-          <ShieldCheck size={29} strokeWidth={1.7} />
-        </div>
-        <strong>NIN</strong>
-        <small>verified identity</small>
-      </div>
-    </div>
-  )
-}
-
 export default function HomePage() {
   const [activeStep, setActiveStep] = useState(1)
 
@@ -108,110 +50,11 @@ export default function HomePage() {
 
   return (
     <div className="site-shell">
-      {/* ── Universal Translucent Sticky Navbar ── */}
-      <UniversalNavbar />
+      {/* ── PayKaduna Flagship Hero Section ── */}
+      <PayKadunaHero />
 
       {/* ── Main Content ── */}
       <main id="top">
-        {/* Hero Section */}
-        <section className="hero container">
-          <div className="hero__copy">
-            <div className="eyebrow">
-              <span className="eyebrow__line" />
-              KADIRS central identity gateway
-            </div>
-
-            <h1>
-              One identity.<br />
-              <em>Every</em> public service.
-            </h1>
-
-            <p className="hero__intro">
-              A simpler way to access Kaduna State tax, revenue, and vehicle services.
-              Verify your identity once, then move between connected portals without starting over.
-            </p>
-
-            <div className="hero__actions">
-              <Link className="button button--primary" to="/auth/register">
-                Create your account <ArrowRight size={16} />
-              </Link>
-              <a
-                className="text-link"
-                href="#how-it-works"
-                onClick={(e) => scrollToSection(e, 'how-it-works')}
-              >
-                See how it works <ArrowDownRight size={16} />
-              </a>
-            </div>
-
-            <div className="hero__meta">
-              <span>
-                <span className="meta-check">
-                  <Check size={11} />
-                </span>
-                NIMC verified
-              </span>
-              <span>
-                <span className="meta-check">
-                  <Check size={11} />
-                </span>
-                NDPA protected
-              </span>
-              <span>
-                <span className="meta-check">
-                  <Check size={11} />
-                </span>
-                14 connected MDAs
-              </span>
-            </div>
-          </div>
-
-          <div className="hero__visual-wrap">
-            <div className="hero__visual-label">
-              Your digital identity <span>01 / 03</span>
-            </div>
-
-            <div className="hero__visual">
-              <div className="visual-topline">
-                <span>SSO / KADIRS</span>
-                <span>ACTIVE</span>
-              </div>
-
-              <IdentityDiagram />
-
-              <div className="visual-footer">
-                <div>
-                  <span className="status-dot" />
-                  <strong>Identity verified</strong>
-                  <small>Last checked just now</small>
-                </div>
-                <span className="visual-footer__arrow">
-                  <ArrowUpRight size={15} />
-                </span>
-              </div>
-            </div>
-
-            <div className="visual-note">
-              <Sparkles size={14} />
-              One secure sign-on across your Kaduna records.
-            </div>
-          </div>
-        </section>
-
-        {/* Service Strip */}
-        <section className="service-strip" id="services">
-          <div className="container service-strip__inner">
-            <p className="service-strip__label">One gateway for</p>
-            <div className="service-strip__items">
-              {servicesData.map((s) => (
-                <ServiceBadge key={s.code} name={s.name} detail={s.detail} />
-              ))}
-            </div>
-            <Link to="/paykaduna/services" className="service-strip__count">
-              + 11 more<br />connected services
-            </Link>
-          </div>
-        </section>
 
         {/* The SSO Difference (Story Section) */}
         <section className="section section--story" id="how-it-works">

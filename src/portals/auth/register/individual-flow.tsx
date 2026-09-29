@@ -1008,11 +1008,107 @@ export function IndividualFlow({
       )}
 
       {/* ================================================================ */}
-      {/* STEP 3: Security & 2-Step Verification (Staged: Password -> 2FA)  */}
+      {/* STEP 3: Privacy & Consent Agreement (NDPA 2023)                   */}
       {/* ================================================================ */}
       {step === 3 && (
         <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#1AA260] text-[11px] font-semibold mb-3">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Step 5 &bull; Statutory Data Protection</span>
+            </div>
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
+              Privacy &amp; Consent Agreement
+            </h2>
+            <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
+              In compliance with the Nigeria Data Protection Act (NDPA) 2023, please review and confirm the terms governing how your verified identity and tax data are handled before setting your account password.
+            </p>
+          </div>
+
+          <div className="space-y-3.5 border-t border-b border-[var(--gray-200)] py-5">
+            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
+              <input
+                type="checkbox"
+                checked={consentStorage}
+                onChange={(e) => setConsentStorage(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
+              />
+              <div className="text-xs sm:text-sm">
+                <span className="font-semibold text-[var(--ink)] block">
+                  1. Secure Data Storage
+                </span>
+                <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
+                  I authorize KADIRS to securely store my verified profile and tax records within certified Nigerian data infrastructure.
+                </span>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
+              <input
+                type="checkbox"
+                checked={consentSharing}
+                onChange={(e) => setConsentSharing(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
+              />
+              <div className="text-xs sm:text-sm">
+                <span className="font-semibold text-[var(--ink)] block">
+                  2. Protected Agency Sharing
+                </span>
+                <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
+                  I authorize KADIRS to share verified credentials (name, contact, and tax office) with connected state portals to provide seamless public services, without ever disclosing my raw National Identity Number (NIN).
+                </span>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
+              <input
+                type="checkbox"
+                checked={consentPolicy}
+                onChange={(e) => setConsentPolicy(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
+              />
+              <div className="text-xs sm:text-sm">
+                <span className="font-semibold text-[var(--ink)] block">
+                  3. Privacy Rights &amp; Access Control
+                </span>
+                <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
+                  I understand I have full control over my records: I can view all connected services, revoke agency access permissions, or update my details at any time from my central dashboard.
+                </span>
+              </div>
+            </label>
+          </div>
+
+          <div className="flex justify-between items-center pt-2">
+            <button
+              type="button"
+              onClick={() => changeStep(2)}
+              className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
+            >
+              &larr; Back
+            </button>
+            <button
+              type="button"
+              disabled={!consentStorage || !consentSharing || !consentPolicy}
+              onClick={() => changeStep(4)}
+              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-8 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
+            >
+              <span>Accept &amp; Continue to Security</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ================================================================ */}
+      {/* STEP 4: Security & 2-Step Verification (Staged: Password -> 2FA)  */}
+      {/* ================================================================ */}
+      {step === 4 && (
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#1AA260] text-[11px] font-semibold mb-3">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Step 6 &bull; Account Security</span>
+            </div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               {passwordStage === 'password' ? 'Create Account Password' : 'Secondary Verification (2FA)'}
             </h2>
@@ -1208,10 +1304,10 @@ export function IndividualFlow({
               <>
                 <button
                   type="button"
-                  onClick={() => changeStep(2)}
+                  onClick={() => changeStep(3)}
                   className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
                 >
-                  &larr; Back
+                  &larr; Back to Consent
                 </button>
                 <button
                   type="button"
@@ -1233,105 +1329,14 @@ export function IndividualFlow({
                 </button>
                 <button
                   type="button"
-                  onClick={() => changeStep(4)}
-                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                  onClick={handleComplete}
+                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-8 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shadow-sm"
                 >
-                  Continue to Privacy Agreement &nbsp;&rarr;
+                  <span>Complete Registration &amp; Activate</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* ================================================================ */}
-      {/* STEP 4: Privacy & Consent Agreement                               */}
-      {/* ================================================================ */}
-      {step === 4 && (
-        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#1AA260] text-[11px] font-semibold mb-3">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Statutory Data Protection</span>
-            </div>
-            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
-              Privacy &amp; Consent Agreement
-            </h2>
-            <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
-              In compliance with the Nigeria Data Protection Act, please review and confirm the terms governing how your verified identity and tax data are handled.
-            </p>
-          </div>
-
-          <div className="space-y-3.5 border-t border-b border-[var(--gray-200)] py-5">
-            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
-              <input
-                type="checkbox"
-                checked={consentStorage}
-                onChange={(e) => setConsentStorage(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
-              />
-              <div className="text-xs sm:text-sm">
-                <span className="font-semibold text-[var(--ink)] block">
-                  1. Secure Data Storage
-                </span>
-                <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
-                  I authorize KADIRS to securely store my verified profile and tax records within certified Nigerian data infrastructure.
-                </span>
-              </div>
-            </label>
-
-            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
-              <input
-                type="checkbox"
-                checked={consentSharing}
-                onChange={(e) => setConsentSharing(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
-              />
-              <div className="text-xs sm:text-sm">
-                <span className="font-semibold text-[var(--ink)] block">
-                  2. Protected Agency Sharing
-                </span>
-                <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
-                  I authorize KADIRS to share verified credentials (name, contact, and tax office) with connected state portals to provide seamless public services, without ever disclosing my raw National Identity Number (NIN).
-                </span>
-              </div>
-            </label>
-
-            <label className="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-[var(--gray-200)]">
-              <input
-                type="checkbox"
-                checked={consentPolicy}
-                onChange={(e) => setConsentPolicy(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
-              />
-              <div className="text-xs sm:text-sm">
-                <span className="font-semibold text-[var(--ink)] block">
-                  3. Privacy Rights &amp; Access Control
-                </span>
-                <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
-                  I understand I have full control over my records: I can view all connected services, revoke agency access permissions, or update my details at any time from my central dashboard.
-                </span>
-              </div>
-            </label>
-          </div>
-
-          <div className="flex justify-between items-center pt-2">
-            <button
-              type="button"
-              onClick={() => changeStep(3)}
-              className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
-            >
-              &larr; Back
-            </button>
-            <button
-              type="button"
-              disabled={!consentStorage || !consentSharing || !consentPolicy}
-              onClick={handleComplete}
-              className="bg-[#1AA260] hover:bg-[#158A52] text-white px-8 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
-            >
-              <span>Complete Registration</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
           </div>
         </div>
       )}

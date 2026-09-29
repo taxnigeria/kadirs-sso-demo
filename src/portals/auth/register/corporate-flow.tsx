@@ -17,7 +17,8 @@ import {
   RefreshCw,
   UserCheck,
   Clock,
-  Sparkles
+  Sparkles,
+  Mail
 } from 'lucide-react'
 import { lookupCAC, verifyNINWithNIMC, type CACLookupResponse } from '@/engine/kyc-simulator'
 import { useAuthEngine, checkRCRegistered, checkEmailRegistered } from '@/engine/auth-engine'
@@ -54,10 +55,10 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
   const logConsent = useEventLogger((s) => s.logConsent)
   const logEvent = useEventLogger((s) => s.logEvent)
 
-  // Step state: 0 = CAC Lookup, 1 = Company, 2 = Representative, 3 = Secure & Confirm
-  const [step, setStepState] = useState<0 | 1 | 2 | 3>(0)
+  // Step state: 0 = CAC Lookup, 1 = Company, 2 = Representative, 3 = Consent, 4 = Security & 2FA
+  const [step, setStepState] = useState<0 | 1 | 2 | 3 | 4>(0)
 
-  const changeStep = (next: 0 | 1 | 2 | 3) => {
+  const changeStep = (next: 0 | 1 | 2 | 3 | 4) => {
     setStepState(next)
     onStepChange?.(next)
   }
@@ -146,17 +147,18 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
   const mandateDocRef = 'Corporate-Board-Resolution.pdf'
 
   // ==========================================
-  // Step 3: Secure & Confirm (Password, 2FA, 3 Consents)
+  // Step 3 (Statutory Consent) & Step 4 (Security & 2FA) State
   // ==========================================
-  const [corporatePassword, setCorporatePassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false)
-  const [twoFactorMethod, setTwoFactorMethod] = useState<'totp' | 'sms'>('totp')
-
-  // 3 Independent Statutory Consent Checkboxes
+  // 3 Independent Statutory Consent Checkboxes (Step 3)
   const [consentAuthorized, setConsentAuthorized] = useState(false)
   const [consentPrivacy, setConsentPrivacy] = useState(false)
   const [consentReview, setConsentReview] = useState(false)
+
+  // Account Security & 2FA (Step 4, Staged: password -> two_factor)
+  const [passwordStage, setPasswordStage] = useState<'password' | 'two_factor'>('password')
+  const [corporatePassword, setCorporatePassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [twoFactorMethod, setTwoFactorMethod] = useState<'totp' | 'sms'>('totp')
 
   // Final submission state
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -416,15 +418,11 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
   const isPasswordValid = passLength && passUpper && passLower && passNumber && passSpecial && passNotNin
   const passwordStrength = calculatePasswordStrength(corporatePassword)
 
-  const isStep3Valid =
-    isPasswordValid &&
-    Boolean(twoFactorMethod) &&
-    consentAuthorized &&
-    consentPrivacy &&
-    consentReview
+  const isStep3Valid = consentAuthorized && consentPrivacy && consentReview
+  const isStep4Valid = isPasswordValid && Boolean(twoFactorMethod) && isStep3Valid
 
   const handleActivateAccount = () => {
-    if (!cacData || !isStep3Valid || !repCitizenId) return
+    if (!cacData || !isStep4Valid || !repCitizenId) return
     setIsSubmitting(true)
 
     const needsReview = isDirectorMatch === false
@@ -1387,7 +1385,7 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
               onClick={() => changeStep(3)}
               className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50 flex items-center gap-2"
             >
-              <span>Continue to Security &amp; Confirm</span>
+              <span>Continue to Consent</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -1395,263 +1393,418 @@ export function CorporateFlow({ onBackToSelection, onStepChange }: CorporateFlow
       )}
 
       {/* ================================================================ */}
-      {/* STEP 3: Secure & Confirm (Password, 2FA, 3 Consents & Activate)   */}
+      {/* STEP 3: Statutory Consents & Declarations (NDPA 2023)              */}
       {/* ================================================================ */}
       {step === 3 && cacData && (
         <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
           <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#1AA260] text-[11px] font-semibold mb-3">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Step 5 &bull; NDPA 2023 Statutory Consents</span>
+            </div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
-              Account Security &amp; Statutory Confirmation
+              Statutory Consents &amp; Authority Declarations
             </h2>
             <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
-              Establish a dedicated corporate password, configure two-factor authentication, and provide mandatory statutory authorizations.
+              In compliance with the Nigeria Data Protection Act (NDPA) 2023, provide the mandatory statutory declarations for this corporate entity before setting up login credentials.
             </p>
           </div>
 
-          {/* 1. Dedicated Corporate Password */}
-          <div className="space-y-3 p-5 border border-[var(--input-border)] rounded-2xl bg-black/[0.01] dark:bg-white/[0.02]">
-            <div className="flex items-center justify-between">
+          {/* Compact Entity & Representative Summary Card */}
+          <div className="p-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] border border-[var(--gray-200)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+                <Building2 className="w-5 h-5" />
+              </div>
               <div>
-                <h3 className="font-display font-bold text-sm text-[var(--ink)]">
-                  Corporate Login Password <span className="text-rose-500">*</span>
-                </h3>
-                <span className="text-xs text-[var(--gray-700)]">
-                  Isolated strictly for managing {cacData.companyName}.
+                <span className="font-bold text-sm text-[var(--ink)] block">
+                  {cacData.companyName}
+                </span>
+                <span className="text-xs text-[var(--gray-500)] font-mono">
+                  RC: {cacData.rcNumber} &bull; State TIN: {cacData.tin}
                 </span>
               </div>
-              {corporatePassword && (
-                <span className="text-xs font-semibold text-[var(--gray-700)] flex items-center gap-1.5">
-                  <span>Strength:</span>
-                  <span className={`px-2 py-0.5 rounded text-white text-[10px] font-bold ${passwordStrength.color}`}>
-                    {passwordStrength.label}
-                  </span>
-                </span>
-              )}
             </div>
-
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={corporatePassword}
-                onChange={(e) => setCorporatePassword(e.target.value)}
-                onFocus={() => setIsPasswordFocused(true)}
-                placeholder="Create enterprise password"
-                className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-3.5 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+            <div className="text-left sm:text-right">
+              <span className="text-xs text-[var(--gray-500)] block">Authorized Representative</span>
+              <span className="text-xs font-semibold text-[var(--ink)]">
+                {repLegalName} ({repRole})
+              </span>
             </div>
-
-            {/* Password Validation Checklist (revealed on focus or typing) */}
-            {(isPasswordFocused || corporatePassword.length > 0) && (
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2 animate-in fade-in">
-                <div
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
-                    passLength
-                      ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
-                      : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
-                  }`}
-                >
-                  <span>{passLength ? '✓' : '○'}</span>
-                  <span>8+ chars</span>
-                </div>
-                <div
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
-                    passUpper
-                      ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
-                      : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
-                  }`}
-                >
-                  <span>{passUpper ? '✓' : '○'}</span>
-                  <span>Uppercase</span>
-                </div>
-                <div
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
-                    passLower
-                      ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
-                      : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
-                  }`}
-                >
-                  <span>{passLower ? '✓' : '○'}</span>
-                  <span>Lowercase</span>
-                </div>
-                <div
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
-                    passNumber
-                      ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
-                      : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
-                  }`}
-                >
-                  <span>{passNumber ? '✓' : '○'}</span>
-                  <span>Number</span>
-                </div>
-                <div
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
-                    passSpecial
-                      ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
-                      : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
-                  }`}
-                >
-                  <span>{passSpecial ? '✓' : '○'}</span>
-                  <span>Special char</span>
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* 2. Secondary Verification (2FA Setup) */}
+          {/* Three Statutory Consent Checkboxes */}
           <div className="space-y-3">
-            <div>
-              <h3 className="font-display font-bold text-sm text-[var(--ink)]">
-                Secondary Verification (2FA) <span className="text-rose-500">*</span>
-              </h3>
-              <p className="text-xs text-[var(--gray-700)] mt-0.5">
-                Protect corporate tax filings with mandated two-factor authentication.
-              </p>
-            </div>
+            <h3 className="font-display font-bold text-sm text-[var(--ink)]">
+              Mandatory Statutory Declarations <span className="text-rose-500">*</span>
+            </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <button
-                type="button"
-                onClick={() => setTwoFactorMethod('totp')}
-                className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
-                  twoFactorMethod === 'totp'
-                    ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
-                    : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02]'
-                }`}
-              >
-                <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                    twoFactorMethod === 'totp' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] text-[var(--gray-500)]'
-                  }`}
-                >
-                  <KeyRound className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-[var(--ink)]">Authenticator App</div>
-                  <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
-                    Works with Google Authenticator, Microsoft Authenticator, or Apple Keychain.
-                  </div>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setTwoFactorMethod('sms')}
-                className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
-                  twoFactorMethod === 'sms'
-                    ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
-                    : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02]'
-                }`}
-              >
-                <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                    twoFactorMethod === 'sms' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] text-[var(--gray-500)]'
-                  }`}
-                >
-                  <Smartphone className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-[var(--ink)]">Corporate SMS OTP</div>
-                  <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
-                    Instant verification codes dispatched to verified corporate phone ({corporatePhone}).
-                  </div>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          {/* 3. Three Independent Statutory Consent Checkboxes */}
-          <div className="space-y-3 pt-3 border-t border-[var(--gray-200)]">
-            <div>
-              <h3 className="font-display font-bold text-sm text-[var(--ink)]">
-                Statutory Consents &amp; Authority Declarations <span className="text-rose-500">*</span>
-              </h3>
-              <p className="text-xs text-[var(--gray-700)] mt-0.5">
-                All three declarations are individually captured in the immutable KADIRS audit log under NDPA 2023.
-              </p>
-            </div>
-
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {/* Checkbox 1: Authority */}
-              <label className="flex items-start gap-3 p-3.5 border border-[var(--input-border)] rounded-xl bg-black/[0.01] dark:bg-white/[0.02] cursor-pointer text-xs">
+              <label className="flex items-start gap-3.5 p-4 border border-[var(--input-border)] rounded-2xl bg-black/[0.01] dark:bg-white/[0.02] hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors cursor-pointer text-xs">
                 <input
                   type="checkbox"
                   checked={consentAuthorized}
                   onChange={(e) => setConsentAuthorized(e.target.checked)}
                   className="mt-0.5 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
                 />
-                <span className="text-[var(--gray-700)] leading-relaxed">
-                  <strong className="text-[var(--ink)]">Declaration of Authority:</strong> I solemnly declare that I am legally authorized to register and manage statutory tax affairs for <strong>{cacData.companyName}</strong>.
-                </span>
+                <div className="text-xs sm:text-sm">
+                  <strong className="text-[var(--ink)] block font-semibold">1. Declaration of Authority</strong>
+                  <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
+                    I solemnly declare that I am legally authorized to register, bind, and manage statutory tax affairs for <strong>{cacData.companyName}</strong>.
+                  </span>
+                </div>
               </label>
 
               {/* Checkbox 2: NDPA Data Storage */}
-              <label className="flex items-start gap-3 p-3.5 border border-[var(--input-border)] rounded-xl bg-black/[0.01] dark:bg-white/[0.02] cursor-pointer text-xs">
+              <label className="flex items-start gap-3.5 p-4 border border-[var(--input-border)] rounded-2xl bg-black/[0.01] dark:bg-white/[0.02] hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors cursor-pointer text-xs">
                 <input
                   type="checkbox"
                   checked={consentPrivacy}
                   onChange={(e) => setConsentPrivacy(e.target.checked)}
                   className="mt-0.5 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
                 />
-                <span className="text-[var(--gray-700)] leading-relaxed">
-                  <strong className="text-[var(--ink)]">Privacy &amp; Data Policy:</strong> I consent to KADIRS storing and processing enterprise identification and tax records in compliance with the Nigeria Data Protection Act (NDPA) 2023.
-                </span>
+                <div className="text-xs sm:text-sm">
+                  <strong className="text-[var(--ink)] block font-semibold">2. Privacy &amp; Data Policy (NDPA 2023)</strong>
+                  <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
+                    I consent to KADIRS storing and processing enterprise identification and tax records in compliance with the Nigeria Data Protection Act (NDPA) 2023.
+                  </span>
+                </div>
               </label>
 
               {/* Checkbox 3: Regulatory Review Understanding */}
-              <label className="flex items-start gap-3 p-3.5 border border-[var(--input-border)] rounded-xl bg-black/[0.01] dark:bg-white/[0.02] cursor-pointer text-xs">
+              <label className="flex items-start gap-3.5 p-4 border border-[var(--input-border)] rounded-2xl bg-black/[0.01] dark:bg-white/[0.02] hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors cursor-pointer text-xs">
                 <input
                   type="checkbox"
                   checked={consentReview}
                   onChange={(e) => setConsentReview(e.target.checked)}
                   className="mt-0.5 w-4 h-4 rounded text-[#1AA260] focus:ring-[#1AA260] accent-[#1AA260] cursor-pointer shrink-0"
                 />
-                <span className="text-[var(--gray-700)] leading-relaxed">
-                  <strong className="text-[var(--ink)]">Regulatory Compliance Audit:</strong> I understand that KADIRS reserves statutory authority to audit registrations and verify representative credentials with relevant state authorities.
-                </span>
+                <div className="text-xs sm:text-sm">
+                  <strong className="text-[var(--ink)] block font-semibold">3. Regulatory Compliance &amp; Audit Trail</strong>
+                  <span className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed block">
+                    I understand that KADIRS reserves statutory authority to audit registrations and verify representative credentials with relevant state authorities.
+                  </span>
+                </div>
               </label>
             </div>
           </div>
 
-          {/* Sticky Action Footer */}
+          {/* Action Footer */}
           <div className="flex justify-between items-center pt-5 border-t border-[var(--gray-200)]">
             <button
               type="button"
               onClick={() => changeStep(2)}
               className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
             >
-              &larr; Back
+              &larr; Back to Representative
             </button>
             <button
               type="button"
-              disabled={!isStep3Valid || isSubmitting}
-              onClick={handleActivateAccount}
+              disabled={!isStep3Valid}
+              onClick={() => changeStep(4)}
               className="bg-[#1AA260] hover:bg-[#158A52] text-white px-8 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
             >
-              {isSubmitting ? (
-                <>
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                  <span>Activating enterprise...</span>
-                </>
-              ) : isDirectorMatch ? (
-                <>
-                  <span>Activate Corporate Account</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              ) : (
-                <>
-                  <span>Submit for Administrative Review</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
+              <span>Accept &amp; Continue to Security</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ================================================================ */}
+      {/* STEP 4: Security & 2FA (Staged: Password -> 2FA)                  */}
+      {/* ================================================================ */}
+      {step === 4 && cacData && (
+        <div className="bg-[var(--card-bg)] text-[var(--ink)] shadow-float rounded-[28px] p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#1AA260] text-[11px] font-semibold mb-3">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Step 6 &bull; Account Security</span>
+            </div>
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
+              {passwordStage === 'password' ? 'Corporate Account Password' : 'Secondary Verification (2FA)'}
+            </h2>
+            <p className="text-xs sm:text-sm text-[var(--gray-700)] mt-1 leading-relaxed">
+              {passwordStage === 'password'
+                ? `Establish a dedicated enterprise password strictly isolated for managing ${cacData.companyName}.`
+                : 'Configure two-factor authentication to protect corporate tax filings and statutory submissions.'}
+            </p>
+          </div>
+
+          <div className="space-y-5">
+            {/* Corporate Login Identity (Email) Confirmation */}
+            <div className="p-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] border border-[var(--gray-200)] flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-500)] block">
+                    Corporate Login Email / Username
+                  </span>
+                  <span className="font-bold text-sm text-[var(--ink)] truncate block mt-0.5">
+                    {corporateEmail}
+                  </span>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800">
+                  Verified Sign-In ID
+                </span>
+                <button
+                  type="button"
+                  onClick={() => changeStep(1)}
+                  className="block text-[11px] text-[var(--gray-500)] hover:text-[#1AA260] hover:underline mt-1 cursor-pointer ml-auto"
+                >
+                  Edit email &rarr;
+                </button>
+              </div>
+            </div>
+
+            {/* Stage 1: Password Input and Live Requirements (2FA is hidden) */}
+            {passwordStage === 'password' ? (
+              <div className="space-y-4 animate-in fade-in duration-200">
+                <div className="space-y-3 p-5 border border-[var(--input-border)] rounded-2xl bg-black/[0.01] dark:bg-white/[0.02]">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-display font-bold text-sm text-[var(--ink)]">
+                        Corporate Login Password <span className="text-rose-500">*</span>
+                      </h3>
+                      <span className="text-xs text-[var(--gray-700)]">
+                        Isolated strictly for managing {cacData.companyName}.
+                      </span>
+                    </div>
+                    {corporatePassword && (
+                      <span className="text-xs font-semibold text-[var(--gray-700)] flex items-center gap-1.5">
+                        <span>Strength:</span>
+                        <span className={`px-2 py-0.5 rounded text-white text-[10px] font-bold ${passwordStrength.color}`}>
+                          {passwordStrength.label}
+                        </span>
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={corporatePassword}
+                      onChange={(e) => setCorporatePassword(e.target.value)}
+                      placeholder="Create enterprise password"
+                      className="w-full px-4 py-3 border border-[var(--input-border)] rounded-xl bg-[var(--input-bg)] text-[var(--ink)] text-sm focus:outline-none focus:border-[#1AA260] focus:ring-2 focus:ring-[#1AA260]/10 pr-11"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3.5 top-3.5 text-[var(--gray-500)] hover:text-[var(--ink)] cursor-pointer"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  {/* Password Validation Checklist */}
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2">
+                    <div
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                        passLength
+                          ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
+                      }`}
+                    >
+                      <span>{passLength ? '✓' : '○'}</span>
+                      <span>8+ chars</span>
+                    </div>
+                    <div
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                        passUpper
+                          ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
+                      }`}
+                    >
+                      <span>{passUpper ? '✓' : '○'}</span>
+                      <span>Uppercase</span>
+                    </div>
+                    <div
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                        passLower
+                          ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
+                      }`}
+                    >
+                      <span>{passLower ? '✓' : '○'}</span>
+                      <span>Lowercase</span>
+                    </div>
+                    <div
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                        passNumber
+                          ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
+                      }`}
+                    >
+                      <span>{passNumber ? '✓' : '○'}</span>
+                      <span>Number</span>
+                    </div>
+                    <div
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ${
+                        passSpecial
+                          ? 'border-emerald-500/30 bg-emerald-500/10 text-[#1AA260]'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--gray-500)]'
+                      }`}
+                    >
+                      <span>{passSpecial ? '✓' : '○'}</span>
+                      <span>Special char</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Stage 2: Password Confirmed Badge + 2FA Selection (Password input is hidden) */
+              <div className="space-y-5 animate-in fade-in duration-200">
+                {/* Confirmed Password Card */}
+                <div className="p-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] border border-[var(--gray-200)] flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--gray-500)] block">
+                        Corporate Password Established
+                      </span>
+                      <span className="font-mono text-sm tracking-widest text-[var(--ink)] block mt-0.5">
+                        ••••••••••••
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPasswordStage('password')}
+                    className="text-xs font-semibold text-[#1AA260] hover:text-[#158A52] hover:underline cursor-pointer shrink-0"
+                  >
+                    Change password &rarr;
+                  </button>
+                </div>
+
+                {/* Secondary Verification (2FA Setup) */}
+                <div className="space-y-3">
+                  <div>
+                    <h3 className="font-display font-bold text-sm text-[var(--ink)]">
+                      Secondary Verification (2FA) <span className="text-rose-500">*</span>
+                    </h3>
+                    <p className="text-xs text-[var(--gray-700)] mt-0.5">
+                      Protect corporate tax filings with mandated two-factor authentication.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <button
+                      type="button"
+                      onClick={() => setTwoFactorMethod('totp')}
+                      className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
+                        twoFactorMethod === 'totp'
+                          ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02]'
+                      }`}
+                    >
+                      <div
+                        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                          twoFactorMethod === 'totp' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] text-[var(--gray-500)]'
+                        }`}
+                      >
+                        <KeyRound className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-[var(--ink)]">Authenticator App</div>
+                        <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                          Works with Google Authenticator, Microsoft Authenticator, or Apple Keychain.
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setTwoFactorMethod('sms')}
+                      className={`p-4 border rounded-2xl text-left cursor-pointer transition-all flex items-start gap-3.5 ${
+                        twoFactorMethod === 'sms'
+                          ? 'border-[#1AA260] bg-emerald-500/10 ring-2 ring-[#1AA260]/20'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:bg-black/[0.02]'
+                      }`}
+                    >
+                      <div
+                        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                          twoFactorMethod === 'sms' ? 'bg-[#1AA260] text-white' : 'bg-black/[0.05] text-[var(--gray-500)]'
+                        }`}
+                      >
+                        <Smartphone className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-[var(--ink)]">Corporate SMS OTP</div>
+                        <div className="text-xs text-[var(--gray-700)] mt-0.5 leading-relaxed">
+                          Instant verification codes dispatched to verified corporate phone ({corporatePhone}).
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sticky Action Footer */}
+          <div className="flex justify-between items-center pt-5 border-t border-[var(--gray-200)]">
+            {passwordStage === 'password' ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => changeStep(3)}
+                  className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
+                >
+                  &larr; Back to Consent
+                </button>
+                <button
+                  type="button"
+                  disabled={!isPasswordValid}
+                  onClick={() => setPasswordStage('two_factor')}
+                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-7 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
+                >
+                  Set Password &amp; Continue &nbsp;&rarr;
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setPasswordStage('password')}
+                  className="text-[var(--gray-500)] hover:text-[var(--ink)] text-xs sm:text-sm px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-[var(--gray-100)] transition-colors cursor-pointer"
+                >
+                  &larr; Back
+                </button>
+                <button
+                  type="button"
+                  disabled={!isStep4Valid || isSubmitting}
+                  onClick={handleActivateAccount}
+                  className="bg-[#1AA260] hover:bg-[#158A52] text-white px-8 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Activating enterprise...</span>
+                    </>
+                  ) : isDirectorMatch ? (
+                    <>
+                      <span>Activate Corporate Account</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Submit for Administrative Review</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

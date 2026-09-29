@@ -43,7 +43,7 @@ export function PortalShell({ portal, noSidebar, children }: PortalShellProps) {
   if (noSidebar || portal.id === 'auth') {
     return (
       <div className="min-h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)] transition-colors w-full max-w-full">
-        <UniversalNavbar />
+        {portal.id !== 'home' && <UniversalNavbar />}
         <main className="flex-1 w-full max-w-full">
           {children ?? <Outlet />}
         </main>
