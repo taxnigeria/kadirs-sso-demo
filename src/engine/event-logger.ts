@@ -55,6 +55,33 @@ const INITIAL_SYSTEM_EVENTS: SystemEvent[] = [
       grantTypes: ['authorization_code', 'refresh_token'],
       redirectUris: ['https://kadvreg.gov.ng/oauth/callback']
     }
+  },
+  {
+    id: 'evt-init-003',
+    timestamp: new Date(Date.now() - 1200000).toISOString(),
+    category: 'admin',
+    action: 'BRANCH_CREATED',
+    actor: 'CIT-KAD-2024-00109',
+    details: {
+      entityId: 'RC-1029384',
+      branchCode: 'ZAR-01',
+      branchName: 'Zaria Distribution Hub',
+      lga: 'Sabon Gari',
+      taxOffice: 'Sabon Gari Tax Office — Samaru, Zaria'
+    }
+  },
+  {
+    id: 'evt-init-004',
+    timestamp: new Date(Date.now() - 600000).toISOString(),
+    category: 'auth',
+    action: 'OFFICER_BOUND',
+    actor: 'CIT-KAD-2024-00109',
+    details: {
+      entityId: 'RC-1029384',
+      role: 'ENTITY_ADMIN',
+      branchScope: 'ALL',
+      corporateEmail: 'amara.rep@amaraholdings.ng'
+    }
   }
 ]
 

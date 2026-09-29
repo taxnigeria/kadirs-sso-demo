@@ -164,7 +164,37 @@ export const DEMO_PERSONAS: DemoPersonaConfig[] = [
       status: 'active',
       industry: 'Transportation & Warehousing',
       directors: ['Amara Chioma Nnamdi', 'Chidi Kenneth Nnamdi'],
-      representatives: ['CIT-KAD-2024-00109']
+      representatives: ['CIT-KAD-2024-00109'],
+      branches: [
+        {
+          id: 'br-amara-hq',
+          entityId: 'RC-1849204',
+          branchCode: 'HQ',
+          name: 'Head Office (Kawo)',
+          address: 'Plot 7 Ali Akilu Road, Kawo, Kaduna',
+          lga: 'Kaduna North',
+          taxOffice: 'Kaduna North Tax Office — Kawo, Kaduna',
+          contactEmail: 'tax@amaraholdings.ng',
+          contactPhone: '+234 812 987 6543',
+          kadirsBranchId: 'BR-KAD-1029-01',
+          status: 'active',
+          createdAt: '2024-07-12T08:00:00Z'
+        },
+        {
+          id: 'br-amara-zaria',
+          entityId: 'RC-1849204',
+          branchCode: 'ZAR-01',
+          name: 'Zaria Distribution Hub',
+          address: '14 Sokoto Road, Sabon Gari, Zaria',
+          lga: 'Sabon Gari',
+          taxOffice: 'Sabon Gari Tax Office — Samaru, Zaria',
+          contactEmail: 'zaria.hub@amaraholdings.ng',
+          contactPhone: '+234 803 555 1290',
+          kadirsBranchId: 'BR-KAD-1029-02',
+          status: 'active',
+          createdAt: '2024-08-15T10:00:00Z'
+        }
+      ]
     },
     description: 'Proves CAC RC lookup, locked entity fields, representative NIN linking, and switching between personal citizen profile and corporate tax manager.',
     startingUrl: '/auth/register'

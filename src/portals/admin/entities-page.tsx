@@ -67,6 +67,7 @@ export default function AdminEntitiesPage() {
                   <th className="py-2.5 px-3 font-semibold">State TIN</th>
                   <th className="py-2.5 px-3 font-semibold">Authorized Representative</th>
                   <th className="py-2.5 px-3 font-semibold">Rep Masked NIN</th>
+                  <th className="py-2.5 px-3 font-semibold">Taxable Branches</th>
                   <th className="py-2.5 px-3 font-semibold">Status</th>
                   <th className="py-2.5 px-3 font-semibold text-right">Actions</th>
                 </tr>
@@ -82,6 +83,23 @@ export default function AdminEntitiesPage() {
                       <div className="text-[10px] font-mono text-[var(--ink-soft)]">{corp.authorizedRepCitizenId}</div>
                     </td>
                     <td className="py-3 px-3 font-mono text-xs text-[var(--green)] font-semibold">{corp.authorizedRepNINMasked}</td>
+                    <td className="py-3 px-3">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {corp.branches && corp.branches.length > 0 ? (
+                          corp.branches.map((b) => (
+                            <span
+                              key={b.id}
+                              title={`${b.name} (${b.lga})`}
+                              className="px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-mono font-bold text-[#1AA260]"
+                            >
+                              {b.branchCode}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[10px] text-[var(--ink-soft)] font-mono">HQ Only</span>
+                        )}
+                      </div>
+                    </td>
                     <td className="py-3 px-3">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                         corp.status === 'active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'

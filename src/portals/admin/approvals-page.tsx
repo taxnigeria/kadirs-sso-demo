@@ -148,6 +148,56 @@ function FriendlyDossierView({
         </div>
       )}
 
+      {/* Category: Branch Access & Scope Assignment */}
+      {category === 'branch_access' && (
+        <div className="space-y-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="p-3 bg-[var(--paper)] border border-[var(--line)] rounded-lg">
+              <span className="text-[10px] font-semibold text-[var(--ink-soft)] uppercase tracking-wider block mb-1">
+                Target Branch / Unit
+              </span>
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-[var(--green)]" />
+                <span className="font-semibold text-xs text-[var(--ink)]">
+                  {String(details.targetBranchName || 'Head Office')}
+                </span>
+                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[var(--green)]/15 text-[var(--green)] font-bold">
+                  {String(details.targetBranchCode || 'HQ')}
+                </span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-[var(--paper)] border border-[var(--line)] rounded-lg">
+              <span className="text-[10px] font-semibold text-[var(--ink-soft)] uppercase tracking-wider block mb-1">
+                Requested Authorization Scope
+              </span>
+              <span className="font-mono text-xs font-semibold text-[var(--ink)]">
+                {String(details.requestedRole || 'BRANCH_OFFICER')}
+              </span>
+            </div>
+          </div>
+
+          <div className="p-3 bg-[var(--paper)] border border-[var(--line)] rounded-lg">
+            <span className="text-[10px] font-semibold text-[var(--ink-soft)] uppercase tracking-wider block mb-1">
+              Statutory Justification &amp; Authority
+            </span>
+            <p className="text-xs text-[var(--ink)] font-medium leading-relaxed">
+              {String(details.justification || 'N/A')}
+            </p>
+          </div>
+
+          {Boolean(details.mandateDocRef) && (
+            <div className="p-3 bg-[var(--paper)] border border-[var(--line)] rounded-lg flex items-center justify-between">
+              <span className="text-xs text-[var(--ink-soft)]">Attached Board Extract / Letter of Authority:</span>
+              <span className="font-mono text-xs font-bold text-[var(--green)] flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5" />
+                <span>{String(details.mandateDocRef)}</span>
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Category: Officer Credentialing */}
       {category === 'officer_add' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -412,6 +462,7 @@ export default function AdminApprovalsPage() {
             { id: 'all', label: 'All Items' },
             { id: 'agency_reg', label: 'Agency Registrations' },
             { id: 'rep_transfer', label: 'Rep Transfers' },
+            { id: 'branch_access', label: 'Branch Access' },
             { id: 'officer_add', label: 'Officer Additions' },
             { id: 'disputed_account', label: 'Disputed Accounts' },
             { id: 'identity_conflict', label: 'Identity Conflicts' },

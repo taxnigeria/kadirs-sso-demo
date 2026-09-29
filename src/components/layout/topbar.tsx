@@ -6,6 +6,7 @@ import { useAdminEngine } from '@/engine/admin-engine'
 import { useInspectorStore } from '@/engine/inspector-store'
 import { usePresentationStore } from '@/engine/presentation-store'
 import { LogoMark } from './universal-navbar'
+import { BranchSwitcher } from '@/components/corporate/branch-switcher'
 import { type PortalConfig } from './portal-branding'
 
 interface TopbarProps {
@@ -61,6 +62,8 @@ export function Topbar({ portal, hasSidebar, onToggleMobileNav }: TopbarProps) {
 
       {/* Center/Right: Navigation & User info */}
       <div className="flex items-center gap-2.5">
+        {/* Branch Context Switcher (Only renders when active persona is corporate and entity has multiple branches) */}
+        <BranchSwitcher />
 
         {/* Current user pill if logged in (Citizen Portals Only) */}
         {currentUser && portal.id !== 'admin' && (

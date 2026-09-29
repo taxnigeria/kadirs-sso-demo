@@ -35,7 +35,7 @@ export interface CitizenProfile {
   incomeBand?: string
 }
 
-// Corporate Entity (CAC-verified)
+// Corporate Entity (CAC-verified, RC-anchored parent)
 export interface CorporateEntity {
   rcNumber: string
   companyName: string
@@ -44,6 +44,59 @@ export interface CorporateEntity {
   industry?: string
   directors: string[]
   representatives: string[]  // citizenIds of authorized human representatives
+  branches?: CorporateBranch[]    // Taxable units under this legal entity
+  bindings?: EntityBinding[]      // NIN→entity/branch role assignments
+}
+
+// Corporate Branch (child taxable unit, unique on entity_id + branch_code)
+export type BranchStatus = 'active' | 'inactive' | 'pending_approval'
+
+export interface CorporateBranch {
+  id: string
+  entityId: string           // Parent CorporateEntity rcNumber
+  branchCode: string         // e.g. 'HQ', 'KD-CEN', 'ZAR-01'
+  name: string               // e.g. 'Head Office', 'Zaria Branch'
+  address: string
+  lga: string
+  taxOffice: string
+  contactEmail: string
+  contactPhone: string
+  kadirsBranchId?: string    // TODO: Does KADIRS issue a separate taxpayer ID per branch?
+  status: BranchStatus
+  createdAt: string
+}
+
+// Entity Binding (NIN → entity/branch with role and scope)
+export type EntityRole = 'ENTITY_ADMIN' | 'BRANCH_OFFICER'
+
+export interface EntityBinding {
+  id: string
+  citizenId: string          // Pseudonymous Citizen ID (never raw NIN)
+  entityId: string           // Parent CorporateEntity rcNumber
+  role: EntityRole
+  branchScope: string[] | 'ALL'  // Branch IDs this binding covers
+  corporateEmail: string
+  legalName: string
+  boundAt: string
+}
+
+// Branch Access Request (for "Request access to this entity" flow)
+export type AccessRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+
+export interface BranchAccessRequest {
+  id: string
+  entityId: string           // RC number of the target entity
+  entityName: string         // Company name (for display)
+  requesterCitizenId: string
+  requesterName: string
+  requestedRole: EntityRole
+  requestedBranchId: string | null  // null = requesting entity-wide access
+  justification: string
+  mandateDocRef?: string     // Uploaded mandate letter filename (demo)
+  status: AccessRequestStatus
+  decidedBy?: string
+  decidedAt?: string
+  submittedAt: string
 }
 
 // Government Agency
@@ -99,6 +152,8 @@ export interface TokenPayload {
   iat: number
   exp: number
   consent_ref: string      // Reference to immutable consent event
+  entity_id?: string       // Corporate: parent entity RC number
+  branch_id?: string       // Corporate: active branch ID
 }
 
 // Reconciliation Match
@@ -152,6 +207,7 @@ export type MakerCheckerCategory =
   | 'agency_reg'
   | 'officer_add'
   | 'rep_transfer'
+  | 'branch_access'
   | 'disputed_account'
   | 'identity_conflict'
   | 'fraud_flag'
@@ -208,6 +264,7 @@ export interface CorporateEntityRecord {
   authorizedRepNINMasked: string
   authorizedRepCitizenId: string
   boundSince: string
+  branches?: CorporateBranch[]
 }
 
 export interface AgencyEntityRecord {

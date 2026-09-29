@@ -160,6 +160,26 @@ const INITIAL_MAKER_CHECKER_ITEMS: MakerCheckerItem[] = [
       actionTaken: 'Automated 15-minute lock placed; requires manual supervisory review'
     },
     status: 'pending'
+  },
+  {
+    id: 'mc-007',
+    caseNumber: 'MC-KAD-2024-007',
+    category: 'branch_access',
+    title: 'Branch Tax Officer Authorization & Jurisdiction Assignment',
+    entityName: 'Amara Holdings Ltd (RC-1029384)',
+    applicantName: 'Musa Garba (Zaria Branch Manager)',
+    applicantNINMasked: '445•••••812',
+    submittedAt: '2026-09-23T08:15:00Z',
+    details: {
+      rcNumber: 'RC-1029384',
+      requestedRole: 'BRANCH_OFFICER',
+      targetBranchCode: 'ZAR-01',
+      targetBranchName: 'Zaria Distribution Hub',
+      corporateEmail: 'musa.garba@amaraholdings.ng',
+      justification: 'Appointed Branch Tax Filing Officer per Executive Committee Resolution',
+      mandateDocRef: 'Amara-Board-Extract-Branch-Authority.pdf'
+    },
+    status: 'pending'
   }
 ]
 
@@ -236,7 +256,35 @@ const INITIAL_CORPORATE_ENTITIES: CorporateEntityRecord[] = [
     authorizedRepName: 'Dr. Aliyu Bello',
     authorizedRepNINMasked: '102•••••992',
     authorizedRepCitizenId: 'CIT-KAD-2024-00911',
-    boundSince: '2024-01-15T10:00:00Z'
+    boundSince: '2024-01-15T10:00:00Z',
+    branches: [
+      {
+        id: 'br-amara-hq',
+        entityId: 'RC-1029384',
+        branchCode: 'HQ',
+        name: 'Head Office (Kawo)',
+        address: 'Plot 7 Ali Akilu Road, Kawo, Kaduna',
+        lga: 'Kaduna North',
+        taxOffice: 'Kaduna North Tax Office — Kawo, Kaduna',
+        contactEmail: 'tax@amaraholdings.ng',
+        contactPhone: '+234 812 987 6543',
+        status: 'active',
+        createdAt: '2024-07-12T08:00:00Z'
+      },
+      {
+        id: 'br-amara-zaria',
+        entityId: 'RC-1029384',
+        branchCode: 'ZAR-01',
+        name: 'Zaria Distribution Hub',
+        address: '14 Sokoto Road, Sabon Gari, Zaria',
+        lga: 'Sabon Gari',
+        taxOffice: 'Sabon Gari Tax Office — Samaru, Zaria',
+        contactEmail: 'zaria.hub@amaraholdings.ng',
+        contactPhone: '+234 803 555 1290',
+        status: 'active',
+        createdAt: '2024-08-15T10:00:00Z'
+      }
+    ]
   },
   {
     id: 'corp-002',

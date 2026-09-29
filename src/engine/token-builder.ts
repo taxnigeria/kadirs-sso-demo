@@ -29,6 +29,8 @@ export function buildToken(params: {
   authMethods?: string[]
   assuranceLevel?: '1' | '2' | '3'
   consentRef?: string
+  entityId?: string
+  branchId?: string
 }): BuiltToken {
   const {
     citizenId,
@@ -37,12 +39,22 @@ export function buildToken(params: {
     personaType = 'individual',
     authMethods = ['pwd', 'sms_otp'],
     assuranceLevel = '2',
-    consentRef = `CNS-${Date.now().toString(36).toUpperCase()}`
+    consentRef = `CNS-${Date.now().toString(36).toUpperCase()}`,
+    entityId,
+    branchId
   } = params
 
   // Safety Assertion: Ensure citizenId is NEVER a raw 11-digit NIN
   if (/^\d{11}$/.test(citizenId)) {
     throw new Error('SECURITY VIOLATION: Raw NIN cannot be used as token subject (sub)!')
+  }
+
+  // Safety Assertion: Ensure entityId and branchId are never raw 11-digit NIN
+  if (entityId && /^\d{11}$/.test(entityId)) {
+    throw new Error('SECURITY VIOLATION: Raw NIN cannot be used as entity_id!')
+  }
+  if (branchId && /^\d{11}$/.test(branchId)) {
+    throw new Error('SECURITY VIOLATION: Raw NIN cannot be used as branch_id!')
   }
 
   const nowSeconds = Math.floor(Date.now() / 1000)
@@ -62,7 +74,9 @@ export function buildToken(params: {
     jti: `tok_${Math.random().toString(36).substring(2, 12)}`,
     iat: nowSeconds,
     exp: nowSeconds + 15 * 60, // 15-minute access token lifetime as required by spec
-    consent_ref: consentRef
+    consent_ref: consentRef,
+    ...(entityId ? { entity_id: entityId } : {}),
+    ...(branchId ? { branch_id: branchId } : {})
   }
 
   const encodedHeader = base64UrlEncode(JSON.stringify(header))

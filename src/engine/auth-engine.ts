@@ -3,6 +3,10 @@ import type {
   CitizenProfile,
   IdentityRecord,
   CorporateEntity,
+  CorporateBranch,
+  EntityBinding,
+  BranchAccessRequest,
+  EntityRole,
   GovernmentAgency,
   PersonaType,
   TokenPayload
@@ -40,6 +44,10 @@ interface AuthState {
 
   // Ecosystem state
   corporateEntities: CorporateEntity[]
+  branches: CorporateBranch[]
+  entityBindings: EntityBinding[]
+  accessRequests: BranchAccessRequest[]
+  activeCorporateContext: { entityId: string; branchId: string } | null
   agencies: GovernmentAgency[]
   connectedTsps: string[] // List of TSPs citizen has authorized
   reconciledRecordIds: string[] // List of legacy record IDs already linked
@@ -54,9 +62,34 @@ interface AuthState {
   logout: () => void
   switchTspContext: (tspId: string) => TokenPayload
   switchPersona: (persona: PersonaType) => void
+  switchBranchContext: (entityId: string, branchId: string) => TokenPayload
   updateProfile: (updates: Partial<CitizenProfile>) => void
   registerCitizen: (identity: IdentityRecord, profile: Omit<CitizenProfile, 'citizenId' | 'createdAt' | 'profileCompleteness'>) => CitizenProfile
   registerCorporate: (corporate: CorporateEntity, repNIN: string) => void
+  registerCorporateWithBranch: (params: {
+    corporate: CorporateEntity
+    initialBranch: Omit<CorporateBranch, 'id' | 'entityId' | 'createdAt'>
+    repCitizenId: string
+    repLegalName: string
+    corporateEmail: string
+    role?: EntityRole
+    isDirectorMatch?: boolean
+  }) => void
+  createBranch: (entityId: string, branch: Omit<CorporateBranch, 'id' | 'entityId' | 'createdAt'>) => CorporateBranch
+  requestEntityAccess: (params: {
+    entityId: string
+    entityName: string
+    requesterCitizenId: string
+    requesterName: string
+    requestedRole: EntityRole
+    requestedBranchId: string | null
+    justification: string
+    mandateDocRef?: string
+  }) => BranchAccessRequest
+  approveAccessRequest: (requestId: string, deciderId?: string) => void
+  rejectAccessRequest: (requestId: string, reason: string, deciderId?: string) => void
+  getBranchesForEntity: (entityId: string) => CorporateBranch[]
+  getBindingsForCitizen: (citizenId: string) => EntityBinding[]
   registerAgency: (agency: Omit<GovernmentAgency, 'submittedAt'> | Omit<GovernmentAgency, 'status' | 'submittedAt'>) => GovernmentAgency
   approveAgency: (tin: string, adminNotes?: string) => void
   rejectAgency: (tin: string, reason: string) => void
@@ -69,7 +102,7 @@ interface AuthState {
   cancelAccountDeletion: () => void
   isNINRegistered: (nin: string) => boolean
   isEmailRegistered: (email: string) => { registered: boolean; isPersonal: boolean; ownerName?: string }
-  isRCRegistered: (rc: string) => { registered: boolean; companyName?: string }
+  isRCRegistered: (rc: string) => { registered: boolean; companyName?: string; entity?: CorporateEntity }
   isAgencyTINRegistered: (tin: string) => { registered: boolean; agencyName?: string; status?: string }
   findRepresentativeByNIN: (nin: string) => { found: boolean; name?: string; email?: string }
   resetDemo: () => void
@@ -107,16 +140,16 @@ export function checkEmailRegistered(
 export function checkRCRegistered(
   rc: string,
   corporateList: CorporateEntity[] = []
-): { registered: boolean; companyName?: string } {
+): { registered: boolean; companyName?: string; entity?: CorporateEntity } {
   const clean = rc.trim().toUpperCase()
   if (!clean) return { registered: false }
   const dynamicMatch = corporateList.find((c) => c.rcNumber.toUpperCase() === clean)
   if (dynamicMatch) {
-    return { registered: true, companyName: dynamicMatch.companyName }
+    return { registered: true, companyName: dynamicMatch.companyName, entity: dynamicMatch }
   }
   const personaMatch = DEMO_PERSONAS.find((p) => p.corporate?.rcNumber.toUpperCase() === clean)
   if (personaMatch && personaMatch.corporate) {
-    return { registered: true, companyName: personaMatch.corporate.companyName }
+    return { registered: true, companyName: personaMatch.corporate.companyName, entity: personaMatch.corporate }
   }
   return { registered: false }
 }
@@ -144,6 +177,54 @@ function getInitialState() {
   const aliyu = DEMO_PERSONAS.find((p) => p.id === 'aliyu')!
   const amara = DEMO_PERSONAS.find((p) => p.id === 'amara')!
 
+  const amaraBranches: CorporateBranch[] = [
+    {
+      id: 'br-amara-hq',
+      entityId: amara.corporate!.rcNumber,
+      branchCode: 'HQ',
+      name: 'Head Office (Kawo)',
+      address: 'Plot 7 Ali Akilu Road, Kawo, Kaduna',
+      lga: 'Kaduna North',
+      taxOffice: 'Kaduna North Tax Office — Kawo, Kaduna',
+      contactEmail: 'tax@amaraholdings.ng',
+      contactPhone: '+234 812 987 6543',
+      kadirsBranchId: 'BR-KAD-1029-01',
+      status: 'active',
+      createdAt: '2024-07-12T08:00:00Z'
+    },
+    {
+      id: 'br-amara-zaria',
+      entityId: amara.corporate!.rcNumber,
+      branchCode: 'ZAR-01',
+      name: 'Zaria Distribution Hub',
+      address: '14 Sokoto Road, Sabon Gari, Zaria',
+      lga: 'Sabon Gari',
+      taxOffice: 'Sabon Gari Tax Office — Samaru, Zaria',
+      contactEmail: 'zaria.hub@amaraholdings.ng',
+      contactPhone: '+234 803 555 1290',
+      kadirsBranchId: 'BR-KAD-1029-02',
+      status: 'active',
+      createdAt: '2024-08-15T10:00:00Z'
+    }
+  ]
+
+  const initialAmaraBinding: EntityBinding = {
+    id: 'bind-amara-001',
+    citizenId: amara.profile.citizenId,
+    entityId: amara.corporate!.rcNumber,
+    role: 'ENTITY_ADMIN',
+    branchScope: 'ALL',
+    corporateEmail: 'amara.rep@amaraholdings.ng',
+    legalName: amara.identity.legalName,
+    boundAt: '2024-07-12T08:00:00Z'
+  }
+
+  const amaraCorporate: CorporateEntity = {
+    ...amara.corporate!,
+    branches: amaraBranches,
+    bindings: [initialAmaraBinding]
+  }
+
   return {
     currentUser: null as CitizenProfile | null,
     identity: null as IdentityRecord | null,
@@ -152,7 +233,11 @@ function getInitialState() {
     currentToken: null as TokenPayload | null,
     rawTokenString: null as string | null,
     currentTspContext: 'paykaduna',
-    corporateEntities: [amara.corporate!],
+    corporateEntities: [amaraCorporate],
+    branches: amaraBranches,
+    entityBindings: [initialAmaraBinding],
+    accessRequests: [] as BranchAccessRequest[],
+    activeCorporateContext: { entityId: amara.corporate!.rcNumber, branchId: 'br-amara-hq' },
     agencies: [aliyu.agency!],
     connectedTsps: ['paykaduna', 'kadvreg'],
     reconciledRecordIds: [] as string[],
@@ -253,11 +338,17 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
     const persona = DEMO_PERSONAS.find((p) => p.id === personaId)
     if (!persona) return
 
+    const isCorp = Boolean(persona.corporate)
+    const corpContext = isCorp
+      ? { entityId: persona.corporate!.rcNumber, branchId: 'br-amara-hq' }
+      : null
+
     const tokenResult = buildToken({
       citizenId: persona.profile.citizenId,
       tspId: get().currentTspContext || 'paykaduna',
       scopes: ['profile:read', 'tax:read'],
-      personaType: persona.role.includes('Corporate') ? 'corporate' : persona.role.includes('Agency') ? 'agency' : 'individual'
+      personaType: persona.role.includes('Corporate') ? 'corporate' : persona.role.includes('Agency') ? 'agency' : 'individual',
+      ...(corpContext ? { entityId: corpContext.entityId, branchId: corpContext.branchId } : {})
     })
 
     useEventLogger.getState().logEvent({
@@ -276,7 +367,8 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
       activePersona: persona.corporate ? 'corporate' : persona.agency ? 'agency' : 'individual',
       isAuthenticated: true,
       currentToken: tokenResult.payload,
-      rawTokenString: tokenResult.raw
+      rawTokenString: tokenResult.raw,
+      ...(corpContext ? { activeCorporateContext: corpContext } : {})
     })
   },
 
@@ -313,11 +405,15 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
       ? ['profile:read', 'tax:assess', 'tax:file']
       : ['profile:read', 'payments:view']
 
+    const isCorp = get().activePersona === 'corporate'
+    const corpContext = get().activeCorporateContext
+
     const tokenResult = buildToken({
       citizenId: user.citizenId,
       tspId,
       scopes,
-      personaType: get().activePersona
+      personaType: get().activePersona,
+      ...(isCorp && corpContext ? { entityId: corpContext.entityId, branchId: corpContext.branchId } : {})
     })
 
     useEventLogger.getState().logEvent({
@@ -329,7 +425,8 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
         audience: tspId,
         scopes,
         subjectClaim: user.citizenId,
-        ninExcluded: true
+        ninExcluded: true,
+        ...(isCorp && corpContext ? { entityId: corpContext.entityId, branchId: corpContext.branchId } : {})
       }
     })
 
@@ -342,6 +439,50 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
       currentToken: tokenResult.payload,
       rawTokenString: tokenResult.raw,
       connectedTsps: updatedConnected
+    })
+
+    return tokenResult.payload
+  },
+
+  switchBranchContext: (entityId: string, branchId: string) => {
+    const user = get().currentUser
+    if (!user) {
+      throw new Error('Cannot switch branch without active user session')
+    }
+
+    const branch = get().branches.find(
+      (b) => b.id === branchId || (b.entityId.toUpperCase() === entityId.toUpperCase() && b.branchCode.toUpperCase() === branchId.toUpperCase())
+    )
+    const resolvedBranchId = branch?.id || branchId
+
+    set({
+      activeCorporateContext: { entityId, branchId: resolvedBranchId }
+    })
+
+    const tokenResult = buildToken({
+      citizenId: user.citizenId,
+      tspId: get().currentTspContext || 'paykaduna',
+      scopes: ['profile:read', 'payments:view', 'tax:file'],
+      personaType: 'corporate',
+      entityId,
+      branchId: resolvedBranchId
+    })
+
+    useEventLogger.getState().logEvent({
+      category: 'auth',
+      action: 'BRANCH_CONTEXT_SWITCHED',
+      actor: user.citizenId,
+      details: {
+        entityId,
+        branchId: resolvedBranchId,
+        branchCode: branch?.branchCode || 'HQ',
+        branchName: branch?.name || 'Branch'
+      }
+    })
+
+    set({
+      currentToken: tokenResult.payload,
+      rawTokenString: tokenResult.raw
     })
 
     return tokenResult.payload
@@ -440,8 +581,42 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
   },
 
   registerCorporate: (corporate, repNIN) => {
+    const initialBranch: CorporateBranch = {
+      id: `br-${corporate.rcNumber.toLowerCase().replace(/[^a-z0-9]/g, '')}-hq`,
+      entityId: corporate.rcNumber,
+      branchCode: 'HQ',
+      name: 'Head Office',
+      address: 'Kaduna State',
+      lga: 'Kaduna North',
+      taxOffice: 'Kaduna North Tax Office — Kawo, Kaduna',
+      contactEmail: `tax@${corporate.companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.ng`,
+      contactPhone: '+234 812 987 6543',
+      status: 'active',
+      createdAt: new Date().toISOString()
+    }
+
+    const binding: EntityBinding = {
+      id: `bind-${Date.now().toString(36)}`,
+      citizenId: `CIT-REP-${repNIN.slice(-5) || '001'}`,
+      entityId: corporate.rcNumber,
+      role: 'ENTITY_ADMIN',
+      branchScope: 'ALL',
+      corporateEmail: `tax@${corporate.companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.ng`,
+      legalName: 'Authorized Representative',
+      boundAt: new Date().toISOString()
+    }
+
+    const corpWithBranch: CorporateEntity = {
+      ...corporate,
+      branches: [initialBranch],
+      bindings: [binding]
+    }
+
     set((state) => ({
-      corporateEntities: [...state.corporateEntities, corporate]
+      corporateEntities: [...state.corporateEntities, corpWithBranch],
+      branches: [...state.branches, initialBranch],
+      entityBindings: [...state.entityBindings, binding],
+      activeCorporateContext: { entityId: corporate.rcNumber, branchId: initialBranch.id }
     }))
 
     useEventLogger.getState().logEvent({
@@ -454,6 +629,232 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
         status: corporate.status
       }
     })
+  },
+
+  registerCorporateWithBranch: (params) => {
+    const {
+      corporate,
+      initialBranch,
+      repCitizenId,
+      repLegalName,
+      corporateEmail,
+      role = 'ENTITY_ADMIN',
+      isDirectorMatch = true
+    } = params
+
+    const branchId = `br-${corporate.rcNumber.toLowerCase().replace(/[^a-z0-9]/g, '')}-${initialBranch.branchCode.toLowerCase()}`
+    const branch: CorporateBranch = {
+      ...initialBranch,
+      id: branchId,
+      entityId: corporate.rcNumber,
+      createdAt: new Date().toISOString()
+    }
+
+    const bindingId = `bind-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`
+    const binding: EntityBinding = {
+      id: bindingId,
+      citizenId: repCitizenId,
+      entityId: corporate.rcNumber,
+      role,
+      branchScope: role === 'ENTITY_ADMIN' ? 'ALL' : [branchId],
+      corporateEmail,
+      legalName: repLegalName,
+      boundAt: new Date().toISOString()
+    }
+
+    const entityWithBranch: CorporateEntity = {
+      ...corporate,
+      status: isDirectorMatch ? 'active' : 'inactive',
+      branches: [branch],
+      bindings: [binding]
+    }
+
+    set((state) => ({
+      corporateEntities: [...state.corporateEntities, entityWithBranch],
+      branches: [...state.branches, branch],
+      entityBindings: [...state.entityBindings, binding],
+      activeCorporateContext: { entityId: corporate.rcNumber, branchId }
+    }))
+
+    // Audit logs
+    useEventLogger.getState().logEvent({
+      category: 'kyc',
+      action: 'CAC_CORPORATE_REGISTERED',
+      actor: repCitizenId,
+      details: {
+        rcNumber: corporate.rcNumber,
+        companyName: corporate.companyName,
+        status: entityWithBranch.status,
+        initialBranchCode: branch.branchCode,
+        initialBranchName: branch.name,
+        isDirectorMatch
+      }
+    })
+
+    useEventLogger.getState().logEvent({
+      category: 'admin',
+      action: 'BRANCH_CREATED',
+      actor: repCitizenId,
+      details: {
+        entityId: corporate.rcNumber,
+        branchId,
+        branchCode: branch.branchCode,
+        branchName: branch.name,
+        lga: branch.lga,
+        taxOffice: branch.taxOffice
+      }
+    })
+
+    useEventLogger.getState().logEvent({
+      category: 'auth',
+      action: 'OFFICER_BOUND',
+      actor: repCitizenId,
+      details: {
+        bindingId,
+        entityId: corporate.rcNumber,
+        role,
+        branchScope: binding.branchScope,
+        corporateEmail
+      }
+    })
+  },
+
+  createBranch: (entityId, branchData) => {
+    const existing = get().branches.find(
+      (b) => b.entityId.toUpperCase() === entityId.toUpperCase() && b.branchCode.toUpperCase() === branchData.branchCode.toUpperCase()
+    )
+    if (existing) {
+      throw new Error(`Branch with code "${branchData.branchCode}" already exists for this entity.`)
+    }
+
+    const branchId = `br-${entityId.toLowerCase().replace(/[^a-z0-9]/g, '')}-${branchData.branchCode.toLowerCase()}`
+    const newBranch: CorporateBranch = {
+      ...branchData,
+      id: branchId,
+      entityId,
+      createdAt: new Date().toISOString()
+    }
+
+    set((state) => ({
+      branches: [...state.branches, newBranch],
+      corporateEntities: state.corporateEntities.map((corp) =>
+        corp.rcNumber.toUpperCase() === entityId.toUpperCase()
+          ? { ...corp, branches: [...(corp.branches || []), newBranch] }
+          : corp
+      )
+    }))
+
+    const actor = get().currentUser?.citizenId || 'system'
+    useEventLogger.getState().logEvent({
+      category: 'admin',
+      action: 'BRANCH_CREATED',
+      actor,
+      details: {
+        entityId,
+        branchId,
+        branchCode: newBranch.branchCode,
+        branchName: newBranch.name,
+        lga: newBranch.lga,
+        taxOffice: newBranch.taxOffice
+      }
+    })
+
+    return newBranch
+  },
+
+  requestEntityAccess: (params) => {
+    const requestId = `req-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`
+    const request: BranchAccessRequest = {
+      id: requestId,
+      ...params,
+      status: 'PENDING',
+      submittedAt: new Date().toISOString()
+    }
+
+    set((state) => ({
+      accessRequests: [request, ...state.accessRequests]
+    }))
+
+    useEventLogger.getState().logEvent({
+      category: 'auth',
+      action: 'BRANCH_ACCESS_REQUESTED',
+      actor: params.requesterCitizenId,
+      details: {
+        requestId,
+        entityId: params.entityId,
+        entityName: params.entityName,
+        requestedRole: params.requestedRole,
+        requestedBranchId: params.requestedBranchId,
+        justification: params.justification
+      }
+    })
+
+    return request
+  },
+
+  approveAccessRequest: (requestId, deciderId) => {
+    const req = get().accessRequests.find((r) => r.id === requestId)
+    if (!req) return
+
+    const decider = deciderId || get().currentUser?.citizenId || 'admin'
+    const bindingId = `bind-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`
+    const newBinding: EntityBinding = {
+      id: bindingId,
+      citizenId: req.requesterCitizenId,
+      entityId: req.entityId,
+      role: req.requestedRole,
+      branchScope: req.requestedBranchId ? [req.requestedBranchId] : 'ALL',
+      corporateEmail: `${req.requesterCitizenId.toLowerCase()}@entity.gov.ng`,
+      legalName: req.requesterName,
+      boundAt: new Date().toISOString()
+    }
+
+    set((state) => ({
+      accessRequests: state.accessRequests.map((r) =>
+        r.id === requestId
+          ? { ...r, status: 'APPROVED', decidedBy: decider, decidedAt: new Date().toISOString() }
+          : r
+      ),
+      entityBindings: [...state.entityBindings, newBinding]
+    }))
+
+    useEventLogger.getState().logEvent({
+      category: 'auth',
+      action: 'BRANCH_ACCESS_APPROVED',
+      actor: decider,
+      details: {
+        requestId,
+        entityId: req.entityId,
+        requesterCitizenId: req.requesterCitizenId,
+        bindingId
+      }
+    })
+  },
+
+  rejectAccessRequest: (requestId, reason, deciderId) => {
+    const decider = deciderId || get().currentUser?.citizenId || 'admin'
+    set((state) => ({
+      accessRequests: state.accessRequests.map((r) =>
+        r.id === requestId
+          ? { ...r, status: 'REJECTED', decidedBy: decider, decidedAt: new Date().toISOString() }
+          : r
+      )
+    }))
+
+    useEventLogger.getState().logEvent({
+      category: 'auth',
+      action: 'BRANCH_ACCESS_REJECTED',
+      actor: decider,
+      details: { requestId, reason }
+    })
+  },
+
+  getBranchesForEntity: (entityId: string) => {
+    return get().branches.filter((b) => b.entityId.toUpperCase() === entityId.toUpperCase())
+  },
+
+  getBindingsForCitizen: (citizenId: string) => {
+    return get().entityBindings.filter((b) => b.citizenId === citizenId)
   },
 
   registerAgency: (agencyData) => {
