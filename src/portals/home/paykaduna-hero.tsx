@@ -20,14 +20,18 @@ import {
   ChevronDown,
   Sparkles,
   FileCheck,
-  AlertTriangle
+  AlertTriangle,
+  Sun,
+  Moon
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
+import { useThemeStore } from '@/engine/theme-store'
 import { PayKadunaLogo } from '@/components/layout/paykaduna-logo'
 import paykadunaHeroBg from '@/assets/paykaduna-hero-bg.jpg'
 import ibsLogoImg from '@/assets/ibs-logo.png'
 import ndpcLogoImg from '@/assets/ndpc-logo.png'
 import pcidssLogoImg from '@/assets/pcidss-logo.png'
+import pcidssLogoDarkImg from '@/assets/pcidss-logo-dark.png'
 import isoLogoImg from '@/assets/information-security-logo.png'
 import {
   VerificationModal,
@@ -42,14 +46,26 @@ interface PayKadunaHeroProps {
 
 export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
   const currentUser = useAuthEngine((s) => s.currentUser)
+  const { theme, toggleTheme } = useThemeStore()
 
   const [verifyQuery, setVerifyQuery] = useState('')
   const [isVerifying, setIsVerifying] = useState(false)
   const [isInputFocused, setIsInputFocused] = useState(false)
   const [activeDoc, setActiveDoc] = useState<VerificationDoc | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
 
   const searchBoxRef = useRef<HTMLDivElement>(null)
+
+  // Track scroll position to make navbar transparent at top and frosted when scrolled
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -116,7 +132,7 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
   }
 
   return (
-    <div className="relative w-full min-h-[100dvh] lg:h-[100dvh] bg-[#07191D] text-white flex flex-col justify-between select-none">
+    <div className="relative w-full min-h-[100dvh] bg-[#07191D] text-white flex flex-col justify-between select-none">
       {/* ── Background Layer: Official PayKaduna Durbar Background Image & Atmospheric Overlay ── */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Authentic Kaduna Durbar Camel Riders Backdrop */}
@@ -163,8 +179,14 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
         />
       </div>
 
-      {/* ── Header / Top Navigation (Compact navbar: h-12 sm:h-14) ── */}
-      <header className="relative z-20 w-full shrink-0 border-b border-white/10 backdrop-blur-xs">
+      {/* ── Header / Top Navigation (Transparent until scroll begins: h-12 sm:h-14) ── */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+          isScrolled || mobileMenuOpen
+            ? 'border-b border-white/10 bg-[#07191D]/85 dark:bg-[#051316]/90 backdrop-blur-md shadow-xs'
+            : 'border-b border-transparent bg-transparent backdrop-blur-none shadow-none'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 sm:h-14 flex items-center justify-between">
           {/* Left: Official PayKaduna Emblem with Theme-Adaptive Typography */}
           <Link
@@ -202,54 +224,72 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
             </a>
           </nav>
 
-          {/* Right: Auth Action Buttons */}
-          <div className="hidden sm:flex items-center gap-2.5">
-            {currentUser ? (
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] text-white/80 font-mono hidden lg:inline-block px-2 py-0.5 rounded bg-white/10 border border-white/15">
-                  {currentUser.email.split('@')[0]}
-                </span>
-                <Link
-                  to="/paykaduna"
-                  className="px-3 py-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 text-[#07191D] text-xs font-bold transition-all shadow-xs active:scale-95"
-                >
-                  Dashboard &rarr;
-                </Link>
-              </div>
-            ) : (
-              <>
-                <Link
-                  to="/auth/login"
-                  className="px-4 py-1.5 rounded-md bg-white/20 hover:bg-white/30 text-white text-xs sm:text-[13px] font-medium transition-all backdrop-blur-xs border border-white/15 active:scale-95"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  to="/auth/register"
-                  className="px-4 py-1.5 rounded-md bg-white/20 hover:bg-white/30 text-white text-xs sm:text-[13px] font-medium transition-all backdrop-blur-xs border border-white/15 active:scale-95"
-                >
-                  Register
-                </Link>
-              </>
-            )}
-          </div>
+          {/* Right: Auth Action Buttons + Theme Toggle */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Desktop Auth Links */}
+            <div className="hidden sm:flex items-center gap-2.5">
+              {currentUser ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-white/80 font-mono hidden lg:inline-block px-2 py-0.5 rounded bg-white/10 border border-white/15">
+                    {currentUser.email.split('@')[0]}
+                  </span>
+                  <Link
+                    to="/paykaduna"
+                    className="px-3 py-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 text-[#07191D] text-xs font-bold transition-all shadow-xs active:scale-95"
+                  >
+                    Dashboard &rarr;
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <Link
+                    to="/auth/login"
+                    className="px-4 py-1.5 rounded-md bg-white/20 hover:bg-white/30 text-white text-xs sm:text-[13px] font-medium transition-all backdrop-blur-xs border border-white/15 active:scale-95"
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    to="/auth/register"
+                    className="px-4 py-1.5 rounded-md bg-white/20 hover:bg-white/30 text-white text-xs sm:text-[13px] font-medium transition-all backdrop-blur-xs border border-white/15 active:scale-95"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
+            </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+            {/* Theme Toggle Button (Light/Dark Switcher) */}
             <button
               type="button"
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="p-1.5 rounded-md bg-white/10 text-white hover:bg-white/20 transition-colors"
-              aria-label="Toggle navigation menu"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="p-1.5 sm:p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-all border border-white/20 cursor-pointer active:scale-95 flex items-center justify-center shrink-0"
             >
-              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-300" />
+              ) : (
+                <Moon className="w-4 h-4 text-white" />
+              )}
             </button>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden flex items-center">
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen((prev) => !prev)}
+                className="p-1.5 rounded-md bg-white/10 text-white hover:bg-white/20 transition-colors"
+                aria-label="Toggle navigation menu"
+              >
+                {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden px-4 pt-2.5 pb-4 space-y-2 bg-[#07191D]/95 backdrop-blur-md border-b border-white/10 animate-in fade-in slide-in-from-top-2">
+          <div className="md:hidden px-4 pt-2.5 pb-4 space-y-2 bg-[#07191D]/95 dark:bg-[#051316]/95 backdrop-blur-md border-b border-white/10 animate-in fade-in slide-in-from-top-2">
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
@@ -287,9 +327,23 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
                 Register
               </Link>
             </div>
+            <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+              <span className="text-xs text-white/70">Theme</span>
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/15 text-white text-xs font-medium border border-white/20"
+              >
+                {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-300" /> : <Moon className="w-3.5 h-3.5 text-white" />}
+                <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+              </button>
+            </div>
           </div>
         )}
       </header>
+
+      {/* Spacer matching fixed header height to preserve internal hero layout */}
+      <div className="h-12 sm:h-14 shrink-0" aria-hidden="true" />
 
       {/* ── Center Content: The Compact Quote & Verify Bar with Autofill Popover ── */}
       <div className="relative z-40 w-full max-w-5xl mx-auto px-4 sm:px-6 text-center shrink-0 min-h-0 flex-1 flex flex-col items-center justify-center py-1 sm:py-2">
@@ -643,11 +697,11 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
         </div>
 
         {/* ── Official PayKaduna Compliance Logos & Copyright Strip (Matches PayKaduna.com) ── */}
-        <div className="w-full flex flex-wrap text-white/90 justify-center items-center gap-3 sm:gap-6 mt-3 sm:mt-4 mb-1">
+        <div className="w-full flex flex-wrap text-white/90 justify-center items-center gap-3 sm:gap-6 mt-8 sm:mt-10 lg:mt-12 mb-2 sm:mb-3">
           <p className="w-full sm:w-auto text-center text-xs sm:text-[13px] font-normal text-white/80 tracking-wide">
             &copy; copyright 2026
           </p>
-          <div className="flex items-center justify-center gap-3 sm:gap-4 bg-white/95 px-3.5 sm:px-4 py-1.5 rounded-full shadow-md">
+          <div className="flex items-center justify-center gap-3 sm:gap-4 bg-white/95 dark:bg-[#07191D]/85 border border-transparent dark:border-white/15 px-3.5 sm:px-4 py-1.5 rounded-full shadow-md backdrop-blur-xs transition-colors">
             <img
               src={ibsLogoImg}
               alt="Intelligent Billing System (IBS)"
@@ -658,10 +712,16 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
               alt="Nigeria Data Protection Commission (NDPC)"
               className="h-6 sm:h-7 w-auto object-contain"
             />
+            {/* Adaptive PCI DSS Logo: dark text on light mode, crisp white on dark mode */}
+            <img
+              src={pcidssLogoDarkImg}
+              alt="PCI DSS Compliant"
+              className="h-6 sm:h-7 w-auto object-contain dark:hidden"
+            />
             <img
               src={pcidssLogoImg}
               alt="PCI DSS Compliant"
-              className="h-6 sm:h-7 w-auto object-contain"
+              className="h-6 sm:h-7 w-auto object-contain hidden dark:block"
             />
             <img
               src={isoLogoImg}
@@ -672,7 +732,7 @@ export function PayKadunaHero({ backgroundImageUrl }: PayKadunaHeroProps) {
         </div>
 
         {/* Subtle scroll hint to indicate continuity with the page */}
-        <div className="flex justify-center mt-1.5 opacity-60 hover:opacity-100 transition-opacity">
+        <div className="flex justify-center mt-3 sm:mt-4 opacity-60 hover:opacity-100 transition-opacity">
           <a
             href="#how-it-works"
             onClick={(e) => scrollToSection(e, 'how-it-works')}

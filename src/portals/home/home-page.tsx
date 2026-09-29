@@ -14,6 +14,7 @@ import { PayKadunaHero } from './paykaduna-hero'
 import ibsLogoImg from '@/assets/ibs-logo.png'
 import ndpcLogoImg from '@/assets/ndpc-logo.png'
 import pcidssLogoImg from '@/assets/pcidss-logo.png'
+import pcidssLogoDarkImg from '@/assets/pcidss-logo-dark.png'
 import isoLogoImg from '@/assets/information-security-logo.png'
 import './home-landing.css'
 
@@ -266,7 +267,8 @@ export default function HomePage() {
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.92)', padding: '3px 10px', borderRadius: '9999px' }}>
               <img src={ibsLogoImg} alt="IBS" style={{ height: '18px', width: 'auto' }} />
               <img src={ndpcLogoImg} alt="NDPC" style={{ height: '18px', width: 'auto' }} />
-              <img src={pcidssLogoImg} alt="PCI DSS" style={{ height: '18px', width: 'auto' }} />
+              <img src={pcidssLogoDarkImg} alt="PCI DSS" className="dark:hidden" style={{ height: '18px', width: 'auto' }} />
+              <img src={pcidssLogoImg} alt="PCI DSS" className="hidden dark:block" style={{ height: '18px', width: 'auto' }} />
               <img src={isoLogoImg} alt="ISO 27001" style={{ height: '18px', width: 'auto' }} />
             </div>
           </div>
