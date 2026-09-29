@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useSearchParams, useNavigate } from 'react-router'
+import { useSearchParams, useNavigate, Link } from 'react-router'
 import {
   ShieldCheck,
   Building2,
@@ -13,7 +13,9 @@ import {
   AlertCircle,
   Eye,
   EyeOff,
-  LogIn
+  LogIn,
+  Sparkles,
+  UserPlus
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
@@ -52,6 +54,7 @@ export default function OAuthAuthorizePage() {
   const [isSubmittingLogin, setIsSubmittingLogin] = useState(false)
 
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false)
+  const [isDemoAccordionOpen, setIsDemoAccordionOpen] = useState(false)
   const [copiedToken, setCopiedToken] = useState(false)
   const [generatedCallbackUrl, setGeneratedCallbackUrl] = useState<string | null>(null)
 
@@ -189,8 +192,8 @@ export default function OAuthAuthorizePage() {
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex flex-col items-center justify-center p-4 sm:p-6 transition-colors">
-      {/* Container: Elegant Dark/Light Dialog matching Google OAuth modal */}
-      <div className="w-full max-w-[440px] bg-[var(--card-bg)] text-[var(--ink)] border border-[var(--input-border)] rounded-[28px] shadow-2xl p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-200 relative">
+      {/* Container: Elegant Dark/Light Dialog matching Google OAuth modal (Wider ~10% for improved breathing room) */}
+      <div className="w-full max-w-[485px] bg-[var(--card-bg)] text-[var(--ink)] border border-[var(--input-border)] rounded-[28px] shadow-2xl p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-200 relative">
         {/* Top Header: Kaduna State SSO Brand Mark */}
         <div className="flex items-center justify-between border-b border-[var(--gray-200)] pb-4">
           <div className="flex items-center gap-2">
@@ -297,31 +300,70 @@ export default function OAuthAuthorizePage() {
                   )}
                 </button>
               </div>
+
+              {/* Registration Link */}
+              <div className="text-center pt-2 pb-0.5">
+                <span className="text-xs text-[var(--gray-600)] dark:text-[var(--gray-300)]">
+                  Don&apos;t have an account?{' '}
+                  <Link
+                    to={`/auth/register?return_to=${encodeURIComponent(window.location.pathname + window.location.search)}`}
+                    className="text-[#1AA260] hover:text-[#158A52] font-bold hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>Register here</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </span>
+              </div>
             </form>
 
-            {/* Quick Demo Sign-In Picker (One-Click) */}
+            {/* Quick Demo Sign-In Picker (One-Click Collapsible Accordion) */}
             <div className="pt-2 border-t border-[var(--gray-200)] space-y-2">
-              <div className="flex items-center justify-between text-[11px] text-[var(--gray-500)] font-semibold uppercase tracking-wider">
-                <span>Or Select Demo Taxpayer:</span>
-                <span className="text-[#1AA260] text-[10px] font-bold">1-Click Demo</span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 max-h-44 overflow-y-auto pr-0.5">
-                {DEMO_PERSONAS.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => handleQuickDemoLogin(p.id)}
-                    className="p-2 rounded-xl border border-[var(--input-border)] bg-black/[0.02] dark:bg-white/[0.04] hover:bg-[#1AA260]/10 hover:border-[#1AA260]/40 text-left transition-all group cursor-pointer"
-                  >
-                    <div className="text-xs font-bold text-[var(--ink)] group-hover:text-[#1AA260] truncate">
-                      {p.name}
-                    </div>
-                    <div className="text-[10px] text-[var(--gray-500)] truncate">
-                      {p.profile.email}
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <button
+                type="button"
+                onClick={() => setIsDemoAccordionOpen(!isDemoAccordionOpen)}
+                className="w-full flex items-center justify-between py-2 px-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.03] hover:bg-black/[0.05] dark:hover:bg-white/[0.06] border border-[var(--input-border)] text-left transition-all cursor-pointer group"
+                aria-expanded={isDemoAccordionOpen}
+              >
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-[#1AA260]" />
+                  <span className="text-xs font-semibold text-[var(--gray-700)] dark:text-[var(--gray-300)] group-hover:text-[var(--ink)]">
+                    Or Select Demo Taxpayer
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#1AA260]/10 text-[#1AA260]">
+                    1-Click Demo
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[var(--gray-400)] group-hover:text-[var(--ink)]">
+                  <span className="text-[11px] font-normal hidden sm:inline">
+                    {isDemoAccordionOpen ? 'Hide' : 'Expand'}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isDemoAccordionOpen ? 'rotate-180 text-[#1AA260]' : ''
+                    }`}
+                  />
+                </div>
+              </button>
+
+              {isDemoAccordionOpen && (
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-0.5 pt-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                  {DEMO_PERSONAS.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => handleQuickDemoLogin(p.id)}
+                      className="p-2.5 rounded-xl border border-[var(--input-border)] bg-black/[0.02] dark:bg-white/[0.04] hover:bg-[#1AA260]/10 hover:border-[#1AA260]/40 text-left transition-all group cursor-pointer"
+                    >
+                      <div className="text-xs font-bold text-[var(--ink)] group-hover:text-[#1AA260] truncate">
+                        {p.name}
+                      </div>
+                      <div className="text-[10px] text-[var(--gray-500)] truncate">
+                        {p.profile.email}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="pt-1 text-center">
@@ -446,6 +488,15 @@ export default function OAuthAuthorizePage() {
                     <LogIn className="w-3.5 h-3.5" />
                     <span>Use another account / Sign in with credentials &rarr;</span>
                   </button>
+
+                  {/* Register another account */}
+                  <Link
+                    to={`/auth/register?return_to=${encodeURIComponent(window.location.pathname + window.location.search)}`}
+                    className="w-full p-2.5 rounded-xl text-left border-t border-[var(--input-border)] text-xs text-[var(--gray-600)] dark:text-[var(--gray-300)] hover:text-[#1AA260] font-semibold hover:bg-black/[0.04] dark:hover:bg-white/[0.06] flex items-center gap-2 cursor-pointer"
+                  >
+                    <UserPlus className="w-3.5 h-3.5 text-[#1AA260]" />
+                    <span>Register a new Kaduna State account &rarr;</span>
+                  </Link>
                 </div>
               )}
             </div>

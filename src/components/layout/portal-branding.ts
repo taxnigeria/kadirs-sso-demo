@@ -124,6 +124,7 @@ export const PORTALS: Record<string, PortalConfig> = {
 
 /** TSP configurations for the service directory */
 export const TSP_REGISTRY = [
+  { id: "kadtaxonrent", name: "Kad Tax on Rent", description: "Property WHT management & rental remittance", personas: "Individual / Corporate", icon: Home },
   { id: "paykaduna", name: "PayKaduna", description: "Customer dashboard, revenue payments", personas: "All personas", icon: Wallet },
   { id: "kadvreg", name: "KADVREG", description: "Vehicle registration & licence renewal", personas: "Individual / Corporate", icon: Car },
   { id: "pit", name: "PIT Portal", description: "Personal income tax filing", personas: "Individual only", icon: FileText },

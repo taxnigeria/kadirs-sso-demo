@@ -284,12 +284,12 @@ export default function PayKadunaDashboard() {
               </div>
             )}
 
-            {/* Link to full 14 services catalog */}
+            {/* Link to full services catalog */}
             <Link
               to="/paykaduna/services"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors cursor-pointer shrink-0 shadow-2xs"
             >
-              <span>Explore All Services (14)</span>
+              <span>Explore All Services ({TSP_REGISTRY.length})</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -299,6 +299,7 @@ export default function PayKadunaDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {filteredTsps.map((tsp) => {
             const isCurrent = tsp.id === 'paykaduna'
+            const isKadTax = tsp.id === 'kadtaxonrent'
             const isKadvreg = tsp.id === 'kadvreg'
             const isPit = tsp.id === 'pit'
 
@@ -359,7 +360,22 @@ export default function PayKadunaDashboard() {
                       Token
                     </button>
 
-                    {isKadvreg ? (
+                    {isKadTax ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setTransitioningTsp({
+                            name: 'Kad Tax on Rent (WHT Property Platform)',
+                            url: '/auth/authorize?client_id=kadtaxonrent&redirect_uri=http%3A%2F%2Flocalhost%3A5174%2Fauth%2Fcallback&response_type=code&scope=openid%20profile%3Aread%20tax%3Aread%20rent%3Amanage&state=sso_dash_launch',
+                            audience: 'kadtaxonrent'
+                          })
+                        }
+                        className="text-[#0A5C36] dark:text-emerald-400 font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Launch Kad Tax</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    ) : isKadvreg ? (
                       <button
                         type="button"
                         onClick={() =>

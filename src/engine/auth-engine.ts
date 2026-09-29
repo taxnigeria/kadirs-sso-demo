@@ -94,7 +94,7 @@ interface AuthState {
   approveAgency: (tin: string, adminNotes?: string) => void
   rejectAgency: (tin: string, reason: string) => void
   revokeTspConsent: (tspId: string) => void
-  reconcileRecord: (recordId: string) => void
+  reconcileRecord: (recordId: string, tspId?: string) => void
   initiateContactChange: (type: 'email' | 'phone', newValue: string) => void
   cancelContactChange: () => void
   applyContactChangeImmediately: () => void
@@ -381,12 +381,22 @@ export const useAuthEngine = create<AuthState>((set, get) => ({
     }
   },
 
-  reconcileRecord: (recordId: string) => {
-    set((state) => ({
-      reconciledRecordIds: state.reconciledRecordIds.includes(recordId)
+  reconcileRecord: (recordId: string, tspId?: string) => {
+    set((state) => {
+      const nextReconciled = state.reconciledRecordIds.includes(recordId)
         ? state.reconciledRecordIds
         : [...state.reconciledRecordIds, recordId]
-    }))
+
+      let nextConnected = [...state.connectedTsps]
+      if (tspId && !nextConnected.includes(tspId)) {
+        nextConnected.push(tspId)
+      }
+
+      return {
+        reconciledRecordIds: nextReconciled,
+        connectedTsps: nextConnected
+      }
+    })
     persist()
   },
 

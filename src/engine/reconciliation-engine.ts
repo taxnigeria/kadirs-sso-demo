@@ -2,7 +2,8 @@ import type { IdentityRecord, CitizenProfile, LegacyTspRecord } from '@/types'
 import {
   PAYKADUNA_LEGACY_RECORDS,
   KADVREG_LEGACY_RECORDS,
-  PIT_LEGACY_RECORDS
+  PIT_LEGACY_RECORDS,
+  KADTAXONRENT_LEGACY_RECORDS
 } from '@/data/tsp-legacy-databases'
 import { useAuthEngine } from './auth-engine'
 import { useEventLogger } from './event-logger'
@@ -76,6 +77,7 @@ export function findLegacyMatches(
   profile: CitizenProfile
 ): ReconciliationCandidate[] {
   const allRecords: LegacyTspRecord[] = [
+    ...KADTAXONRENT_LEGACY_RECORDS,
     ...PAYKADUNA_LEGACY_RECORDS,
     ...KADVREG_LEGACY_RECORDS,
     ...PIT_LEGACY_RECORDS
@@ -87,6 +89,24 @@ export function findLegacyMatches(
     const reasons: string[] = []
     let score = 0
     let tier: MatchTier = 'tier_2_strong_fuzzy'
+
+    const tspFriendlyName =
+      rec.tspId === 'kadtaxonrent'
+        ? 'Kad Tax on Rent (WHT Property)'
+        : rec.tspId === 'paykaduna'
+        ? 'PayKaduna'
+        : rec.tspId === 'kadvreg'
+        ? 'KADVREG Vehicle'
+        : 'PIT Portal'
+
+    const tspIcon =
+      rec.tspId === 'kadtaxonrent'
+        ? 'Home'
+        : rec.tspId === 'paykaduna'
+        ? 'CreditCard'
+        : rec.tspId === 'kadvreg'
+        ? 'Car'
+        : 'FileText'
 
     // Case 1: Conflicting NIN detected on legacy record!
     if (rec.nin && rec.nin !== identity.nin) {
@@ -102,8 +122,8 @@ export function findLegacyMatches(
             `Conflicting NIN: Record has ${rec.nin} vs verified ${identity.nin}`,
             `Name similarity is ${(nameSim * 100).toFixed(0)}%`
           ],
-          tspName: rec.tspId === 'paykaduna' ? 'PayKaduna' : rec.tspId === 'kadvreg' ? 'KADVREG Vehicle' : 'PIT Portal',
-          serviceIconName: rec.tspId === 'paykaduna' ? 'CreditCard' : rec.tspId === 'kadvreg' ? 'Car' : 'FileText',
+          tspName: tspFriendlyName,
+          serviceIconName: tspIcon,
           disputeReason: 'NIN mismatch detected. Golden Rule violation: Cannot bind conflicting NIN without administrative dispute resolution.'
         })
       }
@@ -150,8 +170,8 @@ export function findLegacyMatches(
         matchTier: tier,
         confidenceScore: score,
         matchReasons: reasons,
-        tspName: rec.tspId === 'paykaduna' ? 'PayKaduna' : rec.tspId === 'kadvreg' ? 'KADVREG Vehicle' : 'PIT Portal',
-        serviceIconName: rec.tspId === 'paykaduna' ? 'CreditCard' : rec.tspId === 'kadvreg' ? 'Car' : 'FileText'
+        tspName: tspFriendlyName,
+        serviceIconName: tspIcon
       })
     }
   }
@@ -192,8 +212,8 @@ export function executeReconciliation(
     }
   }
 
-  // Register link in Auth Engine
-  useAuthEngine.getState().reconcileRecord(candidate.record.id)
+  // Register link in Auth Engine and merge TSP into citizen's connectedTsps
+  useAuthEngine.getState().reconcileRecord(candidate.record.id, candidate.record.tspId)
 
   // Log NDPA Immutable Consent Event
   useEventLogger.getState().logConsent({

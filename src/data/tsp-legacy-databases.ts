@@ -99,3 +99,29 @@ export const PIT_LEGACY_RECORDS: LegacyTspRecord[] = [
     accountCreated: '2021-06-05'
   }
 ]
+
+// Kad Tax on Rent (WHT Property Platform) legacy records
+export const KADTAXONRENT_LEGACY_RECORDS: LegacyTspRecord[] = [
+  {
+    id: 'kadtax-rec-401',
+    tspId: 'kadtaxonrent',
+    name: 'Fatima Aminu Abdullahi',
+    email: 'fatimah.a@gmail.com',
+    phone: '08031234567',
+    nin: '12345678901',
+    lastActivity: 'Rental withholding tax remittance for Barnawa Property (PROP-2024-8819)',
+    lastActivityDate: '2024-05-18',
+    accountCreated: '2022-04-12'
+  },
+  {
+    id: 'kadtax-rec-402',
+    tspId: 'kadtaxonrent',
+    name: 'Amina Yusuf',
+    email: 'amina.yusuf@outlook.com',
+    phone: '08023456789',
+    nin: '77788899900',
+    lastActivity: 'Rental withholding tax remittance for Malali Duplex (PROP-2026-106373)',
+    lastActivityDate: '2024-06-02',
+    accountCreated: '2023-01-20'
+  }
+]

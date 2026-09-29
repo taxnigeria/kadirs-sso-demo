@@ -42,6 +42,21 @@ interface ServiceItem {
 
 const SERVICES_CATALOG: ServiceItem[] = [
   {
+    id: 'kadtaxonrent',
+    name: 'Kad Tax on Rent (WHT Property Platform)',
+    acronym: 'KadTaxOnRent',
+    agency: 'Kaduna State Internal Revenue Service (KADIRS)',
+    category: 'revenue',
+    description: 'Official Withholding Tax on Rent management gateway. Property profiling, rental withholding remittance, electronic tax credit certificates, and landlord-tenant compliance.',
+    personas: ['Individual', 'Corporate'],
+    icon: Home,
+    isInteractive: true,
+    launchUrl: '/auth/authorize?client_id=kadtaxonrent&redirect_uri=http%3A%2F%2Flocalhost%3A5174%2Fauth%2Fcallback&response_type=code&scope=openid%20profile%3Aread%20tax%3Aread%20rent%3Amanage&state=sso_catalog_launch',
+    audience: 'kadtaxonrent',
+    scopes: ['profile:read', 'tax:read', 'rent:manage'],
+    statutoryBasis: 'Kaduna State Tax Codification and Consolidation Law (WHT Provisions)'
+  },
+  {
     id: 'paykaduna',
     name: 'PayKaduna Revenue Gateway',
     acronym: 'PayKaduna',

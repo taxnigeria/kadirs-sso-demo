@@ -116,7 +116,7 @@ export interface GovernmentAgency {
 // TSP Legacy Record (pre-migration for reconciliation)
 export interface LegacyTspRecord {
   id: string
-  tspId: 'paykaduna' | 'kadvreg' | 'pit'
+  tspId: 'paykaduna' | 'kadvreg' | 'pit' | 'kadtaxonrent'
   name: string
   email: string
   phone: string
