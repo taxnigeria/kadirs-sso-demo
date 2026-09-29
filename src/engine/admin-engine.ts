@@ -398,6 +398,21 @@ const INITIAL_TSP_CLIENTS: TspClientRecord[] = [
     activeScopes: ['profile:read', 'property:read', 'c-of-o:verify'],
     clientSecretMasked: 'sec_live_kg_••••••••7812',
     secretLastRotatedAt: '2024-06-10T00:00:00Z'
+  },
+  {
+    id: 'kadtaxonrent',
+    name: 'Kad Tax on Rent (WHT Property Platform)',
+    audience: 'kadtaxonrent',
+    status: 'active',
+    registeredAt: '2024-04-01T00:00:00Z',
+    redirectUris: [
+      'https://kadtaxonrent.com.ng/auth/callback',
+      'http://localhost:5174/auth/callback',
+      'http://localhost:3000/auth/callback'
+    ],
+    activeScopes: ['profile:read', 'tax:read', 'rent:manage'],
+    clientSecretMasked: 'sec_live_tr_••••••••5521',
+    secretLastRotatedAt: '2024-09-10T00:00:00Z'
   }
 ]
 

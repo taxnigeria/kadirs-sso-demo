@@ -267,5 +267,34 @@ export const DEMO_PERSONAS: DemoPersonaConfig[] = [
     },
     description: 'Has conflicting NINs in legacy systems (PayKaduna vs KADVREG). Triggers conflict resolution and escalation to the KADIRS Admin dispute queue.',
     startingUrl: '/auth/login'
+  },
+  {
+    id: 'courage',
+    name: 'Courage Okaka',
+    tagline: 'Property Owner: Rent Withholding Tax & TSP Single Sign-On',
+    journey: 'Journey 6 (Kad Tax on Rent TSP Federation)',
+    role: 'Individual Citizen & Landlord',
+    identity: {
+      nin: '33344455566',
+      legalName: 'Courage Okaka',
+      dateOfBirth: '1988-06-18',
+      gender: 'male',
+      photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+      verificationProvider: 'nimc',
+      verifiedAt: '2024-09-10T10:00:00Z'
+    },
+    profile: {
+      citizenId: 'CIT-KAD-2024-00847',
+      email: 'courageokaka9@gmail.com',
+      phone: '+234 803 555 1234',
+      lga: 'Kaduna North',
+      taxOffice: 'Kaduna North Tax Office — Kawo, Kaduna',
+      address: '21 Jolly Street, Badarawa, Kaduna',
+      personas: ['individual'],
+      profileCompleteness: 100,
+      createdAt: '2024-09-10T10:00:00Z'
+    },
+    description: 'Registered property owner on Kad Tax on Rent (kadtaxonrent.com.ng) with 3 managed properties and statutory rent WHT invoices. Demonstrates centralized SSO identity federation and cross-portal profile redirection.',
+    startingUrl: '/auth/login'
   }
 ]
