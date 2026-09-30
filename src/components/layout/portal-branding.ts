@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   ScrollText,
   Link2,
+  Receipt,
   type LucideIcon,
 } from "lucide-react"
 
@@ -65,6 +66,7 @@ export const PORTALS: Record<string, PortalConfig> = {
     navItems: [
       { label: "Dashboard", path: "/paykaduna", icon: LayoutDashboard },
       { label: "Services", path: "/paykaduna/services", icon: ClipboardList },
+      { label: "Billing & Invoices", path: "/paykaduna/invoices", icon: Receipt },
       { label: "Account Reconciliation", path: "/auth/reconciliation", icon: Link2 },
       { label: "Citizen Profile", path: "/auth/profile", icon: User },
     ],

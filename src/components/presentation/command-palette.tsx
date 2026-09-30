@@ -20,7 +20,8 @@ import {
   Sliders,
   Check,
   LogOut,
-  Link2
+  Link2,
+  Receipt
 } from 'lucide-react'
 import { usePresentationStore } from '@/engine/presentation-store'
 import { useInspectorStore } from '@/engine/inspector-store'
@@ -166,6 +167,14 @@ export function CommandPalette() {
         badge: 'Services',
         icon: Sliders,
         path: '/paykaduna/services'
+      },
+      {
+        id: 'portal-invoices',
+        title: 'Billing & Invoices Ledger',
+        subtitle: 'Review revenue assessments, road tax renewals, and pay via central gateway',
+        badge: 'Billing',
+        icon: Receipt,
+        path: '/paykaduna/invoices'
       },
       {
         id: 'portal-reconciliation',

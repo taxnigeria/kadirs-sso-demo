@@ -2,15 +2,13 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 import {
   ChevronsUpDown,
-  Sparkles,
   User,
   CreditCard,
   Bell,
   LogOut,
   ShieldCheck,
   Users,
-  Check,
-  Link2
+  Check
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useInvoiceStore } from '@/engine/invoice-store'
@@ -29,7 +27,6 @@ export function SidebarUserFooter() {
   const logout = useAuthEngine((s) => s.logout)
   const loginAsPersona = useAuthEngine((s) => s.loginAsPersona)
 
-  const openBillingModal = useInvoiceStore((s) => s.openBillingModal)
   const invoices = useInvoiceStore((s) => s.invoices)
 
   const unpaidCount = invoices.filter((i) => i.status === 'unpaid' || i.status === 'overdue').length
@@ -140,13 +137,10 @@ export function SidebarUserFooter() {
 
           {/* Primary Action Items */}
           <div className="p-1.5 space-y-0.5 text-xs">
-            {/* 1. Invoices & Billing (Google-Style TSP Explorer Trigger) */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsOpen(false)
-                openBillingModal()
-              }}
+            {/* 1. Invoices & Billing */}
+            <Link
+              to="/paykaduna/invoices"
+              onClick={() => setIsOpen(false)}
               className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors cursor-pointer group text-left"
             >
               <div className="flex items-center gap-2.5 text-[var(--ink)] min-w-0">
@@ -160,7 +154,7 @@ export function SidebarUserFooter() {
               ) : (
                 <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium shrink-0 whitespace-nowrap">All Settled</span>
               )}
-            </button>
+            </Link>
 
             {/* 2. Account Profile */}
             <Link
@@ -172,33 +166,7 @@ export function SidebarUserFooter() {
               <span className="font-medium whitespace-nowrap">Citizen Profile</span>
             </Link>
 
-            {/* 3. Account Reconciliation */}
-            <Link
-              to="/auth/reconciliation"
-              onClick={() => setIsOpen(false)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] transition-colors cursor-pointer"
-            >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <Link2 className="w-4 h-4 text-[#1AA260] shrink-0" />
-                <span className="font-medium whitespace-nowrap">Account Reconciliation</span>
-              </div>
-              <span className="text-[10px] text-[var(--gray-400)] shrink-0 whitespace-nowrap">Legacy Records</span>
-            </Link>
-
-            {/* 4. Connected Services */}
-            <Link
-              to="/paykaduna/services"
-              onClick={() => setIsOpen(false)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] transition-colors cursor-pointer"
-            >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="font-medium whitespace-nowrap">Connected Services</span>
-              </div>
-              <span className="text-[10px] text-[var(--gray-400)] shrink-0 whitespace-nowrap">14 TSPs</span>
-            </Link>
-
-            {/* 4. Notifications & Notices (Matches shadcn screenshot) */}
+            {/* 3. Notifications & Notices (Matches shadcn screenshot) */}
             <button
               type="button"
               onClick={() => {

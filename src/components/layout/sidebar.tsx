@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useAdminEngine } from '@/engine/admin-engine'
+import { useInvoiceStore } from '@/engine/invoice-store'
 import { findLegacyMatches } from '@/engine/reconciliation-engine'
 import { type PortalConfig } from './portal-branding'
 import { ChevronRight, X } from 'lucide-react'
@@ -21,6 +22,11 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
   const reconciledRecordIds = useAuthEngine((s) => s.reconciledRecordIds)
   const makerCheckerItems = useAdminEngine((s) => s.makerCheckerItems)
   const pendingApprovalsCount = makerCheckerItems.filter((i) => i.status === 'pending').length
+  const invoices = useInvoiceStore((s) => s.invoices)
+
+  const unpaidInvoicesCount = useMemo(() => {
+    return invoices.filter((i) => i.status === 'unpaid' || i.status === 'overdue').length
+  }, [invoices])
 
   // Calculate unlinked reconciliation candidate accounts for citizen portals
   const unlinkedReconciledCount = useMemo(() => {
@@ -61,7 +67,10 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
           const isReconciliationRoute =
             (item.path === '/auth/reconciliation' || item.path === '/paykaduna/reconciliation') &&
             (location.pathname === '/auth/reconciliation' || location.pathname === '/paykaduna/reconciliation')
-          const isActive = location.pathname === item.path || isReconciliationRoute
+          const isInvoicesRoute =
+            (item.path === '/paykaduna/invoices' || item.path === '/paykaduna/billing') &&
+            (location.pathname === '/paykaduna/invoices' || location.pathname === '/paykaduna/billing')
+          const isActive = location.pathname === item.path || isReconciliationRoute || isInvoicesRoute
           const NavIcon = item.icon
           return (
             <Link
@@ -85,6 +94,17 @@ export function Sidebar({ portal, isOpenOnMobile, onCloseMobile }: SidebarProps)
                   }`}
                 >
                   {pendingApprovalsCount}
+                </span>
+              )}
+              {(item.path === '/paykaduna/invoices' || item.path === '/paykaduna/billing') && unpaidInvoicesCount > 0 && (
+                <span
+                  className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    isActive
+                      ? 'bg-white/20 text-white'
+                      : 'bg-amber-500/20 text-amber-800 dark:text-amber-300'
+                  }`}
+                >
+                  {unpaidInvoicesCount}
                 </span>
               )}
               {(item.path === '/auth/reconciliation' || item.path === '/paykaduna/reconciliation') && unlinkedReconciledCount > 0 && (

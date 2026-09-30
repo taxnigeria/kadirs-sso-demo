@@ -14,6 +14,7 @@ import ProfilePage from "@/portals/auth/profile-page"
 import ReconciliationPage from "@/portals/auth/reconciliation-page"
 import PayKadunaDashboard from "@/portals/paykaduna/dashboard-page"
 import ServicesPage from "@/portals/paykaduna/services-page"
+import InvoicesPage from "@/portals/paykaduna/invoices-page"
 import KadVRegDashboard from "@/portals/kadvreg/dashboard-page"
 import PITDashboard from "@/portals/pit/dashboard-page"
 import AdminLoginPage from "@/portals/admin/admin-login-page"
@@ -76,6 +77,8 @@ export default function App() {
         <Route path="paykaduna" element={<PortalShell portal={PORTALS.paykaduna} />}>
           <Route index element={<RequireAuth><PayKadunaDashboard /></RequireAuth>} />
           <Route path="services" element={<RequireAuth><ServicesPage /></RequireAuth>} />
+          <Route path="invoices" element={<RequireAuth><InvoicesPage /></RequireAuth>} />
+          <Route path="billing" element={<RequireAuth><InvoicesPage /></RequireAuth>} />
           <Route path="reconciliation" element={<RequireAuth><ReconciliationPage /></RequireAuth>} />
           <Route path="profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         </Route>

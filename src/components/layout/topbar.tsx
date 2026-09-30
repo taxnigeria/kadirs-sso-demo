@@ -47,7 +47,7 @@ export function Topbar({ portal, hasSidebar, onToggleMobileNav }: TopbarProps) {
         </Link>
 
         {/* Portal Breadcrumb / Identifier */}
-        {portal.id !== 'home' && portal.id !== 'auth' && (
+        {portal.id !== 'home' && portal.id !== 'auth' && portal.id !== 'paykaduna' && (
           <div className="hidden md:flex items-center gap-2 pl-4 ml-4 border-l border-[var(--line)] shrink-0">
             <span className={`text-xs uppercase tracking-wider font-semibold ${portal.textColor || 'text-[var(--green)]'}`}>
               {portal.name}
