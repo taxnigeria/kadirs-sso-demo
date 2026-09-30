@@ -17,7 +17,11 @@ import {
   Check,
   X,
   CreditCard,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Table,
+  LayoutGrid,
+  HelpCircle,
+  Info
 } from 'lucide-react'
 import { useInvoiceStore, type TspInvoice } from '@/engine/invoice-store'
 import { VerificationModal, type VerificationDoc } from '@/portals/home/verification-modal'
@@ -31,11 +35,12 @@ export default function InvoicesPage() {
   const setFilterStatus = useInvoiceStore((s) => s.setFilterStatus)
   const searchQuery = useInvoiceStore((s) => s.searchQuery)
   const setSearchQuery = useInvoiceStore((s) => s.setSearchQuery)
-  const viewMode = useInvoiceStore((s) => s.viewMode)
-  const setViewMode = useInvoiceStore((s) => s.setViewMode)
   const payInvoice = useInvoiceStore((s) => s.payInvoice)
   const getSummaryMetrics = useInvoiceStore((s) => s.getSummaryMetrics)
 
+  // Default to Table view as requested by user
+  const [displayMode, setDisplayMode] = useState<'table' | 'grid'>('table')
+  const [showHelpPopover, setShowHelpPopover] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<TspInvoice | null>(null)
   const [activeReceiptDoc, setActiveReceiptDoc] = useState<VerificationDoc | null>(null)
   const [payingInvoiceId, setPayingInvoiceId] = useState<string | null>(null)
@@ -134,18 +139,6 @@ export default function InvoicesPage() {
     })
   }, [invoices, activeFilterTsp, activeFilterStatus, searchQuery])
 
-  // Grouped by TSP mapping
-  const groupedByTsp = useMemo(() => {
-    const map = new Map<string, { tspName: string; tspId: string; items: TspInvoice[] }>()
-    for (const inv of filteredInvoices) {
-      if (!map.has(inv.tspId)) {
-        map.set(inv.tspId, { tspName: inv.tspName, tspId: inv.tspId, items: [] })
-      }
-      map.get(inv.tspId)!.items.push(inv)
-    }
-    return Array.from(map.values())
-  }, [filteredInvoices])
-
   // TSP Icon mapper
   const getTspIcon = (tspId: string) => {
     switch (tspId) {
@@ -180,33 +173,70 @@ export default function InvoicesPage() {
   ]
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-7 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
       
-      {/* ── Page Header Banner ── */}
-      <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-[24px] p-6 sm:p-7 shadow-sm transition-all flex flex-col md:flex-row md:items-center justify-between gap-5">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 text-[#1AA260] flex items-center justify-center border border-emerald-500/20 shrink-0 shadow-xs">
-            <Receipt className="w-6 h-6" />
+      {/* ── Page Header: Very Slim Row (Not in a card) ── */}
+      <div className="flex items-center justify-between gap-4 py-1">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-[#1AA260] flex items-center justify-center border border-emerald-500/20 shrink-0">
+            <Receipt className="w-4 h-4" />
           </div>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50">
-                <CheckCircle2 className="w-3 h-3" />
-                Unified KADIRS Revenue Ledger
-              </span>
-              <span className="text-xs text-[var(--gray-300)]">&bull;</span>
-              <span className="text-xs text-[var(--gray-500)]">14 Partner Agencies</span>
-            </div>
-            <h1 className="font-display font-extrabold text-2xl sm:text-[28px] text-[var(--ink)] tracking-tight leading-tight">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <h1 className="font-display font-extrabold text-xl sm:text-2xl text-[var(--ink)] tracking-tight truncate">
               Billing &amp; Invoices
             </h1>
-            <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-1 max-w-2xl leading-relaxed">
-              Consolidated assessment ledger across all authorized Kaduna State MDAs. View pending tax demands, vehicle renewals, land ground rent, and instantly download verified government receipts.
-            </p>
+            <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50 shrink-0">
+              <CheckCircle2 className="w-3 h-3" />
+              Unified Ledger
+            </span>
+
+            {/* Help / More Popover Button */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowHelpPopover((prev) => !prev)}
+                className="p-1 rounded-full text-[var(--gray-400)] hover:text-[var(--ink)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors cursor-pointer"
+                title="About Billing & Invoices"
+                aria-label="More information about billing and invoices"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button>
+
+              {showHelpPopover && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowHelpPopover(false)}
+                  />
+                  <div className="absolute left-0 top-full mt-2 z-50 w-72 sm:w-80 p-3.5 bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-2xl shadow-xl text-xs space-y-2 text-[var(--ink)] animate-in fade-in zoom-in-95 duration-150">
+                    <div className="flex items-center justify-between pb-1.5 border-b border-[var(--gray-200)]">
+                      <span className="font-bold text-[var(--ink)] flex items-center gap-1.5">
+                        <Info className="w-3.5 h-3.5 text-[#1AA260]" />
+                        About Billing &amp; Invoices
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setShowHelpPopover(false)}
+                        className="p-0.5 text-[var(--gray-400)] hover:text-[var(--ink)] cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <p className="text-[var(--gray-500)] leading-relaxed">
+                      Consolidated assessment ledger across all 14 authorized Kaduna State MDAs. View pending tax demands, vehicle renewals, land ground rent, and instantly download verified government receipts.
+                    </p>
+                    <div className="pt-1 text-[10.5px] text-[var(--gray-400)] border-t border-[var(--gray-100)] dark:border-gray-800 flex items-center justify-between">
+                      <span>Authority: KADIRS Act 2018</span>
+                      <span className="text-[#1AA260] font-medium">Auto-Synced</span>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={() => {
@@ -214,9 +244,9 @@ export default function InvoicesPage() {
                 description: 'Generated consolidated 2026 tax ledger statement in CSV and PDF formats.'
               })
             }}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-[var(--gray-200)] hover:bg-black/[0.03] dark:hover:bg-white/[0.05] text-xs font-semibold transition-colors cursor-pointer text-[var(--ink)] shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[var(--gray-200)] hover:bg-black/[0.03] dark:hover:bg-white/[0.05] text-xs font-semibold transition-colors cursor-pointer text-[var(--ink)] shadow-2xs"
           >
-            <Download className="w-4 h-4 text-[var(--gray-500)]" />
+            <Download className="w-3.5 h-3.5 text-[var(--gray-500)]" />
             <span>Export Statement</span>
           </button>
         </div>
@@ -286,7 +316,7 @@ export default function InvoicesPage() {
       {/* ── Filters & Search Toolbar ── */}
       <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-[20px] p-4 sm:p-5 shadow-sm space-y-4">
         
-        {/* Top Controls: Search + Status Tabs + View Toggle */}
+        {/* Top Controls: Search + Status Tabs + View Mode Toggle (Table / Grid) */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
@@ -338,29 +368,33 @@ export default function InvoicesPage() {
               })}
             </div>
 
-            {/* View Mode Toggle */}
+            {/* View Mode Toggle: Table (default) vs Grid */}
             <div className="inline-flex rounded-xl border border-[var(--gray-200)] p-1 bg-black/[0.02] dark:bg-white/[0.04]">
               <button
                 type="button"
-                onClick={() => setViewMode('flat')}
-                className={`px-2.5 py-1 text-xs rounded-lg transition-all cursor-pointer ${
-                  viewMode === 'flat'
-                    ? 'bg-[var(--card-bg)] text-[var(--ink)] shadow-xs font-semibold'
+                onClick={() => setDisplayMode('table')}
+                className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded-lg transition-all cursor-pointer ${
+                  displayMode === 'table'
+                    ? 'bg-[var(--card-bg)] text-[#1AA260] shadow-xs font-semibold'
                     : 'text-[var(--gray-500)] hover:text-[var(--ink)]'
                 }`}
+                title="View as table (default)"
               >
-                List
+                <Table className="w-3.5 h-3.5" />
+                <span>Table</span>
               </button>
               <button
                 type="button"
-                onClick={() => setViewMode('grouped')}
-                className={`px-2.5 py-1 text-xs rounded-lg transition-all cursor-pointer ${
-                  viewMode === 'grouped'
-                    ? 'bg-[var(--card-bg)] text-[var(--ink)] shadow-xs font-semibold'
+                onClick={() => setDisplayMode('grid')}
+                className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded-lg transition-all cursor-pointer ${
+                  displayMode === 'grid'
+                    ? 'bg-[var(--card-bg)] text-[#1AA260] shadow-xs font-semibold'
                     : 'text-[var(--gray-500)] hover:text-[var(--ink)]'
                 }`}
+                title="View as cards grid"
               >
-                By Agency
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Grid</span>
               </button>
             </div>
           </div>
@@ -392,7 +426,7 @@ export default function InvoicesPage() {
         </div>
       </div>
 
-      {/* ── Main Invoices Feed ── */}
+      {/* ── Main Invoices Feed (Table by Default, or Grid) ── */}
       {filteredInvoices.length === 0 ? (
         <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-[24px] p-12 text-center space-y-3">
           <div className="w-12 h-12 rounded-full bg-black/[0.04] dark:bg-white/[0.05] flex items-center justify-center mx-auto text-[var(--gray-400)]">
@@ -414,46 +448,140 @@ export default function InvoicesPage() {
             Reset all filters
           </button>
         </div>
-      ) : viewMode === 'grouped' ? (
-        /* ── Grouped by Agency View ── */
-        <div className="space-y-6">
-          {groupedByTsp.map((group) => (
-            <div key={group.tspId} className="space-y-3">
-              <div className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-black/[0.03] dark:bg-white/[0.05] border border-[var(--gray-200)] flex items-center justify-center">
-                    {getTspIcon(group.tspId)}
-                  </div>
-                  <h3 className="font-display font-bold text-base text-[var(--ink)]">
-                    {group.tspName}
-                  </h3>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-black/[0.04] dark:bg-white/[0.06] text-[var(--gray-500)]">
-                    {group.items.length} {group.items.length === 1 ? 'bill' : 'bills'}
-                  </span>
-                </div>
-              </div>
+      ) : displayMode === 'table' ? (
+        /* ── Table View (Default) ── */
+        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-[22px] shadow-sm overflow-hidden animate-in fade-in duration-200">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-[var(--gray-200)] bg-black/[0.02] dark:bg-white/[0.02] text-[var(--gray-500)] uppercase tracking-wider font-semibold text-[10.5px]">
+                  <th className="py-3.5 px-4 font-semibold">Invoice &amp; RRR</th>
+                  <th className="py-3.5 px-4 font-semibold">Agency</th>
+                  <th className="py-3.5 px-4 font-semibold">Assessment Title</th>
+                  <th className="py-3.5 px-4 font-semibold">Due Date</th>
+                  <th className="py-3.5 px-4 font-semibold text-right">Amount</th>
+                  <th className="py-3.5 px-4 font-semibold text-center">Status</th>
+                  <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--gray-200)] text-[var(--ink)]">
+                {filteredInvoices.map((inv) => {
+                  const isPaid = inv.status === 'paid'
+                  return (
+                    <tr
+                      key={inv.id}
+                      className="hover:bg-black/[0.015] dark:hover:bg-white/[0.02] transition-colors"
+                    >
+                      {/* Invoice & RRR */}
+                      <td className="py-3.5 px-4 font-mono whitespace-nowrap">
+                        <div className="font-bold text-[var(--ink)]">{inv.invoiceNumber}</div>
+                        {inv.rrr && (
+                          <div className="flex items-center gap-1.5 text-[10.5px] text-[var(--gray-400)] mt-0.5">
+                            <span>{inv.rrr}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopy(inv.rrr!)}
+                              className="text-[var(--gray-400)] hover:text-[var(--ink)] cursor-pointer"
+                              title="Copy RRR"
+                            >
+                              {copiedRef === inv.rrr ? (
+                                <Check className="w-3 h-3 text-[#1AA260]" />
+                              ) : (
+                                <Copy className="w-3 h-3" />
+                              )}
+                            </button>
+                          </div>
+                        )}
+                      </td>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
-                {group.items.map((inv) => (
-                  <InvoiceCard
-                    key={inv.id}
-                    invoice={inv}
-                    onSelect={() => setSelectedInvoice(inv)}
-                    onPay={() => handlePay(inv)}
-                    onReceipt={() => openReceiptModal(inv)}
-                    isPaying={payingInvoiceId === inv.id}
-                    onCopy={handleCopy}
-                    copiedRef={copiedRef}
-                    getTspIcon={getTspIcon}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
+                      {/* Agency */}
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-lg bg-black/[0.03] dark:bg-white/[0.05] border border-[var(--gray-200)] flex items-center justify-center shrink-0">
+                            {getTspIcon(inv.tspId)}
+                          </div>
+                          <span className="font-semibold text-[var(--ink)]">{inv.tspName}</span>
+                        </div>
+                      </td>
+
+                      {/* Title */}
+                      <td className="py-3.5 px-4 max-w-sm">
+                        <div
+                          onClick={() => setSelectedInvoice(inv)}
+                          className="font-medium hover:text-[#1AA260] transition-colors cursor-pointer line-clamp-1 text-[var(--ink)]"
+                          title={inv.billTitle}
+                        >
+                          {inv.billTitle}
+                        </div>
+                        <div className="font-mono text-[10px] text-[var(--gray-400)] truncate mt-0.5">
+                          {inv.revenueHead}
+                        </div>
+                      </td>
+
+                      {/* Due Date */}
+                      <td className="py-3.5 px-4 whitespace-nowrap text-[var(--gray-500)]">
+                        <div className="font-medium text-[var(--ink)]">{inv.dueDate}</div>
+                        <div className="text-[10px] text-[var(--gray-400)]">Issued {inv.issueDate}</div>
+                      </td>
+
+                      {/* Amount */}
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                        <span className="font-display font-extrabold text-sm text-[var(--ink)]">
+                          ₦{inv.amount.toLocaleString()}
+                        </span>
+                      </td>
+
+                      {/* Status */}
+                      <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                        <InvoiceStatusBadge status={inv.status} />
+                      </td>
+
+                      {/* Actions */}
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedInvoice(inv)}
+                            className="px-2.5 py-1 rounded-lg border border-[var(--gray-200)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[11px] font-semibold text-[var(--ink)] transition-colors cursor-pointer"
+                          >
+                            Breakdown
+                          </button>
+                          {isPaid ? (
+                            <button
+                              type="button"
+                              onClick={() => openReceiptModal(inv)}
+                              className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/40 text-[11px] font-bold transition-colors cursor-pointer inline-flex items-center gap-1"
+                            >
+                              <Receipt className="w-3 h-3" />
+                              <span>Receipt</span>
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handlePay(inv)}
+                              disabled={payingInvoiceId === inv.id}
+                              className="px-3 py-1 rounded-lg bg-[#1AA260] hover:bg-[#158A52] text-white text-[11px] font-bold transition-all shadow-2xs cursor-pointer inline-flex items-center gap-1 disabled:opacity-50"
+                            >
+                              {payingInvoiceId === inv.id ? (
+                                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <CreditCard className="w-3 h-3" />
+                              )}
+                              <span>Pay Now</span>
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
-        /* ── Flat List View ── */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+        /* ── Grid View ── */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 animate-in fade-in duration-200">
           {filteredInvoices.map((inv) => (
             <InvoiceCard
               key={inv.id}
