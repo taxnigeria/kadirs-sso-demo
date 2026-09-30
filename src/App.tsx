@@ -46,8 +46,19 @@ export default function App() {
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="discovery" element={<RequireAuth><DiscoveryPage /></RequireAuth>} />
-          <Route path="reconciliation" element={<RequireAuth><ReconciliationPage /></RequireAuth>} />
         </Route>
+
+        {/* Dedicated Reconciliation Page with persistent citizen sidebar */}
+        <Route
+          path="auth/reconciliation"
+          element={
+            <PortalShell portal={PORTALS.paykaduna}>
+              <RequireAuth>
+                <ReconciliationPage />
+              </RequireAuth>
+            </PortalShell>
+          }
+        />
 
         {/* Profile Page with persistent citizen sidebar */}
         <Route
@@ -65,6 +76,7 @@ export default function App() {
         <Route path="paykaduna" element={<PortalShell portal={PORTALS.paykaduna} />}>
           <Route index element={<RequireAuth><PayKadunaDashboard /></RequireAuth>} />
           <Route path="services" element={<RequireAuth><ServicesPage /></RequireAuth>} />
+          <Route path="reconciliation" element={<RequireAuth><ReconciliationPage /></RequireAuth>} />
           <Route path="profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         </Route>
 

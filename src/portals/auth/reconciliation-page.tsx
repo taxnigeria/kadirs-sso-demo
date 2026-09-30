@@ -517,7 +517,7 @@ export default function ReconciliationPage() {
           <div>
             <h1 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               {allLinked
-                ? 'All accounts linked & merged!'
+                ? 'All accounts linked & merged'
                 : allResolved
                 ? 'Review complete'
                 : `${candidates.length} account${candidates.length !== 1 ? 's' : ''} found under your NIN`}
@@ -525,6 +525,11 @@ export default function ReconciliationPage() {
             {!allLinked && !allResolved && (
               <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-0.5">
                 Authenticate with each partner system to verify ownership and merge into your single SSO profile.
+              </p>
+            )}
+            {allLinked && (
+              <p className="text-xs sm:text-sm text-[var(--gray-500)] mt-0.5">
+                All historical partner system records are cryptographically bound to your single Citizen SSO profile.
               </p>
             )}
             {allResolved && !allLinked && (
@@ -568,8 +573,7 @@ export default function ReconciliationPage() {
         )}
 
         {/* ── Account Cards Grid ── */}
-        {!allLinked && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {candidates.map((candidate) => {
               const isLinked = reconciledRecordIds.includes(candidate.record.id)
               const isDisputed = disputedIds.includes(candidate.record.id)
@@ -694,7 +698,6 @@ export default function ReconciliationPage() {
               )
             })}
           </div>
-        )}
 
         {/* ── All Resolved (mix of linked + disputed) — Continue Action ── */}
         {allResolved && !allLinked && (

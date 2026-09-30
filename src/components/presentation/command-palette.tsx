@@ -19,7 +19,8 @@ import {
   Layers,
   Sliders,
   Check,
-  LogOut
+  LogOut,
+  Link2
 } from 'lucide-react'
 import { usePresentationStore } from '@/engine/presentation-store'
 import { useInspectorStore } from '@/engine/inspector-store'
@@ -165,6 +166,14 @@ export function CommandPalette() {
         badge: 'Services',
         icon: Sliders,
         path: '/paykaduna/services'
+      },
+      {
+        id: 'portal-reconciliation',
+        title: 'Account Reconciliation & Legacy Accounts',
+        subtitle: 'Unify historical partner records from PayKaduna, PIT, and Kad Tax on Rent',
+        badge: 'Reconciliation',
+        icon: Link2,
+        path: '/auth/reconciliation'
       },
       {
         id: 'portal-profile',

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router'
 import {
   ShieldCheck,
@@ -13,6 +13,7 @@ import {
   Plus
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
+import { findLegacyMatches } from '@/engine/reconciliation-engine'
 import { TSP_REGISTRY } from '@/components/layout/portal-branding'
 import { SSOTransitionModal } from '@/components/auth/sso-transition-modal'
 import type { PersonaType } from '@/types'
@@ -62,9 +63,39 @@ export default function PayKadunaDashboard() {
     ? `${identity.nin.slice(0, 3)}••••${identity.nin.slice(-3)}`
     : '123••••901'
 
-  // Is this Fatima with un-reconciled legacy accounts?
-  const isFatima = currentUser?.email.toLowerCase().includes('fatima') || identity?.nin === '12345678901'
-  const hasUnreconciledAccounts = isFatima && reconciledRecordIds.length === 0
+  // Candidate legacy records across state databases
+  const candidateMatches = useMemo(() => {
+    if (!currentUser && !identity) return []
+    const activeIdentity = identity || {
+      nin: '12345678901',
+      legalName: currentUser?.citizenId ? 'Fatima Aminu Abdullahi' : 'Citizen',
+      dateOfBirth: '1989-07-14',
+      gender: 'female' as const,
+      photoUrl: '',
+      verificationProvider: 'nimc' as const,
+      verifiedAt: new Date().toISOString()
+    }
+    const activeProfile = currentUser || {
+      citizenId: 'CIT-KAD-2024-00847',
+      email: 'fatimah.a@gmail.com',
+      phone: '+234 803 123 4567',
+      lga: 'Kaduna North',
+      taxOffice: 'Kaduna North Tax Office — Kawo',
+      personas: ['individual' as const],
+      profileCompleteness: 85,
+      createdAt: new Date().toISOString()
+    }
+    return findLegacyMatches(activeIdentity, activeProfile)
+  }, [identity, currentUser])
+
+  // Filter out records that are already reconciled or in dispute/conflict
+  const unlinkedCandidates = useMemo(() => {
+    return candidateMatches.filter(
+      (c) => !reconciledRecordIds.includes(c.record.id) && c.matchTier !== 'tier_3_conflict'
+    )
+  }, [candidateMatches, reconciledRecordIds])
+
+  const hasUnreconciledAccounts = unlinkedCandidates.length > 0
 
   // Filter TSPs — show only connected TSPs on the dashboard
   const connectedTspsList = TSP_REGISTRY.filter(
@@ -168,11 +199,28 @@ export default function PayKadunaDashboard() {
               <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30">
+                  {unlinkedCandidates.length} Pending {unlinkedCandidates.length === 1 ? 'Record' : 'Records'}
+                </span>
+                <span className="text-xs text-amber-700 dark:text-amber-400 font-medium">
+                  {reconciledRecordIds.length > 0 ? `${reconciledRecordIds.length} of ${candidateMatches.length} unified` : 'Action Recommended'}
+                </span>
+              </div>
               <h2 className="font-display font-bold text-base sm:text-[17px] text-[var(--ink)] tracking-tight">
-                3 Pre-Migration Accounts Detected Across Kaduna Agencies
+                {unlinkedCandidates.length === 1
+                  ? '1 Pre-Migration Account Detected Across Kaduna Agencies'
+                  : `${unlinkedCandidates.length} Pre-Migration Accounts Detected Across Kaduna Agencies`}
               </h2>
               <p className="text-xs text-[var(--gray-600)] dark:text-[var(--gray-400)] mt-1 max-w-[70ch] leading-relaxed">
-                The KADIRS Reconciliation Engine discovered existing historical records on <strong>KADVREG</strong> and <strong>PIT Portal</strong> that match your identity attributes. Unify them under your citizen ID to preserve historical receipts and payment certificates.
+                The KADIRS Reconciliation Engine discovered existing historical records on{' '}
+                {Array.from(new Set(unlinkedCandidates.map((c) => c.tspName))).map((name, i, arr) => (
+                  <span key={name}>
+                    <strong>{name}</strong>
+                    {i < arr.length - 2 ? ', ' : i === arr.length - 2 ? ' and ' : ''}
+                  </span>
+                ))}{' '}
+                that match your identity attributes. Unify them under your citizen ID to preserve historical receipts and payment certificates.
               </p>
             </div>
           </div>
@@ -181,7 +229,7 @@ export default function PayKadunaDashboard() {
             onClick={() => navigate('/auth/reconciliation')}
             className="bg-[#1AA260] hover:bg-[#158A52] text-white font-semibold px-5 py-2.5 rounded-full text-xs sm:text-sm flex items-center justify-center gap-2 shrink-0 transition-all cursor-pointer shadow-sm hover:shadow"
           >
-            <span>Review &amp; Unify Accounts</span>
+            <span>Review &amp; Unify Accounts ({unlinkedCandidates.length} remaining)</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

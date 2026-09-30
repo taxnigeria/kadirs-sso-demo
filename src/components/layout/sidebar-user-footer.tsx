@@ -9,7 +9,8 @@ import {
   LogOut,
   ShieldCheck,
   Users,
-  Check
+  Check,
+  Link2
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { useInvoiceStore } from '@/engine/invoice-store'
@@ -99,11 +100,11 @@ export function SidebarUserFooter() {
             <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#1AA260] ring-2 ring-[var(--paper)]" />
           </div>
 
-          <div className="flex flex-col min-w-0">
-            <span className="font-semibold text-xs text-[var(--ink)] truncate max-w-[125px]">
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="font-semibold text-xs text-[var(--ink)] truncate">
               {displayName}
             </span>
-            <span className="text-[11px] text-[var(--gray-500)] truncate max-w-[125px]">
+            <span className="text-[11px] text-[var(--gray-500)] truncate">
               {displayEmail}
             </span>
           </div>
@@ -112,11 +113,11 @@ export function SidebarUserFooter() {
         <ChevronsUpDown className="w-4 h-4 text-[var(--gray-400)] group-hover:text-[var(--ink)] transition-colors shrink-0 ml-1.5" />
       </button>
 
-      {/* ── Popover Dropdown Menu (Floats directly above the avatar trigger, matching shadcn layout) ── */}
+      {/* ── Popover Dropdown Menu (Generously sized w-72 sm:w-80, zero wrapping) ── */}
       {isOpen && (
         <div
           role="menu"
-          className="absolute bottom-full left-2 right-2 sm:left-3 sm:right-3 mb-2 z-50 bg-[var(--card-bg)] rounded-2xl border border-[var(--gray-200)] shadow-[0_12px_40px_rgba(0,0,0,0.18)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.6)] overflow-hidden text-[var(--ink)] animate-in fade-in slide-in-from-bottom-2 duration-150"
+          className="absolute bottom-full left-2 mb-2 z-50 w-72 sm:w-80 max-w-[calc(100vw-24px)] bg-[var(--card-bg)] rounded-2xl border border-[var(--gray-200)] shadow-[0_16px_50px_rgba(0,0,0,0.22)] dark:shadow-[0_16px_50px_rgba(0,0,0,0.7)] text-[var(--ink)] animate-in fade-in slide-in-from-bottom-2 duration-150"
         >
           {/* Header Profile Summary */}
           <div className="p-3.5 border-b border-[var(--gray-200)] bg-black/[0.015] dark:bg-white/[0.015] flex items-center gap-3">
@@ -129,8 +130,8 @@ export function SidebarUserFooter() {
               <span className="font-bold text-xs sm:text-sm text-[var(--ink)] truncate">{displayName}</span>
               <span className="text-[11px] text-[var(--gray-500)] truncate">{displayEmail}</span>
               <div className="mt-1 flex items-center gap-1.5">
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-[#1AA260] border border-emerald-500/20">
-                  <ShieldCheck className="w-3 h-3" />
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-[#1AA260] border border-emerald-500/20 shrink-0 whitespace-nowrap">
+                  <ShieldCheck className="w-3 h-3 shrink-0" />
                   NIMC Verified &middot; Tier 2
                 </span>
               </div>
@@ -148,16 +149,16 @@ export function SidebarUserFooter() {
               }}
               className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors cursor-pointer group text-left"
             >
-              <div className="flex items-center gap-2.5 text-[var(--ink)]">
+              <div className="flex items-center gap-2.5 text-[var(--ink)] min-w-0">
                 <CreditCard className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span className="font-medium">Billing &amp; Invoices</span>
+                <span className="font-medium whitespace-nowrap">Billing &amp; Invoices</span>
               </div>
               {unpaidCount > 0 ? (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-800 dark:text-amber-300">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-800 dark:text-amber-300 shrink-0 whitespace-nowrap">
                   {unpaidCount} Due
                 </span>
               ) : (
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">All Settled</span>
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium shrink-0 whitespace-nowrap">All Settled</span>
               )}
             </button>
 
@@ -168,20 +169,33 @@ export function SidebarUserFooter() {
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] transition-colors cursor-pointer"
             >
               <User className="w-4 h-4 text-[var(--gray-500)] shrink-0" />
-              <span className="font-medium">Citizen Profile</span>
+              <span className="font-medium whitespace-nowrap">Citizen Profile</span>
             </Link>
 
-            {/* 3. Connected Services */}
+            {/* 3. Account Reconciliation */}
+            <Link
+              to="/auth/reconciliation"
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Link2 className="w-4 h-4 text-[#1AA260] shrink-0" />
+                <span className="font-medium whitespace-nowrap">Account Reconciliation</span>
+              </div>
+              <span className="text-[10px] text-[var(--gray-400)] shrink-0 whitespace-nowrap">Legacy Records</span>
+            </Link>
+
+            {/* 4. Connected Services */}
             <Link
               to="/paykaduna/services"
               onClick={() => setIsOpen(false)}
               className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] transition-colors cursor-pointer"
             >
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 min-w-0">
                 <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="font-medium">Connected Services</span>
+                <span className="font-medium whitespace-nowrap">Connected Services</span>
               </div>
-              <span className="text-[10px] text-[var(--gray-400)]">14 TSPs</span>
+              <span className="text-[10px] text-[var(--gray-400)] shrink-0 whitespace-nowrap">14 TSPs</span>
             </Link>
 
             {/* 4. Notifications & Notices (Matches shadcn screenshot) */}
@@ -195,25 +209,25 @@ export function SidebarUserFooter() {
               }}
               className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] transition-colors cursor-pointer text-left"
             >
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 min-w-0">
                 <Bell className="w-4 h-4 text-[var(--gray-500)] shrink-0" />
-                <span className="font-medium">Notifications</span>
+                <span className="font-medium whitespace-nowrap">Notifications</span>
               </div>
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
             </button>
 
-            {/* 4. Switch Persona Accordion / Picker */}
+            {/* 5. Switch Persona Accordion / Picker */}
             <div className="pt-1">
               <button
                 type="button"
                 onClick={() => setShowPersonaPicker((prev) => !prev)}
                 className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ink)] transition-colors cursor-pointer"
               >
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <Users className="w-4 h-4 text-[var(--gray-500)] shrink-0" />
-                  <span className="font-medium">Switch Persona</span>
+                  <span className="font-medium whitespace-nowrap">Switch Persona</span>
                 </div>
-                <span className="text-[10px] font-mono uppercase bg-black/5 dark:bg-white/10 px-1.5 py-0.5 rounded text-[var(--gray-500)]">
+                <span className="text-[10px] font-mono capitalize bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded text-[var(--gray-500)] shrink-0 whitespace-nowrap">
                   {activePersona}
                 </span>
               </button>
