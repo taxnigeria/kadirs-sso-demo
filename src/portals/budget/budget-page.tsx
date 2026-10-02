@@ -202,7 +202,7 @@ function BudgetPageContent() {
         useBudgetStore.getState().toggleEditMode()
         if (nextState) {
           toast.success('Editing Mode Unlocked', {
-            description: 'All fields, rates, and checkboxes are now editable. Press Ctrl+Shift+E to lock.'
+            description: 'All fields, rates, and checkboxes are now editable.'
           })
         } else {
           toast.info('Locked in View-Only Mode', {
@@ -339,18 +339,15 @@ function BudgetPageContent() {
                   toast.info('Locked in View-Only Mode')
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/60 text-emerald-800 dark:text-emerald-200 text-xs font-bold rounded-xl shadow-2xs hover:bg-emerald-100 transition-all cursor-pointer"
-                title="Edit mode is active. Click or press Ctrl+Shift+E to lock view."
+                title="Edit mode is active."
               >
                 <Unlock size={12} className="text-emerald-600 dark:text-emerald-400" />
                 <span>Edit Mode</span>
-                <span className="text-[10px] font-normal opacity-70 border-l border-emerald-400/40 pl-1">
-                  Ctrl+Shift+E
-                </span>
               </button>
             ) : (
               <div
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] text-[var(--ink-soft)] dark:text-[#9bb0a4] text-xs font-semibold rounded-xl select-none"
-                title="Locked in view-only mode. Press Ctrl+Shift+E to unlock editing."
+                title="Locked in view-only mode."
               >
                 <Lock size={12} className="text-[var(--ink-soft)]" />
                 <span>View Only</span>

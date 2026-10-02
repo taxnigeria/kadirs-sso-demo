@@ -285,11 +285,7 @@ export function BudgetAssumptionsSidebar() {
           'All numbers update calculations live across all budget sections.'
         ) : (
           <span>
-            Viewing in <strong>read-only</strong> mode. Press{' '}
-            <kbd className="font-mono text-[10px] px-1 py-0.5 rounded bg-[var(--line-soft)] dark:bg-[#22382f] font-bold">
-              Ctrl+Shift+E
-            </kbd>{' '}
-            to unlock editing.
+            Viewing in <strong>read-only</strong>.
           </span>
         )}
       </div>
