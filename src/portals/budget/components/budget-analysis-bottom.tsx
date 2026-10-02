@@ -287,29 +287,6 @@ export function BudgetAnalysisBottom() {
           ))}
         </div>
       </div>
-
-      {/* Strategic Architecture & Procurement Notes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-t border-[var(--line)]/60 dark:border-[#2a3a31]/60 text-xs">
-        <div className="p-3.5 rounded-lg bg-[var(--field)]/40 dark:bg-[#121b16]/40 border border-[var(--line)] dark:border-[#2a3a31] space-y-2">
-          <h4 className="font-bold text-[var(--ink)] dark:text-[#e8f0eb] flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0b6b3a]" />
-            What Self-Hosting Saves (License Strategy)
-          </h4>
-          <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] leading-relaxed">
-            Eliminates high per-user IAM subscriptions by deploying open-source <strong>Keycloak</strong>, <strong>Kong Gateway</strong>, <strong>HashiCorp Vault</strong>, and <strong>MinIO</strong> on Nigerian Tier-III infrastructure. Retains operational responsibility for patches and backups while avoiding lock-in.
-          </p>
-        </div>
-
-        <div className="p-3.5 rounded-lg bg-[var(--field)]/40 dark:bg-[#121b16]/40 border border-[var(--line)] dark:border-[#2a3a31] space-y-2">
-          <h4 className="font-bold text-[var(--ink)] dark:text-[#e8f0eb] flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0b6b3a]" />
-            Procurement Ceiling Controls
-          </h4>
-          <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] leading-relaxed">
-            Strict ₦48M ceiling protection: milestone-based releases (20% kickoff, 25% architecture, 25% SSO, 20% UAT, 10% handover). Fixed-price 2-month SOW with weekly demonstrations; written rate quotes required from Termii &amp; Dojah before contract execution.
-          </p>
-        </div>
-      </div>
     </section>
   )
 }

@@ -1,4 +1,4 @@
-import { useState, useMemo, Component, type ReactNode, type ErrorInfo } from 'react'
+import { useState, useMemo, useEffect, Component, type ReactNode, type ErrorInfo } from 'react'
 import {
   Plus,
   RotateCcw,
@@ -6,7 +6,9 @@ import {
   X,
   ArrowDown,
   ArrowUp,
-  ArrowUpDown
+  ArrowUpDown,
+  Lock,
+  Unlock
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useBudgetStore, useBudgetSummary, calculateEffectiveItemCost } from './budget-store'
@@ -187,7 +189,32 @@ function BudgetPageContent() {
   const addItem = useBudgetStore((s) => s.addItem)
   const deleteItem = useBudgetStore((s) => s.deleteItem)
   const resetToBaseline = useBudgetStore((s) => s.resetToBaseline)
+  const isEditMode = useBudgetStore((s) => s.isEditMode)
+  const toggleEditMode = useBudgetStore((s) => s.toggleEditMode)
   const summary = useBudgetSummary()
+
+  // Keyboard shortcut listener: Ctrl + Shift + E (or Cmd + Shift + E) toggles edit mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'e') {
+        e.preventDefault()
+        const nextState = !useBudgetStore.getState().isEditMode
+        useBudgetStore.getState().toggleEditMode()
+        if (nextState) {
+          toast.success('Editing Mode Unlocked', {
+            description: 'All fields, rates, and checkboxes are now editable. Press Ctrl+Shift+E to lock.'
+          })
+        } else {
+          toast.info('Locked in View-Only Mode', {
+            description: 'All inputs and checkboxes are now protected from modifications.'
+          })
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   // Column Sort States
   const [buildSort, setBuildSort] = useState<SortState>({ field: null, dir: 'desc' })
@@ -290,14 +317,46 @@ function BudgetPageContent() {
             <input
               type="text"
               value={title}
+              disabled={!isEditMode}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Budget Title"
-              className="w-full text-xl sm:text-2xl font-black text-[var(--ink)] dark:text-white bg-transparent border border-transparent hover:border-[var(--line)] dark:hover:border-[#2a3a31] focus:border-[var(--line)] rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#0b6b3a] transition-all"
+              className={`w-full text-xl sm:text-2xl font-black text-[var(--ink)] dark:text-white bg-transparent border rounded-lg px-2 py-1 transition-all ${
+                isEditMode
+                  ? 'border-transparent hover:border-[var(--line)] dark:hover:border-[#2a3a31] focus:border-[var(--line)] focus:outline-none focus:ring-1 focus:ring-[#0b6b3a]'
+                  : 'border-transparent cursor-default'
+              }`}
               aria-label="Budget title"
             />
           </div>
 
-          <div className="flex items-center gap-3 shrink-0 print:hidden">
+          <div className="flex items-center gap-2.5 shrink-0 print:hidden">
+            {/* View-Only / Edit Mode Indicator */}
+            {isEditMode ? (
+              <button
+                type="button"
+                onClick={() => {
+                  toggleEditMode()
+                  toast.info('Locked in View-Only Mode')
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/60 text-emerald-800 dark:text-emerald-200 text-xs font-bold rounded-xl shadow-2xs hover:bg-emerald-100 transition-all cursor-pointer"
+                title="Edit mode is active. Click or press Ctrl+Shift+E to lock view."
+              >
+                <Unlock size={12} className="text-emerald-600 dark:text-emerald-400" />
+                <span>Edit Mode</span>
+                <span className="text-[10px] font-normal opacity-70 border-l border-emerald-400/40 pl-1">
+                  Ctrl+Shift+E
+                </span>
+              </button>
+            ) : (
+              <div
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] text-[var(--ink-soft)] dark:text-[#9bb0a4] text-xs font-semibold rounded-xl select-none"
+                title="Locked in view-only mode. Press Ctrl+Shift+E to unlock editing."
+              >
+                <Lock size={12} className="text-[var(--ink-soft)]" />
+                <span>View Only</span>
+              </div>
+            )}
+
             {/* Currency Segmented Toggle */}
             <div className="inline-flex border border-[var(--line)] dark:border-[#2a3a31] rounded-xl overflow-hidden bg-white dark:bg-[#18231d] shadow-2xs">
               <button
@@ -324,27 +383,30 @@ function BudgetPageContent() {
               </button>
             </div>
 
-            {/* Add Custom Item Button */}
-            <button
-              type="button"
-              onClick={() => handleOpenAddModal()}
-              className="flex items-center gap-1 px-3 py-1.5 bg-[#0b6b3a] hover:bg-[#158a52] text-white text-xs font-bold rounded-xl shadow-2xs transition-all cursor-pointer"
-              title="Add a custom item with detailed scope description"
-            >
-              <Plus size={13} />
-              Add Item
-            </button>
+            {/* Add Custom Item Button & Reset Button (Only available in Edit Mode) */}
+            {isEditMode && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => handleOpenAddModal()}
+                  className="flex items-center gap-1 px-3 py-1.5 bg-[#0b6b3a] hover:bg-[#158a52] text-white text-xs font-bold rounded-xl shadow-2xs transition-all cursor-pointer"
+                  title="Add a custom item with detailed scope description"
+                >
+                  <Plus size={13} />
+                  Add Item
+                </button>
 
-            {/* Reset Button */}
-            <button
-              type="button"
-              onClick={resetToBaseline}
-              className="flex items-center gap-1 px-3 py-1.5 border border-[var(--line)] dark:border-[#2a3a31] bg-white dark:bg-[#18231d] hover:bg-black/5 dark:hover:bg-white/5 text-[var(--ink-soft)] dark:text-[#9bb0a4] text-xs font-semibold rounded-xl transition-all cursor-pointer"
-              title="Reset all prices and assumptions to baseline"
-            >
-              <RotateCcw size={12} />
-              Reset
-            </button>
+                <button
+                  type="button"
+                  onClick={resetToBaseline}
+                  className="flex items-center gap-1 px-3 py-1.5 border border-[var(--line)] dark:border-[#2a3a31] bg-white dark:bg-[#18231d] hover:bg-black/5 dark:hover:bg-white/5 text-[var(--ink-soft)] dark:text-[#9bb0a4] text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                  title="Reset all prices and assumptions to baseline"
+                >
+                  <RotateCcw size={12} />
+                  Reset
+                </button>
+              </>
+            )}
           </div>
         </header>
 
@@ -475,15 +537,17 @@ function BudgetPageContent() {
                 )}
               </div>
 
-              {/* Add a line button */}
-              <button
-                type="button"
-                onClick={() => handleQuickAddLine('one-time')}
-                className="w-full text-left px-4 py-2.5 border-t border-dashed border-[var(--line)] dark:border-[#2a3a31] text-xs font-bold text-[#0b6b3a] dark:text-[#52c78d] hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                <Plus size={14} />
-                Add a line to Build
-              </button>
+              {/* Add a line button (Only in Edit Mode) */}
+              {isEditMode && (
+                <button
+                  type="button"
+                  onClick={() => handleQuickAddLine('one-time')}
+                  className="w-full text-left px-4 py-2.5 border-t border-dashed border-[var(--line)] dark:border-[#2a3a31] text-xs font-bold text-[#0b6b3a] dark:text-[#52c78d] hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <Plus size={14} />
+                  Add a line to Build
+                </button>
+              )}
             </section>
 
             {/* Section 2: Running costs (Monthly OPEX) */}
@@ -570,15 +634,17 @@ function BudgetPageContent() {
                 )}
               </div>
 
-              {/* Add a line button */}
-              <button
-                type="button"
-                onClick={() => handleQuickAddLine('recurring')}
-                className="w-full text-left px-4 py-2.5 border-t border-dashed border-[var(--line)] dark:border-[#2a3a31] text-xs font-bold text-[#0b6b3a] dark:text-[#52c78d] hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                <Plus size={14} />
-                Add a line to Running costs
-              </button>
+              {/* Add a line button (Only in Edit Mode) */}
+              {isEditMode && (
+                <button
+                  type="button"
+                  onClick={() => handleQuickAddLine('recurring')}
+                  className="w-full text-left px-4 py-2.5 border-t border-dashed border-[var(--line)] dark:border-[#2a3a31] text-xs font-bold text-[#0b6b3a] dark:text-[#52c78d] hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <Plus size={14} />
+                  Add a line to Running costs
+                </button>
+              )}
             </section>
           </div>
         </div>

@@ -10,6 +10,7 @@ export function BudgetAssumptionsSidebar() {
   const activeScenarioId = useBudgetStore((s) => s.activeScenarioId)
   const setScenario = useBudgetStore((s) => s.setScenario)
   const isCustomized = useBudgetStore((s) => s.isCustomized)
+  const isEditMode = useBudgetStore((s) => s.isEditMode)
 
   const derived = getDerivedDrivers(assumptions)
 
@@ -32,7 +33,9 @@ export function BudgetAssumptionsSidebar() {
           </span>
         </h2>
         <p className="text-xs text-[var(--ink-soft)] dark:text-[#9bb0a4] mt-0.5">
-          Change a number and everything on the right updates instantly.
+          {isEditMode
+            ? 'Change a number and everything on the right updates instantly.'
+            : 'Operational drivers locked in view-only mode.'}
         </p>
       </div>
 
@@ -47,12 +50,17 @@ export function BudgetAssumptionsSidebar() {
         <select
           id="scale-preset-select"
           value={isCustomized ? 'custom' : activeScenarioId}
+          disabled={!isEditMode}
           onChange={(e) => {
             if (e.target.value !== 'custom') {
               setScenario(e.target.value)
             }
           }}
-          className="w-full text-xs font-semibold text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-2.5 py-2 focus:outline-none focus:ring-1 focus:ring-[#0b6b3a] cursor-pointer"
+          className={`w-full text-xs font-semibold text-[var(--ink)] dark:text-[#e8f0eb] border rounded-lg px-2.5 py-2 focus:outline-none focus:ring-1 focus:ring-[#0b6b3a] transition-colors ${
+            isEditMode
+              ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31] cursor-pointer'
+              : 'bg-transparent border-transparent cursor-default pointer-events-none appearance-none'
+          }`}
         >
           {scenarios.map((scen) => (
             <option key={scen.id} value={scen.id}>
@@ -76,12 +84,17 @@ export function BudgetAssumptionsSidebar() {
           <FormattedNumberInput
             value={assumptions.rate}
             onChange={(val) => setAssumption('rate', val)}
-            className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
+            disabled={!isEditMode}
+            className={`w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a] ${
+              isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31]'
+                : 'bg-transparent border-transparent cursor-default'
+            }`}
             aria-label="Exchange rate"
           />
         </div>
 
-        {/* Development timeframe (Build phase duration in months, default: 6) */}
+        {/* Development timeframe (Build phase duration in months, default: 2) */}
         <div>
           <label
             htmlFor="a-dev-months"
@@ -97,7 +110,12 @@ export function BudgetAssumptionsSidebar() {
             step="1"
             value={assumptions.devMonths !== undefined ? assumptions.devMonths : 2}
             onChange={(e) => handleNumberChange('devMonths', e)}
-            className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
+            disabled={!isEditMode}
+            className={`w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a] ${
+              isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31]'
+                : 'bg-transparent border-transparent cursor-default'
+            }`}
             aria-label="Development timeframe in months"
           />
           <div className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] mt-0.5">
@@ -116,7 +134,12 @@ export function BudgetAssumptionsSidebar() {
           <FormattedNumberInput
             value={assumptions.users}
             onChange={(val) => setAssumption('users', val)}
-            className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
+            disabled={!isEditMode}
+            className={`w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a] ${
+              isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31]'
+                : 'bg-transparent border-transparent cursor-default'
+            }`}
             aria-label="Average users per month"
           />
         </div>
@@ -136,7 +159,12 @@ export function BudgetAssumptionsSidebar() {
             step="any"
             value={assumptions.lpu || ''}
             onChange={(e) => handleNumberChange('lpu', e)}
-            className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
+            disabled={!isEditMode}
+            className={`w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a] ${
+              isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31]'
+                : 'bg-transparent border-transparent cursor-default'
+            }`}
           />
           <div className="text-[11px] text-[#0b6b3a] dark:text-[#52c78d] font-semibold mt-0.5">
             = {derived.totalLogins.toLocaleString()} logins a month
@@ -159,7 +187,12 @@ export function BudgetAssumptionsSidebar() {
             step="any"
             value={assumptions.otp || ''}
             onChange={(e) => handleNumberChange('otp', e)}
-            className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
+            disabled={!isEditMode}
+            className={`w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a] ${
+              isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31]'
+                : 'bg-transparent border-transparent cursor-default'
+            }`}
           />
           <div className="text-[11px] text-[#0b6b3a] dark:text-[#52c78d] font-semibold mt-0.5">
             = {derived.otpCount.toLocaleString()} SMS a month
@@ -177,7 +210,12 @@ export function BudgetAssumptionsSidebar() {
           <FormattedNumberInput
             value={assumptions.reg}
             onChange={(val) => setAssumption('reg', val)}
-            className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
+            disabled={!isEditMode}
+            className={`w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a] ${
+              isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31]'
+                : 'bg-transparent border-transparent cursor-default'
+            }`}
             aria-label="New registrations per month"
           />
           <div className="text-[11px] text-[#0b6b3a] dark:text-[#52c78d] font-semibold mt-0.5">
@@ -200,7 +238,12 @@ export function BudgetAssumptionsSidebar() {
             step="1"
             value={assumptions.months || ''}
             onChange={(e) => handleNumberChange('months', e)}
-            className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
+            disabled={!isEditMode}
+            className={`w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a] ${
+              isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31]'
+                : 'bg-transparent border-transparent cursor-default'
+            }`}
           />
           <div className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] mt-0.5">
             Running costs projection period
@@ -223,7 +266,12 @@ export function BudgetAssumptionsSidebar() {
             step="any"
             value={assumptions.cont !== undefined ? assumptions.cont : 0}
             onChange={(e) => handleNumberChange('cont', e)}
-            className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
+            disabled={!isEditMode}
+            className={`w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a] ${
+              isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31]'
+                : 'bg-transparent border-transparent cursor-default'
+            }`}
           />
           <div className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] mt-0.5">
             ₦3.0M delivery contingency itemized in Build
@@ -233,7 +281,17 @@ export function BudgetAssumptionsSidebar() {
 
       {/* Footer Note */}
       <div className="pt-2 border-t border-[var(--line-soft)] dark:border-[#22382f] text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] leading-relaxed">
-        All prices are placeholders. Edit any quantity or rate live on the right.
+        {isEditMode ? (
+          'All numbers update calculations live across all budget sections.'
+        ) : (
+          <span>
+            Viewing in <strong>read-only</strong> mode. Press{' '}
+            <kbd className="font-mono text-[10px] px-1 py-0.5 rounded bg-[var(--line-soft)] dark:bg-[#22382f] font-bold">
+              Ctrl+Shift+E
+            </kbd>{' '}
+            to unlock editing.
+          </span>
+        )}
       </div>
     </aside>
   )

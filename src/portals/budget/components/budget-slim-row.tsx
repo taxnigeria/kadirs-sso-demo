@@ -15,6 +15,7 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
   const currency = useBudgetStore((s) => s.currency)
   const toggleItem = useBudgetStore((s) => s.toggleItem)
   const updateItemRow = useBudgetStore((s) => s.updateItemRow)
+  const isEditMode = useBudgetStore((s) => s.isEditMode)
 
   const [showTooltip, setShowTooltip] = useState(false)
 
@@ -135,10 +136,13 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
       <input
         type="checkbox"
         checked={item.isEnabled}
+        disabled={!isEditMode}
         onChange={() => toggleItem(item.id)}
-        className="w-4 h-4 rounded border-[var(--line)] text-[#0b6b3a] focus:ring-[#0b6b3a] accent-[#0b6b3a] cursor-pointer"
+        className={`w-4 h-4 rounded border-[var(--line)] text-[#0b6b3a] focus:ring-[#0b6b3a] accent-[#0b6b3a] ${
+          isEditMode ? 'cursor-pointer' : 'cursor-default'
+        }`}
         aria-label={item.isEnabled ? 'Exclude from budget' : 'Include in budget'}
-        title={item.isEnabled ? 'Click to exclude' : 'Click to include'}
+        title={item.isEnabled ? (isEditMode ? 'Click to exclude' : 'Included in model') : (isEditMode ? 'Click to include' : 'Excluded from model')}
       />
 
       {/* 2. Item Name & Description Tooltip Popover */}
@@ -146,10 +150,13 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
         <input
           type="text"
           value={item.title}
+          disabled={!isEditMode}
           onChange={handleTitleChange}
-          className={`w-full font-medium text-xs sm:text-sm bg-transparent border border-transparent hover:border-[var(--line)] dark:hover:border-[#2a3a31] focus:border-[var(--line)] rounded px-1 py-0.5 text-[var(--ink)] dark:text-[#e8f0eb] focus:outline-none focus:ring-1 focus:ring-[#0b6b3a] truncate ${
-            !item.isEnabled ? 'line-through text-[var(--ink-soft)] dark:text-[#9bb0a4]' : ''
-          }`}
+          className={`w-full font-medium text-xs sm:text-sm bg-transparent border rounded px-1 py-0.5 text-[var(--ink)] dark:text-[#e8f0eb] transition-all truncate ${
+            isEditMode
+              ? 'border-transparent hover:border-[var(--line)] dark:hover:border-[#2a3a31] focus:border-[var(--line)] focus:outline-none focus:ring-1 focus:ring-[#0b6b3a]'
+              : 'border-transparent cursor-default'
+          } ${!item.isEnabled ? 'line-through text-[var(--ink-soft)] dark:text-[#9bb0a4]' : ''}`}
           aria-label="Item title"
         />
 
@@ -197,26 +204,37 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
             step="any"
             value={isAuto ? effectiveQuantity : item.quantity}
             onChange={handleQuantityChange}
-            disabled={isAuto}
+            disabled={!isEditMode || isAuto}
             className={`w-full font-semibold text-xs text-center border rounded px-1 py-1 focus:outline-none focus:ring-1 focus:ring-[#0b6b3a] ${
               isAuto
                 ? 'bg-[var(--accbg)] dark:bg-[#1b3a2a] text-[#0b6b3a] dark:text-[#52c78d] font-bold border-transparent'
-                : 'bg-[var(--field)] dark:bg-[#121b16] text-[var(--ink)] dark:text-[#e8f0eb] border-[var(--line)] dark:border-[#2a3a31]'
+                : isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] text-[var(--ink)] dark:text-[#e8f0eb] border-[var(--line)] dark:border-[#2a3a31]'
+                : 'bg-transparent text-[var(--ink)] dark:text-[#e8f0eb] border-transparent cursor-default'
             }`}
             aria-label="Quantity"
             title={isAuto ? `Calculated volume: ${effectiveQuantity.toLocaleString()}` : undefined}
           />
           {isAuto ? (
-            <button
-              type="button"
-              onClick={() => updateItemRow(item.id, { isAutoQuantity: false })}
-              className="absolute -top-2 right-0.5 text-[8px] font-bold px-1 py-0.2 rounded-full bg-[#0b6b3a] text-white cursor-pointer shadow-2xs hover:bg-[#158a52]"
-              title="Calculated from assumptions. Click to manually override."
-            >
-              auto
-            </button>
+            isEditMode ? (
+              <button
+                type="button"
+                onClick={() => updateItemRow(item.id, { isAutoQuantity: false })}
+                className="absolute -top-2 right-0.5 text-[8px] font-bold px-1 py-0.2 rounded-full bg-[#0b6b3a] text-white cursor-pointer shadow-2xs hover:bg-[#158a52]"
+                title="Calculated from assumptions. Click to manually override."
+              >
+                auto
+              </button>
+            ) : (
+              <span
+                className="absolute -top-2 right-0.5 text-[8px] font-bold px-1 py-0.2 rounded-full bg-[#0b6b3a] text-white shadow-2xs select-none pointer-events-none"
+                title="Calculated from assumptions."
+              >
+                auto
+              </span>
+            )
           ) : (
-            item.usageDriver !== 'fixed' && (
+            isEditMode && item.usageDriver !== 'fixed' && (
               <button
                 type="button"
                 onClick={handleResetAuto}
@@ -238,7 +256,12 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
                 : item.unitLabel
             }
             onChange={(e) => handleUnitChange(e.target.value)}
-            className="w-full text-[11px] font-semibold text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded px-1 py-1 focus:outline-none focus:ring-1 focus:ring-[#0b6b3a] cursor-pointer truncate"
+            disabled={!isEditMode}
+            className={`w-full text-[11px] font-semibold text-[var(--ink)] dark:text-[#e8f0eb] border rounded px-1 py-1 focus:outline-none focus:ring-1 focus:ring-[#0b6b3a] truncate transition-colors ${
+              isEditMode
+                ? 'bg-[var(--field)] dark:bg-[#121b16] border-[var(--line)] dark:border-[#2a3a31] cursor-pointer'
+                : 'bg-transparent border-transparent cursor-default pointer-events-none appearance-none'
+            }`}
             aria-label="Unit"
           >
             {item.costType === 'one-time' ? (
@@ -299,11 +322,22 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
         </span>
 
         {/* Integrated Currency Select + Comma Formatted Price Input */}
-        <div className="flex items-center rounded border border-[var(--line)] dark:border-[#2a3a31] bg-[var(--field)] dark:bg-[#121b16] focus-within:ring-1 focus-within:ring-[#0b6b3a] focus-within:border-[#0b6b3a] overflow-hidden">
+        <div
+          className={`flex items-center rounded overflow-hidden transition-colors ${
+            isEditMode
+              ? 'border border-[var(--line)] dark:border-[#2a3a31] bg-[var(--field)] dark:bg-[#121b16] focus-within:ring-1 focus-within:ring-[#0b6b3a] focus-within:border-[#0b6b3a]'
+              : 'border border-transparent bg-transparent'
+          }`}
+        >
           <select
             value={item.currency || 'NGN'}
             onChange={(e) => handleCurrencyChange(e.target.value as Currency)}
-            className="text-[11px] font-bold text-[#0b6b3a] dark:text-[#52c78d] bg-transparent pl-1 pr-0.5 py-1 focus:outline-none cursor-pointer border-r border-[var(--line)]/50 dark:border-[#2a3a31]/50 appearance-none text-center"
+            disabled={!isEditMode}
+            className={`text-[11px] font-bold text-[#0b6b3a] dark:text-[#52c78d] bg-transparent pl-1 pr-0.5 py-1 focus:outline-none appearance-none text-center ${
+              isEditMode
+                ? 'cursor-pointer border-r border-[var(--line)]/50 dark:border-[#2a3a31]/50'
+                : 'cursor-default pointer-events-none'
+            }`}
             title="Item currency: ₦ Naira or $ USD"
             aria-label="Item currency"
           >
@@ -313,7 +347,10 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
           <FormattedNumberInput
             value={item.unitRateNgn}
             onChange={handlePriceChange}
-            className="w-full font-bold text-xs text-right bg-transparent text-[var(--ink)] dark:text-[#e8f0eb] px-1.5 py-1 border-none focus:outline-none focus:ring-0"
+            disabled={!isEditMode}
+            className={`w-full font-bold text-xs text-right bg-transparent text-[var(--ink)] dark:text-[#e8f0eb] px-1.5 py-1 border-none focus:outline-none focus:ring-0 ${
+              isEditMode ? '' : 'cursor-default'
+            }`}
             aria-label="Unit price"
           />
         </div>
@@ -339,15 +376,19 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
 
       {/* 5. Delete Action Button */}
       <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={() => onDelete(item)}
-          className="w-6 h-6 rounded flex items-center justify-center text-[var(--ink-soft)] dark:text-[#85a396] hover:bg-red-50 dark:hover:bg-red-950/50 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer text-xs"
-          title="Remove line item"
-          aria-label="Delete line"
-        >
-          <X size={13} />
-        </button>
+        {isEditMode ? (
+          <button
+            type="button"
+            onClick={() => onDelete(item)}
+            className="w-6 h-6 rounded flex items-center justify-center text-[var(--ink-soft)] dark:text-[#85a396] hover:bg-red-50 dark:hover:bg-red-950/50 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer text-xs"
+            title="Remove line item"
+            aria-label="Delete line"
+          >
+            <X size={13} />
+          </button>
+        ) : (
+          <span className="w-6 h-6" />
+        )}
       </div>
     </div>
   )

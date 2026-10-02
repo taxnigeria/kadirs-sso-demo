@@ -49,6 +49,11 @@ interface BudgetState {
   monthlyActiveUsers: number
   fxRate: number
 
+  // Edit mode lock state (locked in view-only mode by default)
+  isEditMode: boolean
+  toggleEditMode: () => void
+  setEditMode: (enabled: boolean) => void
+
   // Actions
   setTitle: (title: string) => void
   setCurrency: (currency: Currency) => void
@@ -189,6 +194,7 @@ function getInitialState(): {
   currency: Currency
   scenarioId: string
   isCustomized: boolean
+  isEditMode: boolean
 } {
   const initialItems = BASELINE_ITEMS.map((i) => ({ ...i }))
   let title = DEFAULT_TITLE
@@ -196,8 +202,14 @@ function getInitialState(): {
   let currency: Currency = 'NGN'
   let scenarioId = 'lean'
   let isCustomized = false
+  let isEditMode = false
 
   if (typeof window !== 'undefined' && window.location.search) {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('edit') === '1' || params.get('edit') === 'true' || params.get('mode') === 'edit') {
+      isEditMode = true
+    }
+
     const delta = deserializeBudgetDelta(window.location.search)
     if (delta) {
       isCustomized = true
@@ -270,7 +282,7 @@ function getInitialState(): {
     }
   }
 
-  return { title, items: initialItems, assumptions, currency, scenarioId, isCustomized }
+  return { title, items: initialItems, assumptions, currency, scenarioId, isCustomized, isEditMode }
 }
 
 const initial = getInitialState()
@@ -285,6 +297,10 @@ export const useBudgetStore = create<BudgetState>((set, get) => ({
   currency: initial.currency,
   lastDeletedItem: null,
   isCustomized: initial.isCustomized,
+  isEditMode: initial.isEditMode,
+
+  toggleEditMode: () => set((state) => ({ isEditMode: !state.isEditMode })),
+  setEditMode: (enabled: boolean) => set({ isEditMode: enabled }),
 
   // Legacy aliases
   monthlyActiveUsers: initial.assumptions.users,

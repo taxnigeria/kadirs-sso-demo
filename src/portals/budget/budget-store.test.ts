@@ -167,6 +167,18 @@ async function runBudgetTests() {
   store.resetToBaseline()
   assertEquals(useBudgetStore.getState().assumptions.otp, DEFAULT_ASSUMPTIONS.otp, 'Reset restored baseline assumptions')
   assertEquals(useBudgetStore.getState().activeScenarioId, 'lean', 'Reset restored lean scenario')
+
+  // Edit Mode Lock/Unlock tests
+  assertEquals(useBudgetStore.getState().isEditMode, false, 'Default isEditMode is false (view-only lock)')
+  store.toggleEditMode()
+  assertEquals(useBudgetStore.getState().isEditMode, true, 'toggleEditMode toggles to true')
+  store.toggleEditMode()
+  assertEquals(useBudgetStore.getState().isEditMode, false, 'toggleEditMode toggles back to false')
+  store.setEditMode(true)
+  assertEquals(useBudgetStore.getState().isEditMode, true, 'setEditMode(true) enables edit mode')
+  store.setEditMode(false)
+  assertEquals(useBudgetStore.getState().isEditMode, false, 'setEditMode(false) disables edit mode')
+  console.log('✓ Edit mode lock/unlock actions verified')
   console.log('✓ Store mutations and assumptions passed')
 
   console.log('\n--- [4] Testing URL Delta Serialization & Deserialization ---')
