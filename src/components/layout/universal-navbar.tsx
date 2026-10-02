@@ -87,9 +87,15 @@ export function UniversalNavbar({ showNotice = true }: { showNotice?: boolean })
             <a href="/#support" onClick={(e) => scrollToSection(e, 'support')}>
               Support
             </a>
+            <Link to="/budget" className="font-semibold text-emerald-700 dark:text-emerald-400 hover:underline">
+              Budget
+            </Link>
 
             {/* Mobile menu secondary items */}
             <div className="md:hidden pt-3 border-t border-[var(--line)] flex flex-col gap-2 mt-2">
+              <Link to="/budget" className="header-help text-emerald-700 dark:text-emerald-400 font-bold">
+                Project Budget Estimator
+              </Link>
               <a
                 className="header-help"
                 href="/#support"

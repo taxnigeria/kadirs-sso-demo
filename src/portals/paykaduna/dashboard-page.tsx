@@ -111,29 +111,29 @@ export default function PayKadunaDashboard() {
   })
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden animate-in fade-in duration-300">
+    <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 overflow-x-hidden animate-in fade-in duration-300">
       
       {/* ── Citizen Master Hero Banner ── */}
-      <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-[24px] p-6 sm:p-7 shadow-sm transition-all">
+      <div className="bg-[var(--card-bg)] border border-slate-200/70 dark:border-white/10 rounded-3xl sm:rounded-[28px] p-5 sm:p-7 shadow-float transition-all duration-300">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             
             {/* Top Verification & ID badge */}
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-[#1AA260] border border-emerald-200/70 dark:border-emerald-800/40 shadow-2xs">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Identity Verified (NIMC)
               </span>
-              <span className="text-xs text-[var(--gray-300)]">&bull;</span>
+              <span className="text-xs text-[var(--gray-300)] hidden sm:inline">&bull;</span>
               <span className="text-xs font-mono text-[var(--gray-500)]">{citizenId}</span>
             </div>
 
             {/* Avatar + Heading */}
             <div className="flex items-center gap-3.5 pt-1">
-              <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50 flex items-center justify-center text-base font-bold shrink-0 shadow-xs">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-[#1AA260] border border-emerald-200/70 dark:border-emerald-800/40 flex items-center justify-center text-base font-bold shrink-0 shadow-xs">
                 {initials}
               </div>
-              <div>
+              <div className="min-w-0">
                 <h1 className="font-display font-extrabold text-2xl sm:text-[28px] text-[var(--ink)] tracking-tight leading-tight">
                   Good day, {citizenName}
                 </h1>
@@ -164,11 +164,11 @@ export default function PayKadunaDashboard() {
           </div>
 
           {/* Active Persona Badge & Switcher */}
-          <div className="md:text-right shrink-0">
+          <div className="md:text-right md:shrink-0 w-full sm:w-auto">
             <div className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold mb-2">
               Active Context
             </div>
-            <div className="inline-flex rounded-full border border-[var(--gray-200)] p-1 bg-black/[0.02] dark:bg-white/[0.04]">
+            <div className="inline-flex max-w-full overflow-x-auto no-scrollbar rounded-full border border-slate-200/70 dark:border-white/10 p-1 bg-slate-50/80 dark:bg-white/[0.04] shadow-xs">
               {(['individual', 'corporate', 'agency'] as PersonaType[]).map((p) => {
                 const isActive = activePersona === p
                 return (
@@ -176,7 +176,7 @@ export default function PayKadunaDashboard() {
                     key={p}
                     type="button"
                     onClick={() => switchPersona(p)}
-                    className={`px-3.5 py-1 text-xs rounded-full capitalize transition-all cursor-pointer ${
+                    className={`px-2.5 sm:px-3.5 py-1 text-xs rounded-full capitalize transition-all cursor-pointer whitespace-nowrap ${
                       isActive
                         ? 'bg-[#1AA260] text-white shadow-xs font-semibold'
                         : 'text-[var(--gray-500)] hover:text-[var(--ink)] font-medium'
@@ -193,14 +193,14 @@ export default function PayKadunaDashboard() {
 
       {/* ── Reconciliation Banner (For Fatima & Legacy Users) ── */}
       {hasUnreconciledAccounts && (
-        <div className="bg-amber-50/70 dark:bg-amber-950/25 border border-amber-200/80 dark:border-amber-800/50 p-5 sm:p-6 rounded-[22px] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm animate-in fade-in duration-300">
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 border border-amber-200 dark:border-amber-800/60 shadow-xs">
+        <div className="bg-amber-50/60 dark:bg-amber-950/25 border border-amber-200/60 dark:border-amber-800/40 p-5 sm:p-6 rounded-3xl sm:rounded-[28px] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-float animate-in fade-in duration-300">
+          <div className="flex items-start gap-3.5 min-w-0">
+            <div className="w-11 h-11 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 border border-amber-200/60 dark:border-amber-800/40 shadow-xs">
               <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-1">
+                <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/15 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/25 shadow-2xs">
                   {unlinkedCandidates.length} Pending {unlinkedCandidates.length === 1 ? 'Record' : 'Records'}
                 </span>
                 <span className="text-xs text-amber-700 dark:text-amber-400 font-medium">
@@ -227,10 +227,11 @@ export default function PayKadunaDashboard() {
           <button
             type="button"
             onClick={() => navigate('/auth/reconciliation')}
-            className="bg-[#1AA260] hover:bg-[#158A52] text-white font-semibold px-5 py-2.5 rounded-full text-xs sm:text-sm flex items-center justify-center gap-2 shrink-0 transition-all cursor-pointer shadow-sm hover:shadow"
+            className="bg-[#1AA260] hover:bg-[#158A52] text-white font-semibold px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm flex items-center justify-center gap-2 w-full md:w-auto shrink-0 transition-all cursor-pointer shadow-sm hover:shadow-md"
           >
-            <span>Review &amp; Unify Accounts ({unlinkedCandidates.length} remaining)</span>
-            <ArrowRight className="w-4 h-4" />
+            <span className="hidden sm:inline">Review &amp; Unify Accounts ({unlinkedCandidates.length} remaining)</span>
+            <span className="sm:hidden">Unify Accounts ({unlinkedCandidates.length} pending)</span>
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
         </div>
       )}
@@ -239,7 +240,7 @@ export default function PayKadunaDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
         
         {/* Stat 1: Revenue Contributed */}
-        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-4 sm:p-4.5 rounded-[20px] shadow-sm hover:shadow transition-all flex items-center justify-between gap-3">
+        <div className="bg-[var(--card-bg)] border border-slate-200/70 dark:border-white/10 p-4.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-float hover:shadow-float-hover transition-all duration-300 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold block truncate">
               Total Revenue Paid
@@ -248,13 +249,13 @@ export default function PayKadunaDashboard() {
               {activePersona === 'corporate' ? '₦285,000.00' : '₦15,000.00'}
             </div>
           </div>
-          <div className="w-9 h-9 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#1AA260] border border-emerald-200/60 dark:border-emerald-800/40 flex items-center justify-center shrink-0 shadow-2xs">
             <CreditCard className="w-4 h-4" />
           </div>
         </div>
 
         {/* Stat 2: Active Identity Level */}
-        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-4 sm:p-4.5 rounded-[20px] shadow-sm hover:shadow transition-all flex items-center justify-between gap-3">
+        <div className="bg-[var(--card-bg)] border border-slate-200/70 dark:border-white/10 p-4.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-float hover:shadow-float-hover transition-all duration-300 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold block truncate">
               Identity Assurance
@@ -263,28 +264,28 @@ export default function PayKadunaDashboard() {
               Level 2 (NIMC)
             </div>
           </div>
-          <div className="w-9 h-9 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40 flex items-center justify-center shrink-0 shadow-2xs">
             <ShieldCheck className="w-4 h-4" />
           </div>
         </div>
 
         {/* Stat 3: Connected Portals */}
-        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-4 sm:p-4.5 rounded-[20px] shadow-sm hover:shadow transition-all flex items-center justify-between gap-3">
+        <div className="bg-[var(--card-bg)] border border-slate-200/70 dark:border-white/10 p-4.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-float hover:shadow-float-hover transition-all duration-300 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold block truncate">
               Connected Services
             </span>
             <div className="font-display font-extrabold text-xl sm:text-[22px] text-[var(--ink)] tracking-tight mt-0.5 truncate">
-              {connectedTsps.length} of 14 Portals
+              {connectedTspsList.length} of {TSP_REGISTRY.length} Portals
             </div>
           </div>
-          <div className="w-9 h-9 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-800/40 flex items-center justify-center shrink-0 shadow-2xs">
             <Layers className="w-4 h-4" />
           </div>
         </div>
 
         {/* Stat 4: Tax Compliance */}
-        <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] p-4 sm:p-4.5 rounded-[20px] shadow-sm hover:shadow transition-all flex items-center justify-between gap-3">
+        <div className="bg-[var(--card-bg)] border border-slate-200/70 dark:border-white/10 p-4.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-float hover:shadow-float-hover transition-all duration-300 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <span className="text-[11px] uppercase tracking-wider text-[var(--gray-500)] font-bold block truncate">
               Tax Assessment 2024
@@ -293,7 +294,7 @@ export default function PayKadunaDashboard() {
               In Good Standing
             </div>
           </div>
-          <div className="w-9 h-9 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#1AA260] border border-emerald-200/60 dark:border-emerald-800/40 flex items-center justify-center shrink-0 shadow-2xs">
             <UserCheck className="w-4 h-4" />
           </div>
         </div>
@@ -301,7 +302,7 @@ export default function PayKadunaDashboard() {
 
       {/* ── Connected Services Section (Only Connected TSPs) ── */}
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--gray-200)] pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/70 dark:border-white/10 pb-3">
           <div>
             <h2 className="font-display font-bold text-xl sm:text-2xl text-[var(--ink)] tracking-tight">
               Connected Services ({connectedTspsList.length})
@@ -314,13 +315,13 @@ export default function PayKadunaDashboard() {
           <div className="flex flex-wrap items-center gap-3">
             {/* Category Filter Pills (if multiple connected) */}
             {connectedTspsList.length > 3 && (
-              <div className="flex items-center gap-1 bg-[var(--card-bg)] border border-[var(--gray-200)] p-1 rounded-full text-xs shadow-2xs">
+              <div className="flex items-center gap-1 bg-[var(--card-bg)] border border-slate-200/70 dark:border-white/10 p-1 rounded-full text-xs shadow-2xs max-w-full overflow-x-auto no-scrollbar">
                 {(['all', 'individual', 'corporate', 'government'] as const).map((cat) => (
                   <button
                     key={cat}
                     type="button"
                     onClick={() => setFilterCategory(cat)}
-                    className={`px-3.5 py-1 rounded-full capitalize font-medium transition-all cursor-pointer ${
+                    className={`px-3 sm:px-3.5 py-1 rounded-full capitalize font-medium transition-all cursor-pointer whitespace-nowrap ${
                       filterCategory === cat
                         ? 'bg-[#1AA260] text-white shadow-xs font-semibold'
                         : 'text-[var(--gray-500)] hover:text-[var(--ink)]'
@@ -335,7 +336,7 @@ export default function PayKadunaDashboard() {
             {/* Link to full services catalog */}
             <Link
               to="/paykaduna/services"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors cursor-pointer shrink-0 shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/70 dark:border-emerald-800/40 hover:bg-emerald-100/80 dark:hover:bg-emerald-900/50 transition-colors cursor-pointer shrink-0 shadow-2xs"
             >
               <span>Explore All Services ({TSP_REGISTRY.length})</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -351,37 +352,43 @@ export default function PayKadunaDashboard() {
             const isKadvreg = tsp.id === 'kadvreg'
             const isPit = tsp.id === 'pit'
 
+            const iconTheme = (isKadTax || isPit)
+              ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border-amber-200/60 dark:border-amber-800/40'
+              : isKadvreg
+              ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border-blue-200/60 dark:border-blue-800/40'
+              : 'bg-emerald-50 dark:bg-emerald-950/60 text-[#1AA260] border-emerald-200/60 dark:border-emerald-800/40'
+
             return (
               <div
                 key={tsp.id}
-                className={`p-5 rounded-[22px] border transition-all flex flex-col justify-between gap-4 shadow-sm hover:shadow-md ${
+                className={`p-5 rounded-[24px] border transition-all duration-300 flex flex-col justify-between gap-4 shadow-float hover:shadow-float-hover ${
                   isCurrent
-                    ? 'border-[#1AA260]/60 bg-emerald-50/20 dark:bg-emerald-950/10'
-                    : 'border-[var(--gray-200)] bg-[var(--card-bg)] hover:border-emerald-300 dark:hover:border-emerald-700/60'
+                    ? 'border-[#1AA260]/60 dark:border-emerald-500/40 bg-emerald-50/25 dark:bg-emerald-950/20'
+                    : 'border-slate-200/70 dark:border-white/10 bg-[var(--card-bg)] hover:border-emerald-300/80 dark:hover:border-emerald-600/40'
                 }`}
               >
                 <div>
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+                  <div className="flex flex-wrap sm:flex-nowrap items-start justify-between gap-2.5 sm:gap-3 mb-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-10 h-10 rounded-xl ${iconTheme} border flex items-center justify-center shrink-0 shadow-2xs`}>
                         <tsp.icon className="w-5 h-5" />
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-sm sm:text-[15px] text-[var(--ink)] leading-snug">
+                      <div className="min-w-0">
+                        <h3 className="font-semibold text-sm sm:text-[15px] text-[var(--ink)] leading-snug truncate">
                           {tsp.name}
                         </h3>
-                        <span className="text-[11px] font-mono text-[var(--gray-500)] uppercase block mt-0.5">
+                        <span className="text-[11px] font-mono text-[var(--gray-500)] uppercase block mt-0.5 truncate">
                           {tsp.id}
                         </span>
                       </div>
                     </div>
 
                     {isCurrent ? (
-                      <span className="text-[10.5px] font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-0.5 rounded-full shrink-0">
+                      <span className="text-[10.5px] font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/70 dark:border-emerald-800/40 px-2.5 py-0.5 rounded-full shrink-0 shadow-2xs">
                         Current Portal
                       </span>
                     ) : (
-                      <span className="text-[10.5px] font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0">
+                      <span className="text-[10.5px] font-semibold text-[#1AA260] bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/70 dark:border-emerald-800/40 px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0 shadow-2xs">
                         <CheckCircle2 className="w-3 h-3" />
                         SSO Connected
                       </span>
@@ -393,12 +400,12 @@ export default function PayKadunaDashboard() {
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-[var(--gray-200)] dark:border-white/5 flex items-center justify-between text-xs">
-                  <span className="text-[11px] text-[var(--gray-500)] font-medium">
+                <div className="pt-3 border-t border-slate-100 dark:border-white/5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 text-xs">
+                  <span className="text-[11px] text-[var(--gray-500)] font-medium truncate min-w-0">
                     {tsp.personas}
                   </span>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
                     <button
                       type="button"
                       onClick={() => setInspectingTsp(tsp)}
@@ -479,12 +486,12 @@ export default function PayKadunaDashboard() {
             )
           })}
 
-          {/* Connect More Services Card */}
+          {/* Connect More Services Card (Dashed empty-slot card with zero shadow) */}
           <Link
             to="/paykaduna/services"
-            className="p-5 rounded-[22px] border-2 border-dashed border-[var(--gray-200)] hover:border-emerald-400 dark:hover:border-emerald-600/70 bg-black/[0.01] dark:bg-white/[0.01] hover:bg-emerald-50/20 dark:hover:bg-emerald-950/20 transition-all flex flex-col items-center justify-center text-center gap-3 group cursor-pointer min-h-[170px]"
+            className="p-5 rounded-[24px] border border-dashed border-slate-200/70 dark:border-white/10 hover:border-emerald-400 dark:hover:border-emerald-500/70 bg-black/[0.01] dark:bg-white/[0.01] hover:bg-emerald-50/20 dark:hover:bg-emerald-950/20 shadow-none hover:shadow-none transition-all duration-300 flex flex-col items-center justify-center text-center gap-3 group cursor-pointer min-h-[170px]"
           >
-            <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#1AA260] border border-emerald-200/60 dark:border-emerald-800/40 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Plus className="w-5 h-5" />
             </div>
             <div>
@@ -492,7 +499,7 @@ export default function PayKadunaDashboard() {
                 Connect More Services
               </h3>
               <p className="text-xs text-[var(--gray-500)] mt-0.5 max-w-[26ch]">
-                Explore 14 Kaduna State MDAs &amp; authorize new TSP applications
+                Explore {TSP_REGISTRY.length} Kaduna State MDAs &amp; authorize new TSP applications
               </p>
             </div>
           </Link>
@@ -500,7 +507,7 @@ export default function PayKadunaDashboard() {
       </div>
 
       {/* ── Recent Unified Revenue Receipts Table ── */}
-      <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-[24px] p-6 sm:p-7 shadow-sm transition-all">
+      <div className="bg-[var(--card-bg)] border border-slate-200/70 dark:border-white/10 rounded-3xl sm:rounded-[28px] p-5 sm:p-7 shadow-float transition-all duration-300">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
           <div>
             <h2 className="font-display font-bold text-lg sm:text-xl text-[var(--ink)] tracking-tight">
@@ -522,7 +529,7 @@ export default function PayKadunaDashboard() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-[var(--gray-200)] text-[var(--gray-500)] text-[11px] uppercase tracking-wider">
+              <tr className="border-b border-slate-200/70 dark:border-white/10 text-[var(--gray-500)] text-[11px] uppercase tracking-wider">
                 <th className="py-3 font-semibold">Receipt Ref</th>
                 <th className="py-3 font-semibold">Origin Agency</th>
                 <th className="py-3 font-semibold">Description</th>
@@ -531,7 +538,7 @@ export default function PayKadunaDashboard() {
                 <th className="py-3 font-semibold text-center">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--gray-200)] text-[var(--ink)]">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/5 text-[var(--ink)]">
               <tr className="hover:bg-black/[0.015] dark:hover:bg-white/[0.02] transition-colors">
                 <td className="py-3.5 font-mono text-[12px] text-[var(--gray-700)] dark:text-[var(--gray-300)]">RCP-KD-2024-0982</td>
                 <td className="py-3.5 font-semibold text-[13px] text-[var(--ink)]">PayKaduna Gateway</td>
@@ -539,7 +546,7 @@ export default function PayKadunaDashboard() {
                 <td className="py-3.5 text-[12px] text-[var(--gray-500)]">14 Mar 2024</td>
                 <td className="py-3.5 font-mono font-bold text-right text-[13px]">₦15,000.00</td>
                 <td className="py-3.5 text-center">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-[#1AA260] border border-emerald-200/70 dark:border-emerald-800/40 shadow-2xs">
                     Settled
                   </span>
                 </td>
@@ -551,7 +558,7 @@ export default function PayKadunaDashboard() {
                 <td className="py-3.5 text-[12px] text-[var(--gray-500)]">22 Jan 2024</td>
                 <td className="py-3.5 font-mono font-bold text-right text-[13px]">₦5,000.00</td>
                 <td className="py-3.5 text-center">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-[#1AA260] border border-emerald-200 dark:border-emerald-800/50">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-[#1AA260] border border-emerald-200/70 dark:border-emerald-800/40 shadow-2xs">
                     Settled
                   </span>
                 </td>
@@ -570,20 +577,26 @@ export default function PayKadunaDashboard() {
       {/* ── Inspecting TSP Modal ── */}
       {inspectingTsp && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-[var(--card-bg)] border border-[var(--gray-200)] rounded-[24px] max-w-md w-full p-6 space-y-4 shadow-float animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-[var(--gray-200)] pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#1AA260]/10 text-[#1AA260] flex items-center justify-center shrink-0">
+          <div className="bg-[var(--card-bg)] border border-slate-200/70 dark:border-white/10 rounded-[28px] max-w-md w-full p-6 space-y-4 shadow-float animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-3 gap-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className={`w-9 h-9 rounded-xl ${
+                  inspectingTsp.id === 'kadtaxonrent' || inspectingTsp.id === 'pit'
+                    ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border-amber-200/60 dark:border-amber-800/40'
+                    : inspectingTsp.id === 'kadvreg'
+                    ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border-blue-200/60 dark:border-blue-800/40'
+                    : 'bg-emerald-50 dark:bg-emerald-950/60 text-[#1AA260] border-emerald-200/60 dark:border-emerald-800/40'
+                } border flex items-center justify-center shrink-0 shadow-2xs`}>
                   <inspectingTsp.icon className="w-4 h-4" />
                 </div>
-                <h3 className="font-display font-bold text-base text-[var(--ink)]">
+                <h3 className="font-display font-bold text-base text-[var(--ink)] truncate">
                   {inspectingTsp.name} SSO Bridge
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setInspectingTsp(null)}
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--gray-400)] hover:text-[var(--ink)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer text-base"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--gray-400)] hover:text-[var(--ink)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer text-base shrink-0"
                 aria-label="Close"
               >
                 &times;
@@ -594,12 +607,12 @@ export default function PayKadunaDashboard() {
               When a citizen navigates to <strong>{inspectingTsp.name}</strong>, KADIRS Central Auth issues an audience-scoped security token scoped strictly to <code>aud: {inspectingTsp.id}</code> with minimum necessary permissions.
             </p>
 
-            <div className="bg-[var(--paper)] border border-[var(--gray-200)] p-4 rounded-2xl text-xs font-mono space-y-1.5 text-[var(--ink)]">
+            <div className="bg-[var(--paper)] border border-slate-200/70 dark:border-white/10 p-4 rounded-2xl text-xs font-mono space-y-1.5 text-[var(--ink)] break-words shadow-2xs">
               <div><strong className="text-[var(--gray-500)]">Audience:</strong> {inspectingTsp.id}</div>
-              <div><strong className="text-[var(--gray-500)]">Subject ID:</strong> {citizenId}</div>
+              <div className="break-all"><strong className="text-[var(--gray-500)]">Subject ID:</strong> {citizenId}</div>
               <div><strong className="text-[var(--gray-500)]">Data Protection:</strong> NDPA Compliant (NIN masked)</div>
               <div><strong className="text-[var(--gray-500)]">Assurance Level:</strong> Level {currentToken?.acr || '2'}</div>
-              <div><strong className="text-[var(--gray-500)]">Token Ref:</strong> {currentToken?.jti || 'tok-live-01'}</div>
+              <div className="break-all"><strong className="text-[var(--gray-500)]">Token Ref:</strong> {currentToken?.jti || 'tok-live-01'}</div>
               <div><strong className="text-[var(--gray-500)]">Permitted Scopes:</strong> profile:read, services:access</div>
             </div>
 
@@ -607,7 +620,7 @@ export default function PayKadunaDashboard() {
               <button
                 type="button"
                 onClick={() => setInspectingTsp(null)}
-                className="bg-[#1AA260] hover:bg-[#158A52] text-white px-5 py-2.5 rounded-full text-xs font-semibold transition-colors cursor-pointer shadow-sm"
+                className="bg-[#1AA260] hover:bg-[#158A52] text-white px-5 py-2.5 rounded-full text-xs font-semibold transition-colors cursor-pointer shadow-sm hover:shadow-md"
               >
                 Close Inspector
               </button>

@@ -32,12 +32,18 @@ import { ArchitectureInspectorDrawer } from "@/components/inspector/architecture
 import { CommandPalette } from "@/components/presentation/command-palette"
 import { Toaster } from "@/components/ui/sonner"
 
+// Project Budget & Operational Financial Estimator
+import BudgetPage from "@/portals/budget/budget-page"
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Modern Editorial Landing Page */}
         <Route index element={<HomePage />} />
+
+        {/* Dedicated Interactive Project Budget Estimator */}
+        <Route path="budget" element={<BudgetPage />} />
 
         {/* OAuth / OIDC Standalone Authorization Ceremony — completely independent of portal navbars */}
         <Route path="auth/authorize" element={<OAuthAuthorizePage />} />

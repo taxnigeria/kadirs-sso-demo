@@ -231,6 +231,14 @@ export function CommandPalette() {
         badge: 'Admin Console',
         icon: Layers,
         path: '/admin/reports'
+      },
+      {
+        id: 'portal-budget',
+        title: 'Project Budget & Financial Lifecycle Estimator',
+        subtitle: 'Interactive Nigerian market rates, developer salaries, cloud OPEX & MAU simulator',
+        badge: 'Budget Model',
+        icon: Calculator,
+        path: '/budget'
       }
     ]
 
