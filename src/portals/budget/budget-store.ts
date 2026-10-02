@@ -20,17 +20,17 @@ import {
 } from './budget-url-sync'
 import type { ExportBudgetPayload } from './budget-file-utils'
 
-export const DEFAULT_TITLE = 'KADIRS Unified Identity & Access Management: Budget'
+export const DEFAULT_TITLE = 'KADIRS Auth System 2.0 — Cost-Optimized Budget (Lean R1.0 Pilot)'
 
 export const DEFAULT_ASSUMPTIONS: BudgetAssumptions = {
   rate: budgetJson.defaultFxRate || 1500,
-  devMonths: 6,
-  users: budgetJson.defaultMau || 100000,
-  lpu: 8,
-  otp: 30,
-  reg: 15000,
+  devMonths: 2,
+  users: budgetJson.defaultMau || 10000,
+  lpu: 3,
+  otp: 100,
+  reg: 2000,
   months: 12,
-  cont: 10
+  cont: 0
 }
 
 interface BudgetState {
@@ -78,7 +78,7 @@ const BASELINE_ITEMS: BudgetItem[] = budgetJson.items.map((item) => ({
   usageDriver: item.usageDriver as UsageDriver,
   isEnabled: item.isEnabled ?? true,
   currency: 'NGN' as Currency,
-  isAutoQuantity: item.usageDriver !== 'fixed'
+  isAutoQuantity: item.isAutoQuantity !== undefined ? item.isAutoQuantity : (item.usageDriver !== 'fixed')
 }))
 
 // Helper: Sync delta to URL query string without reloading
@@ -194,7 +194,7 @@ function getInitialState(): {
   let title = DEFAULT_TITLE
   const assumptions: BudgetAssumptions = { ...DEFAULT_ASSUMPTIONS }
   let currency: Currency = 'NGN'
-  let scenarioId = 'enterprise'
+  let scenarioId = 'lean'
   let isCustomized = false
 
   if (typeof window !== 'undefined' && window.location.search) {
@@ -490,7 +490,7 @@ export const useBudgetStore = create<BudgetState>((set, get) => ({
       monthlyActiveUsers: DEFAULT_ASSUMPTIONS.users,
       fxRate: DEFAULT_ASSUMPTIONS.rate,
       currency: 'NGN',
-      activeScenarioId: 'enterprise',
+      activeScenarioId: 'lean',
       lastDeletedItem: null,
       isCustomized: false
     })
@@ -565,31 +565,20 @@ export function calculateEffectiveItemCost(
     } else if (item.usageDriver === 'mau_cloud') {
       effectiveQuantity = Math.max(1, Math.round((assumptions.users / 1000) * (item.driverMultiplier ?? 10)))
     }
-  }
-
-  // Calculate effective period for one-time build items
-  const isDevMoUnit =
-    item.unitLabel === 'dev/mo' ||
-    item.unitLabel === 'per dev/mo' ||
-    item.unitLabel === 'per dev/month' ||
-    item.unitLabel === 'per engineer/month' ||
-    item.unitLabel === 'month' ||
-    item.unitLabel === 'months'
-
-  let effectivePeriod = 1
-  if (item.costType === 'one-time') {
-    if (isDevMoUnit) {
-      const devM = assumptions.devMonths !== undefined ? assumptions.devMonths : 6
-      if (item.periodMonths && item.periodMonths !== 6) {
-        // e.g. UI/UX Specialist with 4 months out of 6
-        effectivePeriod = Math.max(1, Math.round(item.periodMonths * (devM / 6)))
-      } else {
-        effectivePeriod = devM
-      }
-    } else {
-      effectivePeriod = item.periodMonths || 1
+  } else if (item.costType === 'one-time' && item.isAutoQuantity !== false) {
+    const isMonthlyUnit =
+      item.unitLabel === 'month' ||
+      item.unitLabel === 'months' ||
+      item.unitLabel === 'dev/mo' ||
+      item.unitLabel === 'per dev/mo' ||
+      item.unitLabel === 'per dev/month' ||
+      item.unitLabel === 'per engineer/month'
+    if (isMonthlyUnit) {
+      effectiveQuantity = Math.max(1, assumptions.devMonths || 2)
     }
   }
+
+  const effectivePeriod = 1
 
   let costNgn = 0
   if (item.currency === 'USD') {

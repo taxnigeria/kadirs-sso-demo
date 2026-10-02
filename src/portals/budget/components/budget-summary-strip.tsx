@@ -67,8 +67,10 @@ export function BudgetSummaryStrip() {
         </div>
         <div className="text-[11px] text-emerald-100/90 leading-tight">
           {formatCompact(summary.buildTotalNgn, summary.buildTotalUsd)} build + {summary.budgetMonths} ×{' '}
-          {formatCompact(summary.runningMonthlyNgn, summary.runningMonthlyUsd)} running +{' '}
-          {summary.safetyBufferPercent}% buffer ({formatCompact(summary.bufferAmountNgn, summary.bufferAmountUsd)})
+          {formatCompact(summary.runningMonthlyNgn, summary.runningMonthlyUsd)} running
+          {summary.safetyBufferPercent > 0
+            ? ` + ${summary.safetyBufferPercent}% buffer (${formatCompact(summary.bufferAmountNgn, summary.bufferAmountUsd)})`
+            : ` (incl. ₦3M contingency)`}
         </div>
       </div>
 

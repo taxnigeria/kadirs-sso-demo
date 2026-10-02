@@ -95,13 +95,13 @@ export function BudgetAssumptionsSidebar() {
             min="1"
             max="36"
             step="1"
-            value={assumptions.devMonths || 6}
+            value={assumptions.devMonths !== undefined ? assumptions.devMonths : 2}
             onChange={(e) => handleNumberChange('devMonths', e)}
             className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
             aria-label="Development timeframe in months"
           />
           <div className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] mt-0.5">
-            Engineering build phase duration
+            Pilot build phase duration (2-month constraint)
           </div>
         </div>
 
@@ -221,10 +221,13 @@ export function BudgetAssumptionsSidebar() {
             min="0"
             max="100"
             step="any"
-            value={assumptions.cont || ''}
+            value={assumptions.cont !== undefined ? assumptions.cont : 0}
             onChange={(e) => handleNumberChange('cont', e)}
             className="w-full font-bold text-sm text-[var(--ink)] dark:text-[#e8f0eb] bg-[var(--field)] dark:bg-[#121b16] border border-[var(--line)] dark:border-[#2a3a31] rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0b6b3a]"
           />
+          <div className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] mt-0.5">
+            ₦3.0M delivery contingency itemized in Build
+          </div>
         </div>
       </div>
 

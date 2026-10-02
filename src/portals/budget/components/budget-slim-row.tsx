@@ -18,7 +18,7 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
 
   const [showTooltip, setShowTooltip] = useState(false)
 
-  const { costNgn, costUsd, effectiveQuantity, effectivePeriod } = calculateEffectiveItemCost(item, assumptions)
+  const { costNgn, costUsd, effectiveQuantity } = calculateEffectiveItemCost(item, assumptions)
 
   const lineTotal = currency === 'NGN' ? costNgn : costUsd
   const currencySymbol = currency === 'NGN' ? '₦' : '$'
@@ -40,13 +40,13 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
   // Unit dropdown change that drives calculations and auto volume
   const handleUnitChange = (newUnit: string) => {
     if (item.costType === 'recurring') {
-      if (newUnit === 'per SMS' || newUnit === 'SMS') {
+      if (newUnit === 'per SMS' || newUnit === 'SMS' || newUnit === 'messages') {
         updateItemRow(item.id, {
           unitLabel: newUnit,
           usageDriver: 'mau_otp',
           isAutoQuantity: true
         })
-      } else if (newUnit === 'per check' || newUnit === 'check') {
+      } else if (newUnit === 'per check' || newUnit === 'check' || newUnit === 'checks') {
         updateItemRow(item.id, {
           unitLabel: newUnit,
           usageDriver: 'mau_nimc',
@@ -72,7 +72,15 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
         })
       }
     } else {
-      updateItemRow(item.id, { unitLabel: newUnit })
+      const isMonth =
+        newUnit === 'months' ||
+        newUnit === 'month' ||
+        newUnit === 'dev/mo' ||
+        newUnit === 'per dev/mo'
+      updateItemRow(item.id, {
+        unitLabel: newUnit,
+        isAutoQuantity: isMonth
+      })
     }
   }
 
@@ -103,7 +111,17 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
     updateItemRow(item.id, { isAutoQuantity: true })
   }
 
-  const isAuto = item.usageDriver !== 'fixed' && item.isAutoQuantity !== false
+  const isMonthlyBuildUnit =
+    item.costType === 'one-time' &&
+    (item.unitLabel === 'month' ||
+      item.unitLabel === 'months' ||
+      item.unitLabel === 'dev/mo' ||
+      item.unitLabel === 'per dev/mo' ||
+      item.unitLabel === 'per dev/month')
+
+  const isAuto =
+    (item.usageDriver !== 'fixed' && item.isAutoQuantity !== false) ||
+    (isMonthlyBuildUnit && item.isAutoQuantity !== false)
 
   return (
     <div
@@ -225,24 +243,33 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
           >
             {item.costType === 'one-time' ? (
               <>
+                <option value="months">months</option>
+                <option value="fixed">fixed</option>
+                <option value="TSPs">TSPs</option>
+                <option value="pilot scope">pilot scope</option>
+                <option value="rehearsal">rehearsal</option>
+                <option value="reserve">reserve</option>
                 <option value="dev/mo">dev/mo</option>
                 <option value="lot">lot</option>
-                <option value="item">item</option>
                 <option value="month">month</option>
-                <option value="session">session</option>
-                {!['dev/mo', 'lot', 'item', 'month', 'session', 'per dev/month', 'per engineer/month'].includes(
+                {!['months', 'fixed', 'TSPs', 'pilot scope', 'rehearsal', 'reserve', 'dev/mo', 'lot', 'item', 'month', 'session', 'per dev/month', 'per engineer/month'].includes(
                   item.unitLabel
                 ) && <option value={item.unitLabel}>{item.unitLabel}</option>}
               </>
             ) : (
               <>
+                <option value="month">month</option>
+                <option value="messages">messages</option>
+                <option value="checks">checks</option>
                 <option value="per month">per month</option>
                 <option value="per SMS">per SMS</option>
                 <option value="per check">per check</option>
                 <option value="per lookup">per lookup</option>
                 <option value="per user">per user</option>
-                <option value="per dev/mo">per dev/mo</option>
                 {![
+                  'month',
+                  'messages',
+                  'checks',
                   'per month',
                   'per SMS',
                   'per check',
@@ -250,19 +277,18 @@ export function BudgetSlimRow({ item, sectionTotalNgn, onDelete }: BudgetSlimRow
                   'per user',
                   'per dev/mo',
                   'SMS',
-                  'checks',
                   'check'
                 ].includes(item.unitLabel) && <option value={item.unitLabel}>{item.unitLabel}</option>}
               </>
             )}
           </select>
           {/* Subtle indicator for build items that scale with development timeframe */}
-          {item.costType === 'one-time' && effectivePeriod > 1 && (
+          {item.costType === 'one-time' && isMonthlyBuildUnit && (
             <span
-              className="absolute -top-2 right-1 text-[8px] font-extrabold px-1 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 pointer-events-none select-none"
-              title={`Multiplied by ${effectivePeriod} months development timeframe`}
+              className="absolute -top-2 right-1 text-[8px] font-extrabold px-1 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 pointer-events-none select-none"
+              title={`Auto-scaled to ${assumptions.devMonths || 2} months development timeframe`}
             >
-              ×{effectivePeriod}m
+              {assumptions.devMonths || 2}m
             </span>
           )}
         </div>

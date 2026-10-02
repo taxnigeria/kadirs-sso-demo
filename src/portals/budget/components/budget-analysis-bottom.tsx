@@ -175,53 +175,75 @@ export function BudgetAnalysisBottom() {
         </div>
       </div>
 
-      {/* 3 Metric Cards: Subdued styling without loud colors or shadows */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {/* 1-Year TCO */}
-        <div className="p-3.5 rounded-lg border border-[var(--line)] dark:border-[#2a3a31] space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--ink-soft)] dark:text-[#85a396] uppercase tracking-wider">
-            <span>1-Year TCO Horizon</span>
-            <Calendar size={13} className="text-[var(--ink-soft)] dark:text-[#85a396]" />
-          </div>
-          <div className="text-lg sm:text-xl font-bold text-[var(--ink)] dark:text-[#e8f0eb] tabular-nums">
-            {formatMoney(summary.year1TcoNgn, summary.year1TcoUsd)}
-          </div>
-          <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4]">
-            Build + 12 months running OPEX
-          </p>
-        </div>
+      {/* 4 Metric Cards: Subdued styling without loud colors or shadows */}
+      {(() => {
+        const ceilingTargetNgn = 48_000_000
+        const headroomNgn = ceilingTargetNgn - summary.year1TcoNgn
+        const headroomUsd = headroomNgn / (assumptions.rate > 0 ? assumptions.rate : 1500)
 
-        {/* 3-Year Project Lifecycle */}
-        <div className="p-3.5 rounded-lg border border-[var(--line)] dark:border-[#2a3a31] space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--ink-soft)] dark:text-[#85a396] uppercase tracking-wider">
-            <span>3-Year Sovereign Lifecycle</span>
-            <Sparkles size={13} className="text-[var(--ink-soft)] dark:text-[#85a396]" />
-          </div>
-          <div className="text-lg sm:text-xl font-bold text-[var(--ink)] dark:text-[#e8f0eb] tabular-nums">
-            {formatMoney(summary.year3LifecycleNgn, summary.year3LifecycleUsd)}
-          </div>
-          <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4]">
-            Build + 36 months sovereign cloud &amp; operations
-          </p>
-        </div>
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* 1-Year TCO */}
+            <div className="p-3.5 rounded-lg border border-[var(--line)] dark:border-[#2a3a31] space-y-1">
+              <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--ink-soft)] dark:text-[#85a396] uppercase tracking-wider">
+                <span>First-Year Program Total</span>
+                <Calendar size={13} className="text-[var(--ink-soft)] dark:text-[#85a396]" />
+              </div>
+              <div className="text-lg sm:text-xl font-bold text-[var(--ink)] dark:text-[#e8f0eb] tabular-nums">
+                {formatMoney(summary.year1TcoNgn, summary.year1TcoUsd)}
+              </div>
+              <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4]">
+                ₦34.0M build + 12m running OPEX
+              </p>
+            </div>
 
-        {/* Efficiency & Unit Economics */}
-        <div className="p-3.5 rounded-lg border border-[var(--line)] dark:border-[#2a3a31] space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--ink-soft)] dark:text-[#85a396] uppercase tracking-wider">
-            <span>Citizen Operational Cost</span>
-            <ShieldCheck size={13} className="text-[var(--ink-soft)] dark:text-[#85a396]" />
+            {/* Ceiling Headroom */}
+            <div className="p-3.5 rounded-lg border border-[var(--line)] dark:border-[#2a3a31] space-y-1">
+              <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--ink-soft)] dark:text-[#85a396] uppercase tracking-wider">
+                <span>Headroom Under ₦48M</span>
+                <ShieldCheck size={13} className="text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div className={`text-lg sm:text-xl font-bold tabular-nums ${headroomNgn >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                {headroomNgn >= 0 ? `+${formatMoney(headroomNgn, headroomUsd)}` : formatMoney(headroomNgn, headroomUsd)}
+              </div>
+              <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4]">
+                Target ceiling: ₦48.0M max
+              </p>
+            </div>
+
+            {/* 3-Year Project Lifecycle */}
+            <div className="p-3.5 rounded-lg border border-[var(--line)] dark:border-[#2a3a31] space-y-1">
+              <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--ink-soft)] dark:text-[#85a396] uppercase tracking-wider">
+                <span>3-Year Sovereign Lifecycle</span>
+                <Sparkles size={13} className="text-[var(--ink-soft)] dark:text-[#85a396]" />
+              </div>
+              <div className="text-lg sm:text-xl font-bold text-[var(--ink)] dark:text-[#e8f0eb] tabular-nums">
+                {formatMoney(summary.year3LifecycleNgn, summary.year3LifecycleUsd)}
+              </div>
+              <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4]">
+                Build + 36m sovereign operations
+              </p>
+            </div>
+
+            {/* Efficiency & Unit Economics */}
+            <div className="p-3.5 rounded-lg border border-[var(--line)] dark:border-[#2a3a31] space-y-1">
+              <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--ink-soft)] dark:text-[#85a396] uppercase tracking-wider">
+                <span>Citizen Operational Cost</span>
+                <PieChart size={13} className="text-[var(--ink-soft)] dark:text-[#85a396]" />
+              </div>
+              <div className="text-lg sm:text-xl font-bold text-[var(--ink)] dark:text-[#e8f0eb] tabular-nums">
+                {currency === 'NGN'
+                  ? `₦${summary.costPerUserPerMonthNgn.toFixed(2)}`
+                  : `$${summary.costPerUserPerMonthUsd.toFixed(2)}`}
+                <span className="text-xs font-normal text-[var(--ink-soft)] dark:text-[#9bb0a4] ml-1">/ taxpayer / mo</span>
+              </div>
+              <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4]">
+                Across {assumptions.users.toLocaleString()} active taxpayers
+              </p>
+            </div>
           </div>
-          <div className="text-lg sm:text-xl font-bold text-[var(--ink)] dark:text-[#e8f0eb] tabular-nums">
-            {currency === 'NGN'
-              ? `₦${summary.costPerUserPerMonthNgn.toFixed(2)}`
-              : `$${summary.costPerUserPerMonthUsd.toFixed(2)}`}
-            <span className="text-xs font-normal text-[var(--ink-soft)] dark:text-[#9bb0a4] ml-1">/ taxpayer / mo</span>
-          </div>
-          <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4]">
-            Across {assumptions.users.toLocaleString()} monthly active users
-          </p>
-        </div>
-      </div>
+        )
+      })()}
 
       {/* Visual Category Allocation Stacked Bar */}
       <div className="space-y-2 pt-2">
@@ -263,6 +285,29 @@ export function BudgetAnalysisBottom() {
               <strong className="text-[var(--ink)] dark:text-white tabular-nums">{cat.percentage}%</strong>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Strategic Architecture & Procurement Notes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-t border-[var(--line)]/60 dark:border-[#2a3a31]/60 text-xs">
+        <div className="p-3.5 rounded-lg bg-[var(--field)]/40 dark:bg-[#121b16]/40 border border-[var(--line)] dark:border-[#2a3a31] space-y-2">
+          <h4 className="font-bold text-[var(--ink)] dark:text-[#e8f0eb] flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0b6b3a]" />
+            What Self-Hosting Saves (License Strategy)
+          </h4>
+          <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] leading-relaxed">
+            Eliminates high per-user IAM subscriptions by deploying open-source <strong>Keycloak</strong>, <strong>Kong Gateway</strong>, <strong>HashiCorp Vault</strong>, and <strong>MinIO</strong> on Nigerian Tier-III infrastructure. Retains operational responsibility for patches and backups while avoiding lock-in.
+          </p>
+        </div>
+
+        <div className="p-3.5 rounded-lg bg-[var(--field)]/40 dark:bg-[#121b16]/40 border border-[var(--line)] dark:border-[#2a3a31] space-y-2">
+          <h4 className="font-bold text-[var(--ink)] dark:text-[#e8f0eb] flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0b6b3a]" />
+            Procurement Ceiling Controls
+          </h4>
+          <p className="text-[11px] text-[var(--ink-soft)] dark:text-[#9bb0a4] leading-relaxed">
+            Strict ₦48M ceiling protection: milestone-based releases (20% kickoff, 25% architecture, 25% SSO, 20% UAT, 10% handover). Fixed-price 2-month SOW with weekly demonstrations; written rate quotes required from Termii &amp; Dojah before contract execution.
+          </p>
         </div>
       </div>
     </section>

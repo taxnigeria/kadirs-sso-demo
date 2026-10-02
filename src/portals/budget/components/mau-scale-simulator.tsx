@@ -3,10 +3,10 @@ import { Users, Sliders, MessageSquare, ShieldCheck, Building2, TrendingDown } f
 import { useBudgetStore, useBudgetSummary } from '../budget-store'
 
 const MAU_PRESETS = [
-  { label: 'Pilot (2 LGAs)', value: 25000, desc: 'Initial rollout' },
-  { label: 'Target (100k)', value: 100000, desc: 'Active taxpayers' },
-  { label: 'Full State (500k)', value: 500000, desc: 'State-wide adoption' },
-  { label: 'Peak Surge (1.5M)', value: 1500000, desc: 'March filing rush' }
+  { label: 'Pilot (10k)', value: 10000, desc: 'Initial R1.0 pilot volume' },
+  { label: 'Early Scale (25k)', value: 25000, desc: '2 LGA rollout' },
+  { label: 'Enterprise (100k)', value: 100000, desc: 'Active taxpayers' },
+  { label: 'Full State (500k)', value: 500000, desc: 'State-wide adoption' }
 ]
 
 export function MauScaleSimulator() {

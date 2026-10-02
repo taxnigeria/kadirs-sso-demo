@@ -29,86 +29,79 @@ function assertEquals(actual: unknown, expected: unknown, message: string) {
 }
 
 async function runBudgetTests() {
-  console.log('--- [1] Testing calculateEffectiveItemCost with assumptions ---')
-  const assumptions: BudgetAssumptions = {
-    rate: 1500,
-    devMonths: 6,
-    users: 100000,
-    lpu: 8,
-    otp: 30,
-    reg: 15000,
-    months: 12,
-    cont: 10
-  }
+  console.log('--- [1] Testing calculateEffectiveItemCost with Pilot Assumptions ---')
+  const assumptions: BudgetAssumptions = { ...DEFAULT_ASSUMPTIONS }
 
-  // 1. One-time item test
-  const oneTimeItem: BudgetItem = {
-    id: 'test-1',
+  // 1. One-time item test (auto-scaled with devMonths)
+  const discoveryItem: BudgetItem = {
+    id: 'build-discovery',
     categoryId: 'engineering',
-    title: 'Test Senior Engineer',
-    description: 'Senior software engineering rate',
+    title: 'Product discovery and solution architecture',
+    description: 'Freeze pilot requirements, data model, threat model, acceptance criteria',
     costType: 'one-time',
-    unitRateNgn: 1_500_000,
-    unitLabel: 'per engineer/month',
+    unitRateNgn: 600000,
     quantity: 2,
-    periodMonths: 6,
+    periodMonths: 2,
     usageDriver: 'fixed',
-    isEnabled: true
+    unitLabel: 'months',
+    isEnabled: true,
+    isAutoQuantity: true
   }
 
-  const oneTimeCost = calculateEffectiveItemCost(oneTimeItem, assumptions)
-  assertEquals(oneTimeCost.costNgn, 18_000_000, 'One-time cost: 1.5M * 2 * 6 = 18M')
-  assertEquals(oneTimeCost.costUsd, 18_000_000 / 1500, 'One-time USD conversion matches FX rate')
-  assertEquals(oneTimeCost.effectivePeriod, 6, 'Effective period matches devMonths 6')
+  const discoveryCost = calculateEffectiveItemCost(discoveryItem, assumptions)
+  assertEquals(discoveryCost.costNgn, 1_200_000, 'Discovery cost: 600k * 2 = 1.2M NGN')
+  assertEquals(discoveryCost.effectiveQuantity, 2, 'Effective quantity matches devMonths 2')
 
-  // Test devMonths modification: reducing timeframe to 3 months cuts engineering build cost in half
-  const halfDevCost = calculateEffectiveItemCost(oneTimeItem, { ...assumptions, devMonths: 3 })
-  assertEquals(halfDevCost.costNgn, 9_000_000, 'One-time cost at 3 devMonths: 1.5M * 2 * 3 = 9M')
-  assertEquals(halfDevCost.effectivePeriod, 3, 'Effective period matches modified devMonths 3')
-  console.log('✓ One-time cost calculation verified')
+  // Test devMonths scaling: changing devMonths to 3 scales monthly engineering items
+  const scaledDiscoveryCost = calculateEffectiveItemCost(discoveryItem, { ...assumptions, devMonths: 3 })
+  assertEquals(scaledDiscoveryCost.costNgn, 1_800_000, 'Discovery cost at 3 months: 600k * 3 = 1.8M NGN')
+  assertEquals(scaledDiscoveryCost.effectiveQuantity, 3, 'Effective quantity updates to 3')
+  console.log('✓ One-time cost calculation and devMonths scaling verified')
 
   // 2. Variable OPEX: SMS OTP driven by users * lpu * (otp / 100)
-  // 100k users * 8 logins * 30% = 240,000 SMS
+  // 10,000 users * 3 logins * 100% = 30,000 SMS
   const otpItem: BudgetItem = {
-    id: 'test-otp',
-    categoryId: 'infrastructure',
-    title: 'SMS OTP Service',
+    id: 'run-sms',
+    categoryId: 'integrations',
+    title: 'SMS/OTP',
     description: 'Transactional SMS messages',
     costType: 'recurring',
-    unitRateNgn: 5,
-    unitLabel: 'SMS',
-    quantity: 1,
-    periodMonths: 1,
+    unitRateNgn: 8,
+    unitLabel: 'messages',
+    quantity: 30000,
+    periodMonths: 12,
     usageDriver: 'mau_otp',
     driverMultiplier: 1.0,
-    isEnabled: true
+    isEnabled: true,
+    isAutoQuantity: true
   }
   const otpCost = calculateEffectiveItemCost(otpItem, assumptions)
-  assertEquals(otpCost.effectiveQuantity, 240_000, 'Derived OTP count: 100k * 8 * 30% = 240k')
-  assertEquals(otpCost.costNgn, 240_000 * 5, 'OTP cost: 240k * 5 = 1,200,000 NGN')
+  assertEquals(otpCost.effectiveQuantity, 30_000, 'Derived OTP count: 10,000 * 3 * 100% = 30,000')
+  assertEquals(otpCost.costNgn, 30_000 * 8, 'OTP cost: 30,000 * 8 = 240,000 NGN/mo')
   console.log('✓ MAU OTP cost calculation verified')
 
-  // 3. Variable OPEX: NIMC Verification driven by reg = 15,000
-  const nimcItem: BudgetItem = {
-    id: 'test-nimc',
-    categoryId: 'infrastructure',
-    title: 'NIMC Verification',
-    description: 'NIN identity verification',
+  // 3. Variable OPEX: NIN/CAC Verification driven by reg = 2,000 checks
+  const kycItem: BudgetItem = {
+    id: 'run-kyc',
+    categoryId: 'integrations',
+    title: 'NIN/CAC verification',
+    description: 'Pilot KYC query allowance',
     costType: 'recurring',
-    unitRateNgn: 60,
+    unitRateNgn: 100,
     unitLabel: 'checks',
-    quantity: 1,
-    periodMonths: 1,
+    quantity: 2000,
+    periodMonths: 12,
     usageDriver: 'mau_nimc',
     driverMultiplier: 1.0,
-    isEnabled: true
+    isEnabled: true,
+    isAutoQuantity: true
   }
-  const nimcCost = calculateEffectiveItemCost(nimcItem, assumptions)
-  assertEquals(nimcCost.effectiveQuantity, 15_000, 'Derived registration NIN count: 15,000')
-  assertEquals(nimcCost.costNgn, 15_000 * 60, 'NIMC cost: 15k * 60 = 900,000 NGN')
-  console.log('✓ MAU NIMC cost calculation verified')
+  const kycCost = calculateEffectiveItemCost(kycItem, assumptions)
+  assertEquals(kycCost.effectiveQuantity, 2000, 'Derived KYC registration checks: 2,000')
+  assertEquals(kycCost.costNgn, 2000 * 100, 'KYC cost: 2,000 * 100 = 200,000 NGN/mo')
+  console.log('✓ MAU KYC verification cost calculation verified')
 
-  console.log('\n--- [2] Testing calculateBudgetSummary Formula ---')
+  console.log('\n--- [2] Testing calculateBudgetSummary Formula & Exact Pilot Totals ---')
   const categories: BudgetCategory[] = budgetJson.categories
   const baselineItems: BudgetItem[] = budgetJson.items.map((i) => ({
     ...i,
@@ -118,38 +111,30 @@ async function runBudgetTests() {
   }))
 
   const summary = calculateBudgetSummary(baselineItems, assumptions, categories)
-  assert(summary.buildTotalNgn > 0, 'Build total should be positive')
-  assert(summary.runningMonthlyNgn > 0, 'Monthly running cost should be positive')
+  assertEquals(summary.buildTotalNgn, 34_000_000, 'Build total must equal ₦34,000,000')
+  assertEquals(summary.runningMonthlyNgn, 1_035_000, 'Monthly running cost must equal ₦1,035,000/mo')
+  assertEquals(summary.grandTotalNgn, 46_420_000, 'Grand total must equal ₦46,420,000 (first-year ceiling)')
+  assertEquals(summary.costPerUserPerMonthNgn, 103.5, 'Cost per taxpayer per month = 1,035,000 / 10,000 = ₦103.50')
 
-  // Reference grand total formula check:
-  // Base = Build + Running * Months
-  // Buffer = Base * (Contingency% / 100)
-  // Grand = Base + Buffer
-  const expectedBase = summary.buildTotalNgn + summary.runningMonthlyNgn * assumptions.months
-  const expectedBuffer = expectedBase * (assumptions.cont / 100)
-  const expectedGrand = expectedBase + expectedBuffer
+  // Headroom check under ₦48M
+  const headroomNgn = 48_000_000 - summary.grandTotalNgn
+  assertEquals(headroomNgn, 1_580_000, 'Headroom under ₦48M ceiling must equal ₦1,580,000')
 
-  assertEquals(summary.bufferAmountNgn, expectedBuffer, 'Buffer amount matches formula')
-  assertEquals(summary.grandTotalNgn, expectedGrand, 'Grand total matches formula')
-  assertEquals(
-    summary.costPerUserPerMonthNgn,
-    summary.runningMonthlyNgn / assumptions.users,
-    'Cost per user per month = runningMonthly / users'
-  )
   assert(summary.categoryBreakdown.length === categories.length, 'All categories represented')
-  console.log('✓ calculateBudgetSummary mathematical consistency verified')
+  console.log('✓ calculateBudgetSummary mathematical consistency and exact pilot figures verified')
   console.log(`  Build Total: ₦${summary.buildTotalNgn.toLocaleString()}`)
   console.log(`  Monthly Running: ₦${summary.runningMonthlyNgn.toLocaleString()}/mo`)
-  console.log(`  Grand Total (12m + 10% buffer): ₦${summary.grandTotalNgn.toLocaleString()}`)
+  console.log(`  Grand Total (12m): ₦${summary.grandTotalNgn.toLocaleString()}`)
   console.log(`  Cost Per Taxpayer/Month: ₦${summary.costPerUserPerMonthNgn.toFixed(2)}`)
+  console.log(`  Headroom Under ₦48M: ₦${headroomNgn.toLocaleString()}`)
 
   console.log('\n--- [3] Testing Zustand Store Actions & Assumptions ---')
   const store = useBudgetStore.getState()
   store.resetToBaseline()
 
   // Update assumption
-  store.setAssumption('otp', 40)
-  assertEquals(useBudgetStore.getState().assumptions.otp, 40, 'OTP assumption updated to 40%')
+  store.setAssumption('otp', 50)
+  assertEquals(useBudgetStore.getState().assumptions.otp, 50, 'OTP assumption updated to 50%')
 
   // Update item row
   const targetItem = useBudgetStore.getState().items[0]
@@ -181,18 +166,19 @@ async function runBudgetTests() {
   // Reset to baseline
   store.resetToBaseline()
   assertEquals(useBudgetStore.getState().assumptions.otp, DEFAULT_ASSUMPTIONS.otp, 'Reset restored baseline assumptions')
+  assertEquals(useBudgetStore.getState().activeScenarioId, 'lean', 'Reset restored lean scenario')
   console.log('✓ Store mutations and assumptions passed')
 
   console.log('\n--- [4] Testing URL Delta Serialization & Deserialization ---')
   const delta: BudgetDelta = {
-    mau: 200000,
+    mau: 25000,
     c: 'USD',
     r: 1600,
     s: 'custom',
     t: 'Custom Tender Budget 2026',
-    as: { lpu: 10, otp: 50, months: 24, devMonths: 8, cont: 15 },
-    p: { 'dev-lead-architect': 3500000 },
-    d: ['sec-pen-testing']
+    as: { lpu: 5, otp: 80, months: 12, devMonths: 3, cont: 5 },
+    p: { 'build-discovery': 700000 },
+    d: ['run-email']
   }
 
   const serialized = serializeBudgetDelta(delta)
@@ -200,12 +186,12 @@ async function runBudgetTests() {
   
   const parsed = deserializeBudgetDelta(`?b=${serialized}`)
   assert(parsed !== null, 'Deserialized delta not null')
-  assertEquals(parsed.mau, 200000, 'Delta MAU preserved')
+  assertEquals(parsed.mau, 25000, 'Delta MAU preserved')
   assertEquals(parsed.t, 'Custom Tender Budget 2026', 'Delta title preserved')
-  assertEquals(parsed.as?.months, 24, 'Delta budget months preserved')
-  assertEquals(parsed.as?.devMonths, 8, 'Delta dev timeframe preserved')
-  assertEquals(parsed.as?.cont, 15, 'Delta contingency preserved')
-  assertEquals(parsed.p?.['dev-lead-architect'], 3500000, 'Delta price override preserved')
+  assertEquals(parsed.as?.months, 12, 'Delta budget months preserved')
+  assertEquals(parsed.as?.devMonths, 3, 'Delta dev timeframe preserved')
+  assertEquals(parsed.as?.cont, 5, 'Delta contingency preserved')
+  assertEquals(parsed.p?.['build-discovery'], 700000, 'Delta price override preserved')
 
   const relativeUrl = buildRelativeUrl(delta)
   assertEquals(relativeUrl, `/budget?b=${serialized}`, 'buildRelativeUrl correctly formats path')
@@ -213,7 +199,6 @@ async function runBudgetTests() {
   const shareableUrl = buildShareableUrl(delta)
   assert(shareableUrl.includes(`/budget?b=${serialized}`), 'buildShareableUrl correctly contains delta query')
   console.log('✓ URL Delta serialization and deserialization verified')
-
 
   console.log('\n=== ALL BUDGET UNIT TESTS PASSED SUCCESSFULLY! ===')
 }
