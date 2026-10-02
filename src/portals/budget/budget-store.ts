@@ -20,7 +20,7 @@ import {
 } from './budget-url-sync'
 import type { ExportBudgetPayload } from './budget-file-utils'
 
-export const DEFAULT_TITLE = 'KADIRS Auth System 2.0 — Cost-Optimized Budget (Lean R1.0 Pilot)'
+export const DEFAULT_TITLE = 'SSO Budget'
 
 export const DEFAULT_ASSUMPTIONS: BudgetAssumptions = {
   rate: budgetJson.defaultFxRate || 1500,
