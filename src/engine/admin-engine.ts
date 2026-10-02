@@ -407,6 +407,8 @@ const INITIAL_TSP_CLIENTS: TspClientRecord[] = [
     registeredAt: '2024-04-01T00:00:00Z',
     redirectUris: [
       'https://kadtaxonrent.com.ng/auth/callback',
+      'https://kadtaxonrent.com.ng/sso-demo/callback',
+      'https://kadtaxonrent.com.ng/sso-demo',
       'http://localhost:5174/auth/callback',
       'http://localhost:3000/auth/callback'
     ],

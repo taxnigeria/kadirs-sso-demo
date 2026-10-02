@@ -37,7 +37,23 @@ export default function OAuthAuthorizePage() {
 
   // Query parameters from external TSP
   const clientId = searchParams.get('client_id') || 'kadtaxonrent'
-  const redirectUri = searchParams.get('redirect_uri') || 'http://localhost:5174/auth/callback'
+  const rawRedirectUri = searchParams.get('redirect_uri') || ''
+
+  // Normalize redirectUri: if missing, or if localhost:5174 (which is not a live service),
+  // or if accessed on a live domain (e.g. sso-demo.devravens.com) with a localhost redirect,
+  // resolve to the live Kad Tax on Rent callback endpoint
+  const redirectUri = (() => {
+    if (!rawRedirectUri) {
+      return 'https://kadtaxonrent.com.ng/auth/callback'
+    }
+    if (rawRedirectUri.includes('localhost:5174')) {
+      return 'https://kadtaxonrent.com.ng/auth/callback'
+    }
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && rawRedirectUri.includes('localhost')) {
+      return 'https://kadtaxonrent.com.ng/auth/callback'
+    }
+    return rawRedirectUri
+  })()
   const state = searchParams.get('state') || 'demo_state_123'
   const requestedPersonaParam = searchParams.get('persona') || searchParams.get('persona_id')
 
@@ -699,16 +715,25 @@ export default function OAuthAuthorizePage() {
                   href={generatedCallbackUrl}
                   className="w-full sm:w-auto px-8 py-2.5 rounded-full bg-[#1AA260] hover:bg-[#158A52] text-white text-xs sm:text-sm font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Simulate Open {tspPrimaryName}</span>
+                  <span>Open {tspPrimaryName}</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               )}
+              <a
+                href="https://kadtaxonrent.com.ng/sso-demo"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-full border border-slate-300 dark:border-white/20 hover:bg-slate-100 dark:hover:bg-white/10 text-xs sm:text-sm font-semibold text-[var(--gray-700)] dark:text-gray-300 flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>Visit kadtaxonrent.com.ng/sso-demo</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
               <button
                 type="button"
                 onClick={() => setCeremonyStep('confirm')}
                 className="w-full sm:w-auto px-6 py-2.5 rounded-full border border-slate-300 dark:border-white/20 hover:bg-slate-100 dark:hover:bg-white/10 text-xs sm:text-sm font-semibold text-[var(--gray-700)] dark:text-gray-300 cursor-pointer"
               >
-                Restart Authorization Demo
+                Restart Demo
               </button>
             </div>
           </div>

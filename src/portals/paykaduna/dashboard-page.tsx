@@ -10,7 +10,8 @@ import {
   User,
   Sparkles,
   Lock,
-  Plus
+  Plus,
+  ExternalLink
 } from 'lucide-react'
 import { useAuthEngine } from '@/engine/auth-engine'
 import { findLegacyMatches } from '@/engine/reconciliation-engine'
@@ -416,20 +417,32 @@ export default function PayKadunaDashboard() {
                     </button>
 
                     {isKadTax ? (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setTransitioningTsp({
-                            name: 'Kad Tax on Rent (WHT Property Platform)',
-                            url: '/auth/authorize?client_id=kadtaxonrent&redirect_uri=http%3A%2F%2Flocalhost%3A5174%2Fauth%2Fcallback&response_type=code&scope=openid%20profile%3Aread%20tax%3Aread%20rent%3Amanage&state=sso_dash_launch',
-                            audience: 'kadtaxonrent'
-                          })
-                        }
-                        className="text-[#0A5C36] dark:text-emerald-400 font-bold hover:underline flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>Launch Kad Tax</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href="https://kadtaxonrent.com.ng/sso-demo"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[var(--gray-400)] hover:text-[#0A5C36] dark:hover:text-emerald-400 text-[11px] font-medium transition-colors hidden sm:inline-flex items-center gap-1 cursor-pointer"
+                          title="Open kadtaxonrent.com.ng/sso-demo in new tab"
+                        >
+                          <span>Portal</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setTransitioningTsp({
+                              name: 'Kad Tax on Rent (WHT Property Platform)',
+                              url: '/auth/authorize?client_id=kadtaxonrent&redirect_uri=https%3A%2F%2Fkadtaxonrent.com.ng%2Fauth%2Fcallback&response_type=code&scope=openid%20profile%3Aread%20tax%3Aread%20rent%3Amanage&state=sso_dash_launch',
+                              audience: 'kadtaxonrent'
+                            })
+                          }
+                          className="text-[#0A5C36] dark:text-emerald-400 font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <span>Launch Kad Tax</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     ) : isKadvreg ? (
                       <button
                         type="button"
@@ -609,6 +622,20 @@ export default function PayKadunaDashboard() {
 
             <div className="bg-[var(--paper)] border border-slate-200/70 dark:border-white/10 p-4 rounded-2xl text-xs font-mono space-y-1.5 text-[var(--ink)] break-words shadow-2xs">
               <div><strong className="text-[var(--gray-500)]">Audience:</strong> {inspectingTsp.id}</div>
+              {inspectingTsp.id === 'kadtaxonrent' && (
+                <div>
+                  <strong className="text-[var(--gray-500)]">Target App:</strong>{' '}
+                  <a
+                    href="https://kadtaxonrent.com.ng/sso-demo"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#1AA260] underline inline-flex items-center gap-1"
+                  >
+                    <span>kadtaxonrent.com.ng/sso-demo</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              )}
               <div className="break-all"><strong className="text-[var(--gray-500)]">Subject ID:</strong> {citizenId}</div>
               <div><strong className="text-[var(--gray-500)]">Data Protection:</strong> NDPA Compliant (NIN masked)</div>
               <div><strong className="text-[var(--gray-500)]">Assurance Level:</strong> Level {currentToken?.acr || '2'}</div>

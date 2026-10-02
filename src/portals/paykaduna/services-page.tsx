@@ -51,7 +51,7 @@ const SERVICES_CATALOG: ServiceItem[] = [
     personas: ['Individual', 'Corporate'],
     icon: Home,
     isInteractive: true,
-    launchUrl: '/auth/authorize?client_id=kadtaxonrent&redirect_uri=http%3A%2F%2Flocalhost%3A5174%2Fauth%2Fcallback&response_type=code&scope=openid%20profile%3Aread%20tax%3Aread%20rent%3Amanage&state=sso_catalog_launch',
+    launchUrl: '/auth/authorize?client_id=kadtaxonrent&redirect_uri=https%3A%2F%2Fkadtaxonrent.com.ng%2Fauth%2Fcallback&response_type=code&scope=openid%20profile%3Aread%20tax%3Aread%20rent%3Amanage&state=sso_catalog_launch',
     audience: 'kadtaxonrent',
     scopes: ['profile:read', 'tax:read', 'rent:manage'],
     statutoryBasis: 'Kaduna State Tax Codification and Consolidation Law (WHT Provisions)'
@@ -501,14 +501,29 @@ export default function ServicesPage() {
 
                 {/* Card Actions */}
                 <div className="pt-3.5 mt-2 border-t border-[var(--gray-200)] dark:border-white/5 flex items-center justify-between text-xs">
-                  <button
-                    type="button"
-                    onClick={() => setInspectingService(service)}
-                    className="text-[var(--gray-500)] hover:text-[#1AA260] font-medium inline-flex items-center gap-1.5 cursor-pointer transition-colors"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>Claims</span>
-                  </button>
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setInspectingService(service)}
+                      className="text-[var(--gray-500)] hover:text-[#1AA260] font-medium inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Claims</span>
+                    </button>
+
+                    {service.id === 'kadtaxonrent' && (
+                      <a
+                        href="https://kadtaxonrent.com.ng/sso-demo"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[var(--gray-400)] hover:text-[#0A5C36] dark:hover:text-emerald-400 font-medium inline-flex items-center gap-1 cursor-pointer transition-colors"
+                        title="Open kadtaxonrent.com.ng/sso-demo in new tab"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>Portal</span>
+                      </a>
+                    )}
+                  </div>
 
                   {service.isInteractive ? (
                     <button
