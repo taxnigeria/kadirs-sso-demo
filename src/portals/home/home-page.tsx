@@ -257,6 +257,7 @@ export default function HomePage() {
               <a href="#support" onClick={(e) => scrollToSection(e, 'support')}>
                 Contact support
               </a>
+              <Link to="/budget">Budget</Link>
             </div>
           </div>
         </div>
@@ -277,6 +278,13 @@ export default function HomePage() {
               NDPA 2023 protected <span className="footer-bottom__dot" /> NIMC identity partner
             </span>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', opacity: 0.65 }}>
+              <Link
+                to="/budget"
+                style={{ background: 'none', border: 'none', color: 'inherit', font: 'inherit', textDecoration: 'none', cursor: 'pointer' }}
+              >
+                Budget
+              </Link>
+              <span>•</span>
               <button
                 type="button"
                 onClick={() => openInspector('topology')}
